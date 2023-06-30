@@ -15,6 +15,7 @@ namespace ProServ.Shared.Models.UserInfo
         {
             this.UserId = userId;
         }
+
         public UserProfile()
         {
             
