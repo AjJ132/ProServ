@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Models\NET_CORE_USER\" />
+    <None Remove="Models\User Info\" />
+    <None Remove="Models\Workouts\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\NET_CORE_USER\" />
+    <Folder Include="Models\User Info\" />
+    <Folder Include="Models\Workouts\" />
+  </ItemGroup>
+</Project>

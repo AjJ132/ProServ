@@ -1,0 +1,9 @@
+SELECT TOP(10) *
+FROM UserInformation
+JOIN UserSubscription ON UserInformation.UserId = UserSubscription.UserId
+JOIN UserCoachingStyle ON UserInformation.UserId = UserCoachingStyle.UserId
+JOIN UserGoals ON UserInformation.UserId = UserGoals.UserId
+JOIN ReportedInjuries ON UserInformation.UserId = ReportedInjuries.UserId
+JOIN UserTrackRecords ON UserInformation.UserId = UserTrackRecords.UserId
+JOIN UserProfile ON UserInformation.UserId = UserProfile.UserId
+JOIN ProfileOnboarding ON UserInformation.UserId = ProfileOnboarding.UserId;

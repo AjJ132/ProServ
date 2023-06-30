@@ -1,0 +1,17 @@
+.settings-main-container {
+  width: 100%;
+  height: auto;
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: start;
+
+  row-gap: 20px;
+  column-gap: 20px;
+}
+
+.settings-main-container-cild {
+  flex: 1 0 33%;
+  margin: 10px;
+}
