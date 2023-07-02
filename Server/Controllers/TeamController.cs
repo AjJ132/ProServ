@@ -98,9 +98,6 @@ namespace ProServ.Server.Controllers
 
                 using(var db = _contextFactory.CreateDbContext())
                 {
-
-
-                    
                     IdentityUser user = await _userManager.GetUserAsync(User);
 
                     if(user == null)
@@ -108,8 +105,14 @@ namespace ProServ.Server.Controllers
                         return StatusCode(500, "User was null");
                     }
 
-                    //TODO add handling for removing all roles instead of a specific memeber role
-                    await _userManager.RemoveFromRoleAsync(user, "Member");
+                    //Get users current roles so we can remove them
+                    var roles = await _userManager.GetRolesAsync(user);
+                    if(roles != null && roles.Any())
+                    {
+                        await _userManager.RemoveFromRolesAsync(user, roles);
+                    }
+
+                    //Add coach role
                     await _userManager.AddToRoleAsync(user, "Coach");
 
                     //update user email if it is different
