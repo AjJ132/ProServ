@@ -1,0 +1,60 @@
+﻿.register-container {
+    margin-top: auto;
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    margin: auto;
+    background-color: white;
+}
+
+.register-step-1 {
+    min-width: 300px;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+
+    row-gap: 40px;
+}
+
+    .register-step-1 h2 {
+        font-weight: 550;
+    }
+    .register-step-1 p {
+        font-size: 1.1rem;
+        font-weight: 300;
+    }
+    .register-step-1 a{
+        color: var(--link) !important;
+        font-weight: 500;
+    }
+    .register-step-1 a:hover{
+        text-decoration: underline !important;
+        cursor: pointer;
+    }
+
+    .register-step-1-content{
+        border: var(--border-base) 1px solid;
+        border-radius: 12px;
+        width: 100%;
+        height: fit-content;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-self: center;
+
+        text-align: center;
+
+    }
+
+
+.register-content {
+    width: 30%;
+    height: fit-content;
+    padding: 3rem 1.5rem 3rem 1.5rem;
+}

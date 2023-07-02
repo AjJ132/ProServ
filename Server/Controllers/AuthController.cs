@@ -16,6 +16,7 @@ using ProServ.Shared.Models.UserInfo;
 using Microsoft.IdentityModel.Tokens;
 using ProServ.Server.Contexts;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace ProServ.Server.Controllers
 {
@@ -160,7 +161,25 @@ namespace ProServ.Server.Controllers
             return Ok(user.Id);
         }
 
-
+        [HttpGet("user-role")]
+        [Authorize]
+        public async Task<ActionResult<string>> GetUserRole()
+        {
+            try
+            {
+                //Users should only have one role
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var user = await _userManager.FindByIdAsync(userId);
+                var roles = await _userManager.GetRolesAsync(user);
+                return Ok(roles.FirstOrDefault());
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Error: " + ex.Message);
+                Console.WriteLine(ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
 
         //Get user email
         [HttpGet("Email")]

@@ -1,6 +1,6 @@
 ﻿@page "/Coaches-Dashboard"
 
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Coach")]
 @layout MainLayout;
 
 
@@ -8,11 +8,13 @@
 
 <AuthorizeView>
     <Authorized>
-        
+        <RadzenStack Style="width: 100%; background-color: red; ">
+
+        </RadzenStack>
     </Authorized>
 
     <NotAuthorized>
-        <p>Please log in to see this page</p>
+        <p>You Must be a Coach to view this page</p>
     </NotAuthorized>
 </AuthorizeView>
 
