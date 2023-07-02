@@ -27,13 +27,15 @@ namespace ProServ.Server.Controllers
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IConfiguration _config;
         private readonly IDbContextFactory<ProServDbContext> _contextFactory;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration config, IDbContextFactory<ProServDbContext> contextFactory)
+        public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration config, IDbContextFactory<ProServDbContext> contextFactory, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _config = config;
             _contextFactory = contextFactory;
+            _roleManager = roleManager;
         }
 
         //Register new user
@@ -55,6 +57,8 @@ namespace ProServ.Server.Controllers
 
                 //Ensure that the user is authenticated and log in
                 await _signInManager.SignInAsync(user, isPersistent: false);
+
+                //TODO add user role to database
 
                 var claims = new List<Claim>
                 {

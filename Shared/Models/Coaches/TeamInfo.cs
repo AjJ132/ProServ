@@ -12,6 +12,7 @@ public class TeamInfo
     public bool IsSchoolOrganization { get; set; }
     public int TeamPackageID { get; set; }
     public int TimeChanged { get; set; }
+    public string TeamSport { get; set; }
 
     public virtual Team Team { get; set; }
 }

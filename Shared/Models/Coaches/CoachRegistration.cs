@@ -1,16 +1,18 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace ProServ.Client.Data.Coaches
+namespace ProServ.Shared.Models.Coaches
 {
     public class CoachRegistration
     {
-        [Key]
+        
         public string UserID { get; set; }
         public bool CompletedCoachingOnBoarding { get; set; }
         public string TeamName { get; set; }
         public string TeamLocationCity { get; set; }
         public string TeamLocationState { get; set; }
+        public string TeamSport { get; set; }
+        public string TeamSportSpecify { get; set; }
 
         public string CoachesCode { get; set; }
         public string UsersCode { get; set; }
@@ -18,8 +20,12 @@ namespace ProServ.Client.Data.Coaches
         public DateTimeOffset DateCreated { get; set; }
         public bool IsSchoolOrganization { get; set; }
         public string AffliatedSchool { get; set; }
-        public string PackageID { get; set; }
+        public int PackageID { get; set; }
+        public DateTime PackageStart { get; set; }
+        public DateTime PackageEnd { get; set; }
         public string Email { get; set; }
+        public bool EmailIsCorrect { get; set; }
+        
 
         //All address variables
         public string Address { get; set; }
@@ -39,7 +45,7 @@ namespace ProServ.Client.Data.Coaches
             this.TeamCode = "";
             this.IsSchoolOrganization = false;
             this.AffliatedSchool = "";
-            this.PackageID = "";
+            this.PackageID = 0;
             this.Email = "";
             this.Address = "";
             this.Address2 = "";

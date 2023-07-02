@@ -1,0 +1,28 @@
+.header-subtext{
+    
+    text-align: center;
+}
+
+.header-subtext h3{
+    font-size: 2rem;
+    font-weight: 500;
+    
+}
+
+.header-subtext p {
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.spacer-vertical{
+    height: 50px;
+}
+
+.line-horizontal {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+}

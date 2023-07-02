@@ -15,3 +15,60 @@
   flex: 1 0 33%;
   margin: 10px;
 }
+
+.coaches-registration-main-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+
+.coaches-registration-steps-container{
+  box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.75);
+  z-index: 2;
+  margin: 50px;
+}
+
+.selected {
+  transform: scale(1.1);
+}
+
+.coach-registration-package-card {
+  transition: all 0.3s ease;
+  transform: scale(0.9); /* Make the unselected cards a little smaller */
+  opacity: 0.7; /* Make the unselected cards a little transparent */
+  min-height: 550px;
+}
+
+.coach-registration-package-card:hover,
+.coach-registration-package-card.none-selected {
+  transform: scale(0.95);
+  opacity: 0.95; /* Restore opacity on hover or when no package is selected */
+}
+.coach-registration-package-card.none-selected:hover {
+  transform: scale(1);
+  border-radius: 25px;
+  opacity: 1; /* Fully opaque on hover when no package is selected */
+  box-shadow: 0px 0px 10px 5px rgba(0, 0, 0, 0.1);
+}
+
+.coach-registration-package-card.selected {
+  transform: scale(1.1);
+  opacity: 1; /* Fully opaque for selected card */
+  
+}
+
+
+.selected-background{
+  background-color: #f5f5f5;
+}
+
+.packages-container{
+  width: auto;
+  height: fit-content;
+  overflow: hidden;
+}
+
