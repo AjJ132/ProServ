@@ -19,226 +19,131 @@
             <RadzenStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
                <div class="register-step-1">
                    <div>
-                        <h2>Start your account as...</h2>
-                        <p>Already have an account? <a>Sign In</a></p>
-
+                        <p class="text-3xl text-start font-bold">Start your account as...</p>
+                        <p class="text-start font-normal text-base">Already have an account? <a class="underline text-blue-500 cursor-pointer">Sign In</a></p>
                    </div>
-                    <RadzenStack AlignItems="AlignItems.Center" Style="width: 100%;">
-                        <RadzenSelectBar @bind-Value=@_coachOrAthlete TValue="bool" Change="RegisterSwitchToggle" Size="ButtonSize.Large">
-                            <Items>
-                                <RadzenSelectBarItem Text="Athlete" Value="false" />
-                                <RadzenSelectBarItem Text="Coach" Value="true" />
-                            </Items>
-                        </RadzenSelectBar>
-                    </RadzenStack>
+                    <div class="flex-start flex-row items-center gap-4 grid grid-cols-2 grid-auto-rows: minmax(450px, auto);">
+                        <div class="w-96 max-w-xs h-full"
+                           >
+                            <RadzenCard Style="border-radius: 12px; height: 100%;">
+                               <RadzenStack JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
+                                    <div>
+                                        <p class="text-3xl text-center font-semibold pt-6 pb-4">ProServ Athlete</p>
+                                        <ul class="list-disc pb-8 pl-4">
+                                            <li class="text-lg font-medium pb-4"> Absolutely Free! </li>
+                                        </ul>
 
-                    <div class="register-step-1-content">
-                        @if (_coachOrAthlete == false)
-                        {
-                            <div class="centered-text text-1-bold padding-1">
-                               Athlete
-                            </div>
-                            <ul>
-                                <li> Absolutely Free! </li>
-                            </ul>
-                        }
-                        else
-                        {
-                            <p>Coach</p>
-                        }
+                                    </div>
+                                    <RadzenButton Size="ButtonSize.Large" style="width: 100%;" Click="@RegisterAsAthlete" >Register As Athlete</RadzenButton>
+                               </RadzenStack>
+                            </RadzenCard>
+                        </div>
+
+                        <div class=" h-full w-96 max-w-xs ">
+                            <RadzenCard Style="border-radius: 12px; height: 100%;">
+                                <RadzenStack JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
+                                    <div>
+                                        <p class="text-3xl text-center font-semibold pt-6 pb-4">ProServ Coach</p>
+                                        <ul class="list-disc pb-8 pl-4">
+                                            <li class="text-lg font-medium pb-4"> Free 14 day trial </li>
+                                            <li class="text-lg font-medium pb-4"> No credit card required </li>
+                                            <li class="text-lg font-medium pb-4"> Get full experience of what it means to be a ProServ Coach</li>
+                                        </ul>
+                                    </div>
+                                    <RadzenButton Size="ButtonSize.Large" style="width: 100%;" Click="@RegisterAsCoach" >Register As Coach</RadzenButton>
+                                </RadzenStack>
+                            </RadzenCard>
+                        </div>
                     </div>
-
-                </div>
+               </div>
+            
             </RadzenStack>
         </RadzenStack>
     }
     else if(this._registerStep == 2)
     {
-        <RadzenCard class="onboarding-content">
-            <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center">
-                <RadzenText Text="Welecome to ProServ! This is a quick onboarding process to get you started." />
-                <RadzenTemplateForm TItem="UserInformation" data="@_userInformation" InvalidSubmit="@OnInvalidSubmit" Submit="@SubmitUserInfo">
-                    <RadzenRow Gap="2rem" Class="rz-p-0 rz-p-lg-4">
-                        <RadzenColumn Size="12" SizeMD="6">
-                            <RadzenStack>
-                                <!-- User Information-->
-                                <RadzenFieldset Text="User Information">
-                                    <RadzenRow AlignItems="AlignItems.Center">
-                                        <RadzenColumn Size="12" SizeMD="4">
-                                            <RadzenLabel Text="First Name" />
-                                        </RadzenColumn>
-                                        <RadzenColumn Size="12" SizeMD="8">
-                                            <RadzenTextBox @bind-Value="_userInformation.FirstName" Name="FirstName" AllowClear="true" Placeholder="First Name" Style="width: 100%;" />
-                                            <RadzenRequiredValidator Component="FirstName" Text="First name is required" Popup="true" Style="position: absolute" />
-                                        </RadzenColumn>
-                                    </RadzenRow>
-                                    <br />
-                                    <RadzenRow AlignItems="AlignItems.Center">
-                                        <RadzenColumn Size="12" SizeMD="4">
-                                            <RadzenLabel Text="Last Name" />
-                                        </RadzenColumn>
-                                        <RadzenColumn Size="12" SizeMD="8">
-                                            <RadzenTextBox @bind-Value="_userInformation.LastName" Name="LastName" AllowClear="true" Placeholder="Last Name" Style="width: 100%;" />
-                                            <RadzenRequiredValidator Component="LastName" Text="Last name is required" Popup="true" Style="position: absolute" />
-                                        </RadzenColumn>
-                                    </RadzenRow>
-                                    <br />
-                                    <RadzenRow AlignItems="AlignItems.Center">
-                                        <RadzenColumn Size="12" SizeMD="4">
-                                            <RadzenLabel Text="Birthday" />
-                                        </RadzenColumn>
-                                        <RadzenColumn Size="12" SizeMD="8">
-                                            <RadzenDatePicker ShowTime="false" @bind-Value="_userInformation.Birthday" Name="DateOfBirth">
-                                                <RadzenRequiredValidator Component="DateOfBirth" Text="Date of birth is required" Popup="true" Style="position: absolute" />
-                                            </RadzenDatePicker>
-
-                                        </RadzenColumn>
-                                    </RadzenRow>
-                                    <br />
-                                    <RadzenRow AlignItems="AlignItems.Center">
-                                        <RadzenColumn Size="12" SizeMD="4">
-                                            <RadzenLabel Text="Phone number" />
-                                        </RadzenColumn>
-                                        <RadzenColumn Size="12" SizeMD="8">
-                                            <RadzenTextBox @bind-Value="_phoneNumber" Name="PhoneNumber" AllowClear="true" Placeholder="Phone #" Style="width: 100%;" />
-                                            <RadzenRequiredValidator Component="PhoneNumber" Text="Phone number is required" Popup="true" Style="position: absolute" />
-                                        </RadzenColumn>
-                                    </RadzenRow>
-                                    <br />
-                                </RadzenFieldset>
-                                <!-- Address-->
-                                <RadzenFieldset Text="Address">
-                                    <RadzenRow AlignItems="AlignItems.Center">
-                                        <RadzenColumn Size="12" SizeMD="4">
-                                            <RadzenLabel Text="City" />
-                                        </RadzenColumn>
-                                        <RadzenColumn Size="12" SizeMD="8">
-                                            <RadzenTextBox @bind-Value="_userInformation.City" Name="City" AllowClear="true" Placeholder="City" Style="width: 100%;" />
-                                            <RadzenRequiredValidator Component="City" Text="City is required" Popup="true" Style="position: absolute" />
-
-                                        </RadzenColumn>
-                                    </RadzenRow>
-                                    <br />
-                                    <RadzenRow AlignItems="AlignItems.Center">
-                                        <RadzenColumn Size="12" SizeMD="4">
-                                            <RadzenLabel Text="State" />
-                                        </RadzenColumn>
-                                        <RadzenColumn Size="12" SizeMD="8">
-                                            <RadzenTextBox @bind-Value="_userInformation.State" Name="State" AllowClear="true" Placeholder="State" Style="width: 100%;" />
-                                            <RadzenRequiredValidator Component="State" Text="State is required" Popup="true" Style="position: absolute" />
-                                        </RadzenColumn>
-                                    </RadzenRow>
-                                    <br />
-                                </RadzenFieldset>
-                            </RadzenStack>
-                        </RadzenColumn>
-                        <RadzenColumn Size="12" SizeMD="6">
-                            <!-- More Information-->
-                            <RadzenFieldset Text="Personal Info">
-                                <RadzenRow AlignItems="AlignItems.Center">
-                                    <RadzenColumn Size="12" SizeMD="4">
-                                        <RadzenLabel Text="Height" />
-                                    </RadzenColumn>
-                                    <RadzenColumn Size="12" SizeMD="8">
-                                        <RadzenNumeric @bind-Value="_heightFeet" Max="7" Min="2" Placeholder="00" Style="width: 100%;" />
-                                        <RadzenText Text="Feel free to leave this blank" />
-                                    </RadzenColumn>
-                                </RadzenRow>
-                                <RadzenRow AlignItems="AlignItems.Center">
-                                    <RadzenColumn Size="12" SizeMD="4">
-                                        <RadzenLabel Text="Height" />
-                                    </RadzenColumn>
-                                    <RadzenColumn Size="12" SizeMD="8">
-                                        <RadzenNumeric @bind-Value="_heightInches" Max="11" Min="0" Placeholder="00" Style="width: 100%;" />
-                                        <RadzenText Text="Feel free to leave this blank" />
-                                    </RadzenColumn>
-                                </RadzenRow>
-                                <br />
-                                <RadzenRow AlignItems="AlignItems.Center">
-                                    <RadzenColumn Size="12" SizeMD="4">
-                                        <RadzenLabel Text="Weight" />
-                                    </RadzenColumn>
-                                    <RadzenColumn Size="12" SizeMD="8">
-                                        <RadzenNumeric @bind-Value="_userInformation.Weight" Max="500" Min="50" Placeholder="00" Style="width: 100%;" />
-                                        <RadzenText Text="Feel free to leave this blank" />
-                                    </RadzenColumn>
-                                </RadzenRow>
-                                <br />
-                                <RadzenRow AlignItems="AlignItems.Center">
-                                    <RadzenColumn Size="12" SizeMD="4">
-                                        <RadzenLabel Text="Gender" />
-                                    </RadzenColumn>
-                                    <RadzenColumn Size="12" SizeMD="8">
-                                        <RadzenDropDown @bind-Value="_userInformation.Gender" Data="@_genders" style="width: 100%;" />
-                                        <RadzenText Text="Feel free to leave this blank" />
-                                    </RadzenColumn>
-                                </RadzenRow>
-                                <br />
-                                <RadzenRow AlignItems="AlignItems.Center">
-                                    <RadzenColumn Size="12" SizeMD="4">
-                                        <RadzenLabel Text="Are you in high school?" />
-                                    </RadzenColumn>
-                                    <RadzenColumn Size="12" SizeMD="8">
-                                        <RadzenSwitch @bind-Value="@_userInformation.IsInHighschool" />
-                                    </RadzenColumn>
-                                </RadzenRow>
-                                <br />
-                                <RadzenRow AlignItems="AlignItems.Center">
-                                    <RadzenColumn Size="12" SizeMD="4">
-                                        <RadzenLabel Text="School" />
-                                    </RadzenColumn>
-                                    <RadzenColumn Size="12" SizeMD="8">
-                                        <RadzenTextBox @bind-Value="_userInformation.School" AllowClear="true" Placeholder="School" Style="width: 100%;" />
-                                        <RadzenText Text="Please enter the name of you school/institution here" />
-                                    </RadzenColumn>
-                                </RadzenRow>
-                                <br />
-                            </RadzenFieldset>
-                        </RadzenColumn>
-                    </RadzenRow>
-                    <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Icon="save" Text="Save"></RadzenButton>
-
-                </RadzenTemplateForm>
-            </RadzenStack>
-        </RadzenCard>
-
-
-
-        /* False means they are an athlete */
-        if(this._coachOrAthlete == false)
-        {
-            <RadzenCard>
-                <RadzenTemplateForm TItem="UserProfile" Data="@_userProfile" InvalidSubmit="@OnInvalidSubmit" Submit="SubmitUserProfile">
-                    <RadzenStack Orientation="Orientation.Vertical">
-                        <RadzenText Text="Just a few more questions and we're off to the races!" />
-                        <br />
-                        <RadzenText Text="What is your best event when it comes to track and field or cross country?" />
-                        <RadzenTextBox @bind-Value="_userProfile.BestEvent" Name="BestEvent" AllowClear="true" Placeholder="Best Event" Style="width: 100%;" />
-                        <RadzenRequiredValidator Component="BestEvent" Text="Best Event is required" Popup="true" Style="position: absolute" />
-                        <br />
-                        <RadzenText Text="What is your primary goal when using this service?" />
-                        <RadzenTextBox @bind-Value="_userProfile.PrimaryGoal" Name="PrimaryGoal" AllowClear="true" Placeholder="Primary Goal" Style="width: 100%;" />
-                        <RadzenRequiredValidator Component="PrimaryGoal" Text="Primary Goal is required" Popup="true" Style="position: absolute" />
-                        <br />
-                        <RadzenText Text="Why did you chose to run? Is it Fun? Help you relax? (FIX THIS)" />
-                        <RadzenTextBox @bind-Value="_userProfile.WhyRun" Name="WhyRun" AllowClear="true" Placeholder="Why Run?" Style="width: 100%;" />
-                        <RadzenRequiredValidator Component="WhyRun" Text="Why Run is required" Popup="true" Style="position: absolute" />
-                        <br />
-                        <RadzenText Text="Would you rather get a world record or win the Olympics in your event?" />
-                        <RadzenTextBox @bind-Value="_userProfile.RecordOrOlympics" Name="RecordOrOlympics" AllowClear="true" Placeholder="World Record or Olympics?" Style="width: 100%;" />
-                        <RadzenRequiredValidator Component="RecordOrOlympics" Text="Record or Olympics is required" Popup="true" Style="position: absolute" />
-                        <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Icon="save" Text="Save"></RadzenButton>
+        <EditForm Model="registerUser" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+           
+            <RadzenCard style="border-radius: 12px; padding: 2rem;">
+                <div class="flex flex-center text-start flex-col max-w-lg gap-4">
+                    <div>
+                        @if(_isCoach == false)
+                        {
+                            <p class="text-xl font-bold">Create <span class="text-blue-500">Athlete</span> account</p>
+                        }
+                        else
+                        {
+                            <p class="text-3xl mb-4 font-bold">Create <span class="text-blue-500">Coach</span> account</p>
+                            <p class="mb-2">Creating a ProServ coach account will automatically start your 14-day free trial period. </p>
+                            <p class="text-base font-semibold">No credit card is required unless you wish to continue using your coaching account and all its features</p>
+                        }   
+                    </div>         
+                    <RadzenStack AlignItems="AlignItems.Start" Gap="0.1rem">
+                        <p class="text-base font-semibold">Email</p>
+                        <RadzenTextBox @bind-Value="registerUser.Email" Style="width: 100%;" />
+                        <ValidationMessage For="(() => registerUser.Email)" />
                     </RadzenStack>
-                </RadzenTemplateForm>
+                    <RadzenStack Orientation="Orientation.Horizontal" Style="width: 100%;" >
+                        <RadzenStack AlignItems="AlignItems.Start" Gap="0.1rem" style="width: 100%;">
+                            <p class="text-base font-semibold">First Name</p>
+                            <RadzenTextBox @bind-Value="registerUser.FirstName" Style="width: 100%;" />
+                            <ValidationMessage For="(() => registerUser.FirstName)" />
+                        </RadzenStack>
+                        <RadzenStack AlignItems="AlignItems.Start" Gap="0.1rem" style="width: 100%;">
+                            <p class="text-base font-semibold">Last Name</p>
+                            <RadzenTextBox @bind-Value="registerUser.LastName" Style="width: 100%;" />
+                            <ValidationMessage For="(() => registerUser.LastName)" />
+                        </RadzenStack>
+                    </RadzenStack>
+                    <RadzenStack AlignItems="AlignItems.Start" Gap="0.1rem">
+                        <p class="text-base font-semibold">Password</p>
+                        <RadzenTextBox @bind-Value="registerUser.Password" Style="width: 100%;" />
+                        <ValidationMessage For="(() => registerUser.Password)" />
+                    </RadzenStack>
+                    <RadzenStack AlignItems="AlignItems.Start" Gap="0.1rem">
+                        <p class="text-base font-semibold">Confirm Password</p>
+                        <RadzenTextBox @bind-Value="registerUser.ConfirmPassword" Style="width: 100%;" />
+                        <ValidationMessage For="(() => registerUser.ConfirmPassword)" />
+                    </RadzenStack>
+
+                    <p>WE DONT HAVE A PRIVACY POLICY YET</p>
+
+                    <RadzenButton Size="ButtonSize.Large" Text="Sign Up"  ButtonType="ButtonType.Submit"/>
+
+                    <div class="spacer-vertical"/>
+
+                    <p class="text-base font-bold text-center">Already have an account? <a class="underline text-blue-500 cursor-pointer">Sign In</a></p>
+                    @if(this._isCoach)
+                    {
+                        <RadzenButton Text="Sign Up As Athlete" Style="width: fit-content; align-self: center;" ButtonStyle="ButtonStyle.Warning" Click="RegisterAsAthlete" />
+                    }
+                    else
+                    {
+                        <RadzenButton Text="Sign Up As Coach" Style="width: fit-content; align-self: center;" ButtonStyle="ButtonStyle.Warning" Click="RegisterAsCoach" />
+                    }
+                </div>
             </RadzenCard>
-        }
-        else
-        {
-            
-        }
+        </EditForm>
     }
 
 </div>
 
 
+@code {
+    
+    private void RegisterAsAthlete()
+    {
+        this._registerStep = 2;
+        this._isCoach = false;
+        StateHasChanged();
+    }
+
+    private void RegisterAsCoach()
+    {
+        this._registerStep = 2;
+        this._isCoach = true;
+        StateHasChanged();
+    }
+}
 

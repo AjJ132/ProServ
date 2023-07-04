@@ -304,6 +304,7 @@ public class UserController : ControllerBase
                 var userInfo = await db.UserInformation.Where(n => n.UserId.Equals(userInformation.UserId)).FirstOrDefaultAsync();
                 if (userInfo != null)
                 {
+                    
                     db.Entry(userInfo).State = EntityState.Detached;
                     db.UserInformation.Attach(userInformation);
                     db.Entry(userInformation).State = EntityState.Modified;
@@ -313,6 +314,12 @@ public class UserController : ControllerBase
                 }
                 else
                 {
+                    var user = await _userManager.GetUserAsync(User);
+                    if(user == null)
+                    {
+                        return BadRequest("Error 1001: UserInformation: User is null");
+                    }
+                    userInformation.UserId = user.Id;
                     db.UserInformation.Add(userInformation);
                     await db.SaveChangesAsync();
                     return Ok();

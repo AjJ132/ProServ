@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "tailwindcss": "^3.3.2"
+  },
+  "scripts": {
+    "ui:dev": "npx tailwindcss -c tailwind.config.js -i ./tailwind.input.css -o ./wwwroot/css/app.css --watch",
+    "ui:build": "npx tailwindcss -c tailwind.config.js -i ./tailwind.input.css -o ./wwwroot/css/app.css --minify",
+    "postinstall": "cd ../ProServ && dotnet run --AppTasks=migrate",
+    "migrate": "cd ../ProServ && dotnet run ProServ.csproj --AppTasks=migrate",
+    "revert:last": "cd ../ProServ && dotnet run --AppTasks=migrate.revert:last",
+    "revert:all": "cd ../ProServ && dotnet run --AppTasks=migrate.revert:all"
+  }
+}

@@ -23,7 +23,7 @@ namespace ProServ.Client.Pages.Login_and_Onboarding.Login
         AuthenticationStateProvider AuthProvider { get; set; }
 
 
-        private RegisterUser _registerUser = new RegisterUser();
+        private LoginUser _loginUser = new LoginUser();
         private string _email = "";
         private string _password = "";
         private bool _loading = true;
@@ -35,6 +35,7 @@ namespace ProServ.Client.Pages.Login_and_Onboarding.Login
                 var token = await localStorage.GetItemAsync<string>("authToken");
                 Console.WriteLine($"LoginPage() Retrieved token: {token}");
                 var authState = await AuthProvider.GetAuthenticationStateAsync();
+                //TODO Validate that user is still registered in the system 
                 if (authState.User.Identity.IsAuthenticated)
                 {
                     // User is authenticated
@@ -94,16 +95,16 @@ namespace ProServ.Client.Pages.Login_and_Onboarding.Login
 
         private void CoachLogin()
         {
-            _email = "testcoach1@gmail.com";
-            _password = "TestCoach123";
+            _email = "sport2848@gmail.com";
+            _password = "Johnson132";
             HandleValidSubmit();
         }
 
         private async Task HandleValidSubmit()
         {
-            this._registerUser.Email = _email;
-            this._registerUser.Password = _password;
-            var response = await Http.PostAsJsonAsync("api/auth/Login", _registerUser);
+            this._loginUser.Email = _email;
+            this._loginUser.Password = _password;
+            var response = await Http.PostAsJsonAsync("api/Auth/Login", _loginUser);
             if (response.IsSuccessStatusCode)
             {
                 var token = await response.Content.ReadAsStringAsync();
@@ -114,47 +115,32 @@ namespace ProServ.Client.Pages.Login_and_Onboarding.Login
                 {
                     //TODO Error handling for finding userid
                     //get user id from custom AuthenticationStateProvider
-                    string userID = authState.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                    // Check if user has completed onboarding process, if not, redirect to onboarding
-                    var onboardingStatus = await Http.GetAsync($"api/User/Onboarding/Completed");
-                    if (onboardingStatus.IsSuccessStatusCode)
-                    {
-                        // Get variable 'completed' to see if user completed onboarding
-                        var didCompleteContent = await onboardingStatus.Content.ReadFromJsonAsync<bool>();
-                        if (didCompleteContent)
-                        {
-                            //check for users role
-                            var userRolesResponse = await Http.GetFromJsonAsync<string>("api/Auth/user-role");
+                    
+                    //check for users role
+                    var userRolesResponse = await Http.GetAsync("api/Auth/user-role");
                             
-                            if(userRolesResponse == "Coach")
-                            {
-                                // Navigate to home page if they are returning user
-                                NavigateToCoachesDashboard();
-                            }
-                            else if(userRolesResponse == "Member")
-                            {
-                                // Navigate to onboarding process if they are new user or previously exited process
-                                NavigateToHome();
-                            }
-                            else if (userRolesResponse == "Sudo")
-                            {
-                                // Navigate to onboarding process if they are new user or previously exited process
-                                NavigateToHome();
-                            }
-                            else
-                            {
-                                Console.WriteLine("Error finding user role");
-                            }
+                    if(userRolesResponse.IsSuccessStatusCode)
+                    {
+                        var userRole = await userRolesResponse.Content.ReadAsStringAsync();
+                        if (userRole == "Coach")
+                        {
+                            // Navigate to home page if they are returning user
+                            NavigateToCoachesDashboard();
+                        }
+                        else if (userRole == "Member")
+                        {
+                            // Navigate to onboarding process if they are new user or previously exited process
+                            NavigateToHome();
+                        }
+                        else if (userRole == "Sudo")
+                        {
+                            // Navigate to onboarding process if they are new user or previously exited process
+                            NavigateToHome();
                         }
                         else
                         {
-                            // Navigate to onboarding process if they are new user or previously exited process
-                            NavigateToOnboarding();
+                            Console.WriteLine("Error finding user role");
                         }
-                    }
-                    else
-                    {
-                        Console.WriteLine("Error getting onboarding status");
                     }
                 }
                 else
