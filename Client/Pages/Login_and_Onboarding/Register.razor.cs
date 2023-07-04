@@ -5,6 +5,10 @@ using Radzen.Blazor;
 using System.Text.RegularExpressions;
 using ProServ.Shared.Models.NET_CORE_USER;
 using ProServ.Shared.Models.UserInfo;
+using Radzen;
+using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
 
 namespace ProServ.Client.Pages.Login_and_Onboarding
 {
@@ -35,6 +39,23 @@ namespace ProServ.Client.Pages.Login_and_Onboarding
         private RadzenText _minCharCheck;
         private RadzenText _uppercaseCheck;
         private RegisterUser _registerUser = new RegisterUser();
+
+        UserInformation _userInformation = new UserInformation();
+        UserProfile _userProfile = new UserProfile();
+        string _phoneNumber = "";
+        int _heightFeet = 0;
+        int _heightInches = 0;
+        List<string> _genders = new List<string>
+        {
+            "Male",
+            "Female",
+            "Perfer not to say"
+        };
+        bool _savingUserInformation = false;
+        bool _savingUserProfile = false;
+        bool _completedUserInformation = true;
+        bool _completedUserProfile = false;
+        private int currentStep = 1;
 
 
         protected override void OnInitialized()
@@ -278,6 +299,101 @@ namespace ProServ.Client.Pages.Login_and_Onboarding
         {
             StateHasChanged();
         }
-    
+
+        private void NavigateToCoachesRegistration()
+        {
+            NavigationManager.NavigateTo("Coaches-Registration");
+        }
+
+        //--------------------On Boarding------------------------
+        private async void SubmitUserInfo(UserInformation userInformation)
+        {
+            //get user id
+            var authState = await AuthProvider.GetAuthenticationStateAsync();
+            string userID = authState.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            userInformation.UserId = userID;
+            //concatenate height
+            userInformation.Height = _heightFeet.ToString() + "'" + _heightInches.ToString() + "\"";
+            //Set ReportsTo to Default user (Sarah) might need to change in the future
+            userInformation.ReportsTo = "";
+            userInformation.UserType = "Member";
+            userInformation.DateCreated = DateTime.Now;
+            userInformation.LastAccessed = DateTime.Now;
+            userInformation.ActiveUser = true;
+            userInformation.TeamID = 0;
+            //First put phone number then post user information
+            var phoneNumberContent = new StringContent(JsonSerializer.Serialize(_phoneNumber), Encoding.UTF8, "application/json");
+            Console.WriteLine(phoneNumberContent.ToString());
+            var putPhoneNumber = await Http.PutAsJsonAsync($"api/auth/PhoneNumber", _phoneNumber);
+            //Check if phone number was successfully updated
+            if (!putPhoneNumber.IsSuccessStatusCode)
+            {
+                Console.WriteLine("Error updating phone number");
+            }
+            else
+            {
+                var postUserInfo = await Http.PostAsJsonAsync("api/User/UserInformation", userInformation);
+                //Check if user information was successfully posted
+                if (!postUserInfo.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("Error posting user information");
+                }
+                else
+                {
+                    //its backwards
+                    this._completedUserInformation = false;
+                    this._completedUserProfile = true;
+                    currentStep++;
+                    StateHasChanged();
+                }
+            }
+        }
+
+        private async void SubmitUserProfile(UserProfile userProfile)
+        {
+            if (_completedUserProfile)
+            {
+                //TODO error handling for userid
+                var authState = await AuthProvider.GetAuthenticationStateAsync();
+                string userID = authState.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                userProfile.UserId = userID;
+                var response = await Http.PostAsJsonAsync("api/User/Profile", userProfile);
+                //Check if user profile was successfully posted
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("Error posting user profile");
+                }
+                else
+                {
+                    //if completed move to home page
+                    //its backwards
+                    if (!_completedUserInformation && _completedUserProfile)
+                    {
+                        //if True update UserOnboarding page then navigate to HomePage
+                        bool status = true;
+                        var updateOnboarding = await Http.PutAsJsonAsync($"api/User/Onboarding/Complete", status);
+                        UserTrackRecords newRecords = new UserTrackRecords
+                        {
+                            UserId = userID
+                        };
+                        var insertUserRecordsRequest = await Http.PostAsJsonAsync("api/User/track-records", newRecords);
+                        if (!updateOnboarding.IsSuccessStatusCode)
+                        {
+                            Console.WriteLine("Error updating UserOnboarding");
+                        }
+                        else
+                        {
+                            Console.WriteLine("UserOnboarding updated");
+                            NavigationManager.NavigateTo("/Dashboard");
+                        }
+                    }
+                }
+            }
+        }
+
+        private void OnInvalidSubmit(FormInvalidSubmitEventArgs args)
+        {
+            Console.WriteLine("Invalid Submit");
+        }
     }
 }

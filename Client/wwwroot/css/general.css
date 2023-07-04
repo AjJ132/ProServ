@@ -1,6 +1,10 @@
 :root{
     --border-base: #e5e9f0;
     --link: #007bff;
+
+    font-family: Roboto, sans-serif;
+   
+   
 }
 
 .header-subtext{
@@ -30,4 +34,33 @@
     border-top: 1px solid --border-base;
     margin: 1em 0;
     padding: 0;
+}
+
+.text-1{
+    font-family: Roboto, sans-serif;
+    font-size: calc(.795rem + .4vw);
+    font-weight: 400;
+    letter-spacing: -.01px;
+    line-height: calc(1.345rem + .25vw);
+}
+
+.text-1-bold{
+    font-family: Roboto,sans-serif;
+    font-size: calc(.795rem + .6vw);
+    font-weight: 550;
+    letter-spacing: -.01px;
+    line-height: calc(1.345rem + .25vw);
+}
+
+
+.padding-1{
+    padding: 1rem;
+}
+
+.centered-text{
+    text-align: center;
+}
+
+.mt-4{
+    margin-top: 1rem;
 }

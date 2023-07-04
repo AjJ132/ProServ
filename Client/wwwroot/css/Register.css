@@ -48,8 +48,14 @@
         justify-content: center;
         align-self: center;
 
-        text-align: center;
+        text-align: start;
 
+    }
+
+
+
+    .register-step-1-content li{
+        margin-left: 40px;
     }
 
 
