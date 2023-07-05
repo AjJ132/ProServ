@@ -25,18 +25,42 @@ using ProServ.Shared.Models.UserInfo;
 using Blazored.LocalStorage;
 using System.Net.Http.Headers;
 using System.Diagnostics;
+using ProServ.Shared.Models.Workouts;
 
 namespace ProServ.Client.Pages
 {
     public partial class CoachesDashboard
     {
-        
+
+
+        RadzenScheduler<AssignedWorkout> _calendar;
+        private IEnumerable<AssignedWorkout> _assignedWorkouts;
         protected override async Task OnInitializedAsync()
         {
-
+            //Get Coach's assigned workouts    
             await base.OnInitializedAsync();
         }
+    
 
-       
+        void OnSlotRender(SchedulerSlotRenderEventArgs args)
+        {
+        
+        }
+
+        async Task OnSlotSelect(SchedulerSlotSelectEventArgs args)
+        {
+            
+        }
+
+        async Task OnAppointmentSelect(SchedulerAppointmentSelectEventArgs<AssignedWorkout> args)
+        {
+        
+        }
+
+        void OnAppointmentRender(SchedulerAppointmentRenderEventArgs<AssignedWorkout> args)
+        {
+            
+        }
     }
+    
 }

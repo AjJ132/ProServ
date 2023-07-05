@@ -13,16 +13,21 @@ namespace ProServ.Shared.Models.Workouts
 
         public int WorkoutTypeId { get; set; }
 
-        [MaxLength(150)]
+		[MaxLength(100)]
+		public string WorkoutName { get; set; }
+
+		[MaxLength(450)]
         public string CoachId { get; set; }
 
         [MaxLength(150)]
         public string Notes { get; set; }
 
+
+
         // Navigation properties
         public ICollection<WorkoutBlock> WorkoutBlocks { get; set; }
 
-        public WorkoutInfo WorkoutInfo { get; set; }
+        public virtual WorkoutInfo WorkoutInfo { get; set; }
     }
 
 }

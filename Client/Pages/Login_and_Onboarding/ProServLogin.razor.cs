@@ -5,6 +5,7 @@ using ProServ.Shared.Models.NET_CORE_USER;
 using System.Net.Http.Json;
 using System.Diagnostics;
 using static System.Net.WebRequestMethods;
+using System.Text.Json;
 
 namespace ProServ.Client.Pages.Login_and_Onboarding.Login
 {
@@ -95,7 +96,7 @@ namespace ProServ.Client.Pages.Login_and_Onboarding.Login
 
         private void CoachLogin()
         {
-            _email = "sport2848@gmail.com";
+            _email = "aj132@icloud.com";
             _password = "Johnson132";
             HandleValidSubmit();
         }
@@ -107,9 +108,9 @@ namespace ProServ.Client.Pages.Login_and_Onboarding.Login
             var response = await Http.PostAsJsonAsync("api/Auth/Login", _loginUser);
             if (response.IsSuccessStatusCode)
             {
-                var token = await response.Content.ReadAsStringAsync();
-                Console.WriteLine(token);
-                await localStorage.SetItemAsync("token", token);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                var tokenObj = JsonSerializer.Deserialize<Dictionary<string, string>>(responseContent);
+                await localStorage.SetItemAsync("token", tokenObj["token"]);
                 var authState = await AuthProvider.GetAuthenticationStateAsync();
                 if (authState.User.Identity.IsAuthenticated)
                 {

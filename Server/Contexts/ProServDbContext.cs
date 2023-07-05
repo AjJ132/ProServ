@@ -46,15 +46,22 @@ namespace ProServ.Server.Contexts
             modelBuilder.Entity<Workout>()
                 .HasMany(w => w.WorkoutBlocks)
                 .WithOne(wb => wb.Workout)
-                .HasForeignKey(wb => wb.WorkoutId);
+                .HasForeignKey(wb => wb.WorkoutId)
+                .IsRequired(false);
 
             modelBuilder.Entity<Workout>()
                 .HasOne(w => w.WorkoutInfo)
                 .WithOne(wi => wi.Workout)
                 .HasForeignKey<Workout>(wi => wi.WorkoutId);
 
-            //All Team stuff
-            modelBuilder.Entity<Team>()
+			modelBuilder.Entity<WorkoutBlock>()
+                .HasMany(wb => wb.Parameters)
+                .WithOne(p => p.WorkoutBlock)
+                .HasForeignKey(p => p.BlockId)
+                .IsRequired(false);
+
+			//All Team stuff
+			modelBuilder.Entity<Team>()
                 .HasOne(t => t.TeamInfo)
                 .WithOne(ti => ti.Team)
                 .HasForeignKey<Team>(ti => ti.TeamID);
@@ -64,10 +71,7 @@ namespace ProServ.Server.Contexts
                 .WithOne(tp => tp.Team)
                 .HasForeignKey<Team>(tp => tp.TeamID);
 
-            //modelBuilder.Entity<IdentityUserLogin<string>>().HasKey(x => new { x.LoginProvider, x.ProviderKey });
-            //modelBuilder.Entity<IdentityUserRole<string>>().HasKey(x => new { x.UserId, x.RoleId });
-            //modelBuilder.Entity<IdentityUserToken<string>>().HasKey(x => new { x.UserId, x.LoginProvider, x.Name });
-
+           
             base.OnModelCreating(modelBuilder);
         }
 

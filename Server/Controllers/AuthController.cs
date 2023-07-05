@@ -127,20 +127,15 @@ namespace ProServ.Server.Controllers
 
             if (result.Succeeded)
             {
+                //Get users role
+                var role = await _userManager.GetRolesAsync(user);
+
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
                     new Claim(ClaimTypes.NameIdentifier, user.Id), // Add this line
+                    new Claim(ClaimTypes.Role, role.FirstOrDefault())
                 };
-
-                //fetch user roles
-                var roles = await _userManager.GetRolesAsync(user);
-                foreach (var role in roles)
-                {
-                    claims.Add(new Claim(ClaimTypes.Role, role));
-                }
-
-
 
                 // Fetch these values from the configuration instead of hardcoding
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));

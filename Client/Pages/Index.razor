@@ -1,6 +1,6 @@
 ﻿@page "/Dashboard"
 
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Member")]
 @layout MainLayout;
 
 

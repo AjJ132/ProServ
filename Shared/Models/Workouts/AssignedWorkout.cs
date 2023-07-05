@@ -12,8 +12,8 @@ public class AssignedWorkout
 
     public int WorkoutId { get; set; }
 
-    [MaxLength(30)]
-    public string WorkoutDate { get; set; }
+    
+    public DateTime WorkoutDate { get; set; }
 
     [MaxLength(150)]
     public string Notes { get; set; }
@@ -22,6 +22,9 @@ public class AssignedWorkout
     public string AssigneeId { get; set; }
 
     public bool ReportBack { get; set; }
+
+[MaxLength(100)]
+    public string WorkoutName {get;set;}
 
     // Navigation property
     [ForeignKey("WorkoutId")]

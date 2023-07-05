@@ -8,9 +8,18 @@
 
 <AuthorizeView>
     <Authorized>
-        <RadzenStack Style="width: 100%; background-color: red; ">
-
-        </RadzenStack>
+        <div class="bg-white dark:bg-slate-800 w-full h-screen flex flex-col justify-center content-center">
+            <RadzenCard style="border-radius: 12px;">
+                <RadzenScheduler @ref=@_calendar SlotRender=@OnSlotRender style="height: 768px;" TItem="AssignedWorkout" Data="@_assignedWorkouts" StartProperty="WorkoutDate" EndProperty="WorkoutDate"
+                    TextProperty="WorkoutName" SelectedIndex="2"
+                    SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect AppointmentRender=@OnAppointmentRender>
+                    <RadzenDayView />
+                    <RadzenWeekView />
+                    <RadzenMonthView />
+                    <RadzenYearView />
+                </RadzenScheduler>
+            </RadzenCard>
+        </div>
     </Authorized>
 
     <NotAuthorized>
