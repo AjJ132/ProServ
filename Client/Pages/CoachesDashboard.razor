@@ -1,6 +1,8 @@
 ﻿@page "/Coaches-Dashboard"
 
 @attribute [Authorize(Roles = "Coach")]
+@inject HttpClient Http;
+@inject NavigationManager NavigationManager;
 @layout MainLayout;
 
 
@@ -8,18 +10,58 @@
 
 <AuthorizeView>
     <Authorized>
-        <div class="bg-white dark:bg-slate-800 w-full h-screen flex flex-col justify-center content-center">
-            <RadzenCard style="border-radius: 12px;">
-                <RadzenScheduler @ref=@_calendar SlotRender=@OnSlotRender style="height: 768px;" TItem="AssignedWorkout" Data="@_assignedWorkouts" StartProperty="WorkoutDate" EndProperty="WorkoutDate"
-                    TextProperty="WorkoutName" SelectedIndex="2"
-                    SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect AppointmentRender=@OnAppointmentRender>
-                    <RadzenDayView />
-                    <RadzenWeekView />
-                    <RadzenMonthView />
-                    <RadzenYearView />
-                </RadzenScheduler>
-            </RadzenCard>
-        </div>
+        @if(_isLoading)
+        {
+            <div class=" justify-center content-center">
+                <div class="loader"></div>
+            </div>
+        }
+        else
+        {
+            <div class="bg-white dark:bg-slate-800 w-full h-screen flex flex-col justify-center content-center p-4">
+                <RadzenStack JustifyContent="JustifyContent.Center" Gap="1.5rem">
+                    <div class="flex justify-between content-center">
+                        <p class="text-4xl font-medium">Welcome @_myInformation.FirstName</p>
+                        <p class="text-4xl font-medium">@DateTime.Now.ToString("MMMM d yyyy")</p>
+                    </div>
+                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center">
+                        <RadzenCard style="border-radius: 12px; min-width: 950px; max-width: 950px;">
+                            <RadzenScheduler @ref=@_calendar SlotRender=@OnSlotRender style="height: 768px;" TItem="AssignedWorkout" Data="@_assignedWorkouts" StartProperty="WorkoutDate" EndProperty="WorkoutDate"
+                                             TextProperty="WorkoutName" SelectedIndex="2"
+                                             SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect AppointmentRender=@OnAppointmentRender>
+                                <RadzenDayView />
+                                <RadzenWeekView />
+                                <RadzenMonthView />
+                                <RadzenYearView />
+                            </RadzenScheduler>
+                        </RadzenCard>
+                        <RadzenCard style="border-radius: 12px; min-width: 600px; max-width: 1000px; height: fit-content;">
+                            <div class="flex justify-center flex-col content-start p-4">
+                               @if(_loadingMyteam)
+                               {
+                                    <div class="loader"></div>
+                               }
+                               else if(_userHasNoTeam)
+                               {
+                                    <p class="self-center text-2xl font-medium">You Currently Have No Team</p>
+                               }
+                               else
+                               {
+                                    @if(this._myAtheletes.Count() == 0)
+                                    {
+                                        <p class=" self-center text-2xl font-medium">You Currently Have No Athletes</p>
+                                    }
+                                    else
+                                    {
+                                        
+                                    }
+                               }
+                            </div>
+                        </RadzenCard>
+                    </RadzenStack>
+                </RadzenStack>
+            </div>
+        }
     </Authorized>
 
     <NotAuthorized>
@@ -27,6 +69,8 @@
     </NotAuthorized>
 </AuthorizeView>
 
-
+<style>
+    
+</style>
 
 

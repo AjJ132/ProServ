@@ -64,12 +64,14 @@ namespace ProServ.Server.Contexts
 			modelBuilder.Entity<Team>()
                 .HasOne(t => t.TeamInfo)
                 .WithOne(ti => ti.Team)
-                .HasForeignKey<Team>(ti => ti.TeamID);
+                .HasForeignKey<Team>(ti => ti.TeamID)
+                .IsRequired(false); 
 
             modelBuilder.Entity<Team>()
                 .HasOne(t => t.TeamPackage)
                 .WithOne(tp => tp.Team)
-                .HasForeignKey<Team>(tp => tp.TeamID);
+                .HasForeignKey<Team>(tp => tp.TeamID)
+                .IsRequired(false);
 
            
             base.OnModelCreating(modelBuilder);

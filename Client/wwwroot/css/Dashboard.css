@@ -1,75 +1,18 @@
-﻿.dashboard-container {
-  width: 100%;
-  height: 100vh;
-  background-color: red;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: start;
-  gap: 1rem;
+﻿.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
 }
 
-.dashboard-workouts {
-  width: 100%;
-  height: fit-content;
-}
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
 
-.dashboard-control-center {
-  width: 100%;
-  height: 80%;
-
-  background-color: pink;
-
-  align-items: center;
-  justify-content: center;
-}
-
-.mileage-stack {
-  width: 100%;
-  height: fit-content;
-  display: flex;
-  flex-direction: row;
-  justify-content: start;
-  gap: 1rem;
-}
-
-.dashboard-second-row {
-  width: 100%;
-  height: 100%;
-
-  background-color: green;
-
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  gap: 1rem;
-}
-
-.workout-score {
-  width: 100%;
-  height: auto;
-
-  background-color: yellow;
-
-  display: flex;
-
-  flex-direction: column;
-  align-content: center;
-  justify-content: center;
-  text-align: center;
-}
-
-.workout-calendar {
-  background-color: blue;
-  height: 80%;
-  width: 100%;
-  /* width: 100%;
-  height: auto; */
-
-  /* display: flex;
-
-  flex-direction: column;
-  align-content: center;
-  justify-content: center;
-  text-align: center; */
+    100% {
+        transform: rotate(360deg);
+    }
 }

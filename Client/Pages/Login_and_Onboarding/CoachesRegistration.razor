@@ -1,4 +1,4 @@
-﻿@attribute [Authorize(Roles = "Member, Assistant Coach, Admin, Sudo")];
+﻿@attribute [Authorize(Roles = "Coach")];
 @inject HttpClient Http;
 @layout EmptyLayout;
 @inject AuthenticationStateProvider AuthProvider;

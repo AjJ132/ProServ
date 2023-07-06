@@ -59,7 +59,7 @@ namespace ProServ.Server.Controllers
                 }
             }
 
-            
+
         }
         [HttpGet("team-name-exists/{teamName}")]
         [Authorize]
@@ -85,38 +85,26 @@ namespace ProServ.Server.Controllers
                     return StatusCode(500, $"Internal server error: {ex.Message}");
                 }
             }
-            
+
         }
 
         [HttpPost("coach-registration")]
         [Authorize]
-        public async Task<ActionResult> SubmitCoachRegistration([FromBody]CoachRegistration coachRegistration)
+        public async Task<ActionResult> SubmitCoachRegistration([FromBody] CoachRegistration coachRegistration)
         {
             try
             {
-                
-
-                using(var db = _contextFactory.CreateDbContext())
+                using (var db = _contextFactory.CreateDbContext())
                 {
                     IdentityUser user = await _userManager.GetUserAsync(User);
 
-                    if(user == null)
+                    if (user == null)
                     {
                         return StatusCode(500, "User was null");
                     }
 
-                    //Get users current roles so we can remove them
-                    var roles = await _userManager.GetRolesAsync(user);
-                    if(roles != null && roles.Any())
-                    {
-                        await _userManager.RemoveFromRolesAsync(user, roles);
-                    }
-
-                    //Add coach role
-                    await _userManager.AddToRoleAsync(user, "Coach");
-
                     //update user email if it is different
-                    if(coachRegistration.EmailIsCorrect == false)
+                    if (coachRegistration.EmailIsCorrect == false)
                     {
                         user.Email = coachRegistration.Email;
                         await _userManager.UpdateAsync(user);
@@ -130,6 +118,7 @@ namespace ProServ.Server.Controllers
                         TeamName = coachRegistration.TeamName,
                         Location = coachRegistration.TeamLocationCity + ", " + coachRegistration.TeamLocationState,
                         Terminated = false,
+                        OwnerID = user.Id,
                     };
 
                     await db.Teams.AddAsync(team);
@@ -157,13 +146,19 @@ namespace ProServ.Server.Controllers
                     await db.TeamInfo.AddAsync(teamInfo);
                     await db.TeamPackage.AddAsync(teamPackage);
 
+                    //Update user information table so the coach now points towards the team
+                    var userInformation = await db.UserInformation.FirstOrDefaultAsync(n => n.UserId == user.Id);
+                    userInformation.TeamID = team.TeamID;
+                    userInformation.City = coachRegistration.TeamLocationCity;
+                    userInformation.State = coachRegistration.TeamLocationState;
+
                     await db.SaveChangesAsync();
 
                     return Ok();
 
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex);
                 Console.WriteLine(ex.Message);
@@ -171,6 +166,46 @@ namespace ProServ.Server.Controllers
             }
         }
 
+        [HttpGet("team-athletes/{teamID}")]
+        [Authorize]
+        public async Task<ActionResult<List<UserInformation>>> GetTeamsAthletes(int teamID)
+        {
+            try
+            {
+                using (var db = _contextFactory.CreateDbContext())
+                {
+                    //Verify that the team exists
+                    var team = await db.Teams.Where(n => n.TeamID == teamID).FirstOrDefaultAsync();
+                    if (team == null)
+                    {
+                        //TODO: Log this
+                        //Team does not exist
+                        return StatusCode(404, "Team does not exist");
+                    }
+                    else
+                    {
+                        //Get user information for all athletes on the team
+                        IdentityUser user = await _userManager.GetUserAsync(User);
+                        if(user != null)
+                        {
+                            List<UserInformation> athleteInformation = await db.UserInformation.Where(n => n.TeamID == teamID && !n.UserId.Equals(user.Id)).ToListAsync();
+                            return Ok(athleteInformation);
+                        }
+                        else
+                        {
+                            List<UserInformation> athleteInformation = await db.UserInformation.Where(n => n.TeamID == teamID).ToListAsync();
+                            return Ok(athleteInformation);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
     }
 }
 
