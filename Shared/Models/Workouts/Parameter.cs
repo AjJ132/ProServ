@@ -12,14 +12,14 @@ public class Parameter
     public int BlockId { get; set; }
 
     [MaxLength(100)]
-    public string sValue1 { get; set; }
+    public string SValue1 { get; set; }
 
     [MaxLength(100)]
-    public string sValue2 { get; set; }
+    public string SValue2 { get; set; }
 
-    public TimeSpan tTime1 { get; set; }
+    public TimeSpan TTime1 { get; set; }
 
-    public TimeSpan tTime2 { get; set; }
+    public TimeSpan TTime2 { get; set; }
 
     public TimeSpan sDistance1 { get; set; }
 
