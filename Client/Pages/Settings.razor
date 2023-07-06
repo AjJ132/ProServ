@@ -9,7 +9,13 @@
     <div class="settings-main-container">
         
       
-            @if (this._isLoaded)
+            @if (this._isloading)
+            {
+            <div class=" justify-center content-center">
+                <div class="loader"></div>
+            </div>
+            }
+            else
             {
                 <RadzenCard Style="border-radius: 12px; min-width: 1200px; max-width: 1200px; min-height: 700px; max-height:700px; " Class="settings-main-container-cild">
                         @if (this._missingUserInformation)
@@ -166,135 +172,136 @@
                        
                         }
                     </RadzenCard>
-            }
-            else
-            {
-                <div class=" justify-center content-center">
-                    <div class="loader"></div>
-                </div>
+                
+                <AuthorizeView Roles="Coach" Context="child">
+                    <RadzenCard Class="settings-main-container-cild" Style="border-radius: 12px; min-width: 680px; max-width: 680px;">
+                       @if(_userInformation.TeamID != 0)
+                       {
+                            <div class="flex flex-col justify-center content-center">
+                                <p>Manage</p>
+                            </div>
+                       }
+                       else
+                       {
+                         <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+                            <p class=" text-lg font-medium" style="margin-block-end: 0;">Want to create a team? Register Here</p>
+                            <RadzenButton Text="Create" Size="ButtonSize.Large" ButtonStyle="ButtonStyle.Primary" Click="StartCoachesRegistration"/>
+                        </RadzenStack>
+                       }
+                    </RadzenCard>
+                </AuthorizeView>
+       
+                <AuthorizeView Roles="Member" Context="child">
+                      <RadzenCard Style="border-radius: 12px; min-height: 700px; max-height: 700px; min-width: 680px; max-width: 680px;" Class="settings-main-container-cild">
+                    @if(_missingUserRecords)
+                    {
+                        <p>Something Went Wrong.</p>
+                        <p>We Were Unable To Locate your records. Pleas try again later.</p>
+
+                    }
+                    else
+                    {
+                        <RadzenTemplateForm data="@_userTrackRecords" Submit="@((UserTrackRecords args) => { SaveTrackRecordChanges(args); })" Style="min-width: 500px;">
+                            <RadzenStack>
+                                <RadzenFieldset Text="Records">
+                                    <RadzenStack>
+                                        <RadzenRow AlignItems="AlignItems.Center">
+                                            <RadzenColumn Size="12" SizeMD="4">
+                                                <RadzenLabel Text="400M Time" />
+                                            </RadzenColumn>
+                                            <RadzenColumn Size="12" SizeMD="8">
+                                                <RadzenTextBox @bind-Value="_userTrackRecords._400Time" AllowClear="true" Placeholder="400M Time" Style="width: 100%;" />
+                                            </RadzenColumn>
+                                        </RadzenRow>
+                                        <RadzenRow AlignItems="AlignItems.Center">
+                                            <RadzenColumn Size="12" SizeMD="4">
+                                                <RadzenLabel Text="800M Time" />
+                                            </RadzenColumn>
+                                            <RadzenColumn Size="12" SizeMD="8">
+                                                <RadzenTextBox @bind-Value="_userTrackRecords._800Time" AllowClear="true" Placeholder="800M Time" Style="width: 100%;" />
+                                            </RadzenColumn>
+                                        </RadzenRow>
+                                        <RadzenRow AlignItems="AlignItems.Center">
+                                            <RadzenColumn Size="12" SizeMD="4">
+                                                <RadzenLabel Text="1000M Time" />
+                                            </RadzenColumn>
+                                            <RadzenColumn Size="12" SizeMD="8">
+                                                <RadzenTextBox @bind-Value="_userTrackRecords._1KTime" AllowClear="true" Placeholder="1K Time" Style="width: 100%;" />
+                                            </RadzenColumn>
+                                        </RadzenRow>
+                                        <RadzenRow AlignItems="AlignItems.Center">
+                                            <RadzenColumn Size="12" SizeMD="4">
+                                                <RadzenLabel Text="1500M Time" />
+                                            </RadzenColumn>
+                                            <RadzenColumn Size="12" SizeMD="8">
+                                                <RadzenTextBox @bind-Value="_userTrackRecords._1500time" AllowClear="true" Placeholder="1500M Time" Style="width: 100%;" />
+                                            </RadzenColumn>
+                                        </RadzenRow>
+                                        <RadzenRow AlignItems="AlignItems.Center">
+                                            <RadzenColumn Size="12" SizeMD="4">
+                                                <RadzenLabel Text="1600M Time" />
+                                            </RadzenColumn>
+                                            <RadzenColumn Size="12" SizeMD="8">
+                                                <RadzenTextBox @bind-Value="_userTrackRecords._1600Time" AllowClear="true" Placeholder="1600M Time" Style="width: 100%;" />
+                                            </RadzenColumn>
+                                        </RadzenRow>
+                                        <RadzenRow AlignItems="AlignItems.Center">
+                                            <RadzenColumn Size="12" SizeMD="4">
+                                                <RadzenLabel Text="3K Time" />
+                                            </RadzenColumn>
+                                            <RadzenColumn Size="12" SizeMD="8">
+                                                <RadzenTextBox @bind-Value="_userTrackRecords._3KTime" AllowClear="true" Placeholder="3K Time" Style="width: 100%;" />
+                                            </RadzenColumn>
+                                        </RadzenRow>
+                                        <RadzenRow AlignItems="AlignItems.Center">
+                                            <RadzenColumn Size="12" SizeMD="4">
+                                                <RadzenLabel Text="3200M Time" />
+                                            </RadzenColumn>
+                                            <RadzenColumn Size="12" SizeMD="8">
+                                                <RadzenTextBox @bind-Value="_userTrackRecords._3200Time" AllowClear="true" Placeholder="3200M Time" Style="width: 100%;" />
+                                            </RadzenColumn>
+                                        </RadzenRow>
+                                        <RadzenRow AlignItems="AlignItems.Center">
+                                            <RadzenColumn Size="12" SizeMD="4">
+                                                <RadzenLabel Text="5K Time" />
+                                            </RadzenColumn>
+                                            <RadzenColumn Size="12" SizeMD="8">
+                                                <RadzenTextBox @bind-Value="_userTrackRecords._5KTime" AllowClear="true" Placeholder="5K Time" Style="width: 100%;" />
+                                            </RadzenColumn>
+                                        </RadzenRow>
+                                        <RadzenRow AlignItems="AlignItems.Center">
+                                            <RadzenColumn Size="12" SizeMD="4">
+                                                <RadzenLabel Text="8K Time" />
+                                            </RadzenColumn>
+                                            <RadzenColumn Size="12" SizeMD="8">
+                                                <RadzenTextBox @bind-Value="_userTrackRecords._8KTime" AllowClear="true" Placeholder="8K Time" Style="width: 100%;" />
+                                            </RadzenColumn>
+                                        </RadzenRow>
+                                        <RadzenRow AlignItems="AlignItems.Center">
+                                            <RadzenColumn Size="12" SizeMD="4">
+                                                <RadzenLabel Text="10K Time" />
+                                            </RadzenColumn>
+                                            <RadzenColumn Size="12" SizeMD="8">
+                                                <RadzenTextBox @bind-Value="_userTrackRecords._10KTime" AllowClear="true" Placeholder="10K Time" Style="width: 100%;" />
+                                            </RadzenColumn>
+                                        </RadzenRow>
+
+                                    </RadzenStack>
+                                </RadzenFieldset>
+                            </RadzenStack>
+                            <br />
+                            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center">
+                                <RadzenButton Text="Save" ButtonType="ButtonType.Submit" Size="ButtonSize.Large"/>
+                            </RadzenStack>
+                        </RadzenTemplateForm>
+                    }
+
+                    </RadzenCard>
+                  </AuthorizeView>
             }
        
    
         
-        <AuthorizeView Roles="Coach" Context="child">
-            <RadzenCard Class="settings-main-container-cild" Style="border-radius: 12px; min-width: 680px; max-width: 680px;">
-                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
-                    <p class=" text-lg font-medium" style="margin-block-end: 0;">Want to create a team? Register Here</p>
-                    <RadzenButton Text="Create" Size="ButtonSize.Large" ButtonStyle="ButtonStyle.Primary" Click="StartCoachesRegistration"/>
-                </RadzenStack>
-            </RadzenCard>
-        </AuthorizeView>
-        
-         
-            
-         
-        <AuthorizeView Roles="Member" Context="child">
-              <RadzenCard Style="border-radius: 12px; min-height: 700px; max-height: 700px; min-width: 680px; max-width: 680px;" Class="settings-main-container-cild">
-            @if(_missingUserRecords)
-            {
-                <p>Something Went Wrong.</p>
-                <p>We Were Unable To Locate your records. Pleas try again later.</p>
-
-            }
-            else
-            {
-                <RadzenTemplateForm data="@_userTrackRecords" Submit="@((UserTrackRecords args) => { SaveTrackRecordChanges(args); })" Style="min-width: 500px;">
-                    <RadzenStack>
-                        <RadzenFieldset Text="Records">
-                            <RadzenStack>
-                                <RadzenRow AlignItems="AlignItems.Center">
-                                    <RadzenColumn Size="12" SizeMD="4">
-                                        <RadzenLabel Text="400M Time" />
-                                    </RadzenColumn>
-                                    <RadzenColumn Size="12" SizeMD="8">
-                                        <RadzenTextBox @bind-Value="_userTrackRecords._400Time" AllowClear="true" Placeholder="400M Time" Style="width: 100%;" />
-                                    </RadzenColumn>
-                                </RadzenRow>
-                                <RadzenRow AlignItems="AlignItems.Center">
-                                    <RadzenColumn Size="12" SizeMD="4">
-                                        <RadzenLabel Text="800M Time" />
-                                    </RadzenColumn>
-                                    <RadzenColumn Size="12" SizeMD="8">
-                                        <RadzenTextBox @bind-Value="_userTrackRecords._800Time" AllowClear="true" Placeholder="800M Time" Style="width: 100%;" />
-                                    </RadzenColumn>
-                                </RadzenRow>
-                                <RadzenRow AlignItems="AlignItems.Center">
-                                    <RadzenColumn Size="12" SizeMD="4">
-                                        <RadzenLabel Text="1000M Time" />
-                                    </RadzenColumn>
-                                    <RadzenColumn Size="12" SizeMD="8">
-                                        <RadzenTextBox @bind-Value="_userTrackRecords._1KTime" AllowClear="true" Placeholder="1K Time" Style="width: 100%;" />
-                                    </RadzenColumn>
-                                </RadzenRow>
-                                <RadzenRow AlignItems="AlignItems.Center">
-                                    <RadzenColumn Size="12" SizeMD="4">
-                                        <RadzenLabel Text="1500M Time" />
-                                    </RadzenColumn>
-                                    <RadzenColumn Size="12" SizeMD="8">
-                                        <RadzenTextBox @bind-Value="_userTrackRecords._1500time" AllowClear="true" Placeholder="1500M Time" Style="width: 100%;" />
-                                    </RadzenColumn>
-                                </RadzenRow>
-                                <RadzenRow AlignItems="AlignItems.Center">
-                                    <RadzenColumn Size="12" SizeMD="4">
-                                        <RadzenLabel Text="1600M Time" />
-                                    </RadzenColumn>
-                                    <RadzenColumn Size="12" SizeMD="8">
-                                        <RadzenTextBox @bind-Value="_userTrackRecords._1600Time" AllowClear="true" Placeholder="1600M Time" Style="width: 100%;" />
-                                    </RadzenColumn>
-                                </RadzenRow>
-                                <RadzenRow AlignItems="AlignItems.Center">
-                                    <RadzenColumn Size="12" SizeMD="4">
-                                        <RadzenLabel Text="3K Time" />
-                                    </RadzenColumn>
-                                    <RadzenColumn Size="12" SizeMD="8">
-                                        <RadzenTextBox @bind-Value="_userTrackRecords._3KTime" AllowClear="true" Placeholder="3K Time" Style="width: 100%;" />
-                                    </RadzenColumn>
-                                </RadzenRow>
-                                <RadzenRow AlignItems="AlignItems.Center">
-                                    <RadzenColumn Size="12" SizeMD="4">
-                                        <RadzenLabel Text="3200M Time" />
-                                    </RadzenColumn>
-                                    <RadzenColumn Size="12" SizeMD="8">
-                                        <RadzenTextBox @bind-Value="_userTrackRecords._3200Time" AllowClear="true" Placeholder="3200M Time" Style="width: 100%;" />
-                                    </RadzenColumn>
-                                </RadzenRow>
-                                <RadzenRow AlignItems="AlignItems.Center">
-                                    <RadzenColumn Size="12" SizeMD="4">
-                                        <RadzenLabel Text="5K Time" />
-                                    </RadzenColumn>
-                                    <RadzenColumn Size="12" SizeMD="8">
-                                        <RadzenTextBox @bind-Value="_userTrackRecords._5KTime" AllowClear="true" Placeholder="5K Time" Style="width: 100%;" />
-                                    </RadzenColumn>
-                                </RadzenRow>
-                                <RadzenRow AlignItems="AlignItems.Center">
-                                    <RadzenColumn Size="12" SizeMD="4">
-                                        <RadzenLabel Text="8K Time" />
-                                    </RadzenColumn>
-                                    <RadzenColumn Size="12" SizeMD="8">
-                                        <RadzenTextBox @bind-Value="_userTrackRecords._8KTime" AllowClear="true" Placeholder="8K Time" Style="width: 100%;" />
-                                    </RadzenColumn>
-                                </RadzenRow>
-                                <RadzenRow AlignItems="AlignItems.Center">
-                                    <RadzenColumn Size="12" SizeMD="4">
-                                        <RadzenLabel Text="10K Time" />
-                                    </RadzenColumn>
-                                    <RadzenColumn Size="12" SizeMD="8">
-                                        <RadzenTextBox @bind-Value="_userTrackRecords._10KTime" AllowClear="true" Placeholder="10K Time" Style="width: 100%;" />
-                                    </RadzenColumn>
-                                </RadzenRow>
-
-                            </RadzenStack>
-                        </RadzenFieldset>
-                    </RadzenStack>
-                    <br />
-                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center">
-                        <RadzenButton Text="Save" ButtonType="ButtonType.Submit" Size="ButtonSize.Large"/>
-                    </RadzenStack>
-                </RadzenTemplateForm>
-            }
-
-            </RadzenCard>
-          </AuthorizeView>
          
       
     </div>

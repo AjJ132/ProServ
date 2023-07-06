@@ -33,16 +33,11 @@ public partial class Settings : ComponentBase
     private string _userEmail = "aj132@icloud.com";
     private string _password = "Password Here";
 
-    //UserSubscription _userSubscription;
-    private string _userRole = "Member";
     private bool _isOnTeam = false;
     private bool _isCoach = false;
 
-    //All coach variables
-    private Team _team;
-    private TeamInfo _teamInfo;
-    private TeamPackage _teamPackage;
-
+   
+   
     //bool to make user settings not displayed
     private bool _missingUserInformation = false;
     private bool _missingUserProfile = false;
@@ -51,8 +46,12 @@ public partial class Settings : ComponentBase
     //regex
     private string _emailRegex = @"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$\n";
 
-    bool _isLoaded = false;
+    bool _isloading = true;
 
+
+    //Coaching variables
+    private string _userRole = "Member";
+    private Team _myTeam;
 
     protected override async Task OnInitializedAsync()
     {
@@ -67,17 +66,7 @@ public partial class Settings : ComponentBase
             {
                 this._userInformation = await userInfoRequest.Content.ReadFromJsonAsync<UserInformation>();
 
-
-
-
                 //Check user info to see if they are apart of a team
-                if (_userInformation.TeamID != 0 | _userInformation.TeamID != null)
-                {
-                    this._isOnTeam = true;
-
-                    //TODO fetch team information
-                }
-
             }
             else
             {
@@ -96,17 +85,6 @@ public partial class Settings : ComponentBase
 
 
             this._userTrackRecords = new UserTrackRecords();
-            //var userTrackRecordsRequest = await Http.GetAsync($"api/User/track-records");
-            //if(userTrackRecordsRequest.IsSuccessStatusCode)
-            //{
-            //    //this._userTrackRecords = await userTrackRecordsRequest.Content.ReadFromJsonAsync<UserTrackRecords>();
-
-            //    this._userTrackRecords = new UserTrackRecords();
-            //}
-            //else
-            //{
-            //    this._missingUserRecords = true;
-            //}
 
         }
         catch (Exception ex)
@@ -114,8 +92,36 @@ public partial class Settings : ComponentBase
             Console.WriteLine(ex.Message);
         }
 
+        if (_userInformation.TeamID != 0 )
+        {
+            this._isOnTeam = true;
+            var teamResponse = await Http.GetAsync($"api/Team/team/include-children/{_userInformation.TeamID}");
+            if(teamResponse.IsSuccessStatusCode)
+            {
+                this._myTeam = await teamResponse.Content.ReadFromJsonAsync<Team>();
+                teamResponse = null;
+            }
 
-        _isLoaded = true;
+            var userRoleResponse = await Http.GetAsync($"api/Auth/user-role");
+            if(userRoleResponse.IsSuccessStatusCode)
+            {
+                this._userRole = await userRoleResponse.Content.ReadAsStringAsync();
+                if(this._userRole == "Coach")
+                {
+                    this._isCoach = true;
+                }
+
+                userRoleResponse = null;
+            }
+            else
+            {
+                Console.WriteLine("Failed to get user role");
+            }
+        }
+
+        
+
+        _isloading = false;
     }
 
     private async Task SaveProfileChanges(UserInformation newUserInfo)

@@ -14,7 +14,6 @@ public class Team
     public string? UsersCode { get; set; }
     public bool Terminated { get; set; }
     public string OwnerID { get; set; }
-
     public virtual TeamInfo TeamInfo { get; set; }
     public virtual TeamPackage TeamPackage { get; set; }
 }

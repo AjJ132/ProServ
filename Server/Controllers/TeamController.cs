@@ -206,6 +206,38 @@ namespace ProServ.Server.Controllers
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
+
+        [HttpGet("team/include-children/{teamID}")]
+        [Authorize]
+        public async Task<ActionResult<Team>> GetUsersTeam(int teamID)
+        {
+            try
+            {
+                using(var db = _contextFactory.CreateDbContext())
+                {
+                    //Get Team and include children
+                    var team = await db.Teams.Where(n => n.TeamID == teamID)
+                        .Include(n => n.TeamInfo)
+                        .Include(n => n.TeamPackage)
+                        .FirstOrDefaultAsync();
+
+                    if(team != null)
+                    {
+                        return Ok(team);
+                    }
+                    else
+                    {
+                        return StatusCode(404, "Team does not exist");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
     }
 }
 
