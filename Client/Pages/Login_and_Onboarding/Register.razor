@@ -12,398 +12,138 @@
 
 <PageTitle>Register</PageTitle>
 <div class="register-container">
-    <RadzenCard class="register-content">
-        <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center">
-            <h1>Logo Here</h1>
-            <h3>PacePerfect</h3>
-            <RadzenText Text="Lets get you registered!" />
-            <br />
+    
+    @if(this._registerStep == 1)
+    {
+        <RadzenStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+            <RadzenStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+               <div class="register-step-1">
+                   <div>
+                        <p class="text-3xl text-start font-bold">Start your account as...</p>
+                        <p class="text-start font-normal text-base">Already have an account? <a class="underline text-blue-500 cursor-pointer">Sign In</a></p>
+                   </div>
+                    <div class="flex-start flex-row items-center gap-4 grid grid-cols-2 grid-auto-rows: minmax(450px, auto);">
+                        <div class="w-96 max-w-xs h-full"
+                           >
+                            <RadzenCard Style="border-radius: 12px; height: 100%;">
+                               <RadzenStack JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
+                                    <div>
+                                        <p class="text-3xl text-center font-semibold pt-6 pb-4">ProServ Athlete</p>
+                                        <ul class="list-disc pb-8 pl-4">
+                                            <li class="text-lg font-medium pb-4"> Absolutely Free! </li>
+                                        </ul>
 
-            <RadzenText Text="Please enter your email address" />
-            <RadzenTextBox Placeholder="Email Address" @bind-Value="email" />
-            <RadzenText Visible="@_enterEmail" Text="Please enter a valid email address" Style="color: Red;" />
-            <br />
+                                    </div>
+                                    <RadzenButton Size="ButtonSize.Large" style="width: 100%;" Click="@RegisterAsAthlete" >Register As Athlete</RadzenButton>
+                               </RadzenStack>
+                            </RadzenCard>
+                        </div>
 
-            <RadzenText Text="Password must contain:" />
-            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
-                <RadzenText @ref="@_minCharCheck" Text="8 characters" />
-                @if (_hasMinChars)
-                {
-                    <RadzenIcon Icon="done" Style="width: 40px;" />
-                }
-                else
-                {
-                    <RadzenIcon Icon="hourglass_empty" Style="width: 40px;" />
-                }
+                        <div class=" h-full w-96 max-w-xs ">
+                            <RadzenCard Style="border-radius: 12px; height: 100%;">
+                                <RadzenStack JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
+                                    <div>
+                                        <p class="text-3xl text-center font-semibold pt-6 pb-4">ProServ Coach</p>
+                                        <ul class="list-disc pb-8 pl-4">
+                                            <li class="text-lg font-medium pb-4"> Free 14 day trial </li>
+                                            <li class="text-lg font-medium pb-4"> No credit card required </li>
+                                            <li class="text-lg font-medium pb-4"> Get full experience of what it means to be a ProServ Coach</li>
+                                        </ul>
+                                    </div>
+                                    <RadzenButton Size="ButtonSize.Large" style="width: 100%;" Click="@RegisterAsCoach" >Register As Coach</RadzenButton>
+                                </RadzenStack>
+                            </RadzenCard>
+                        </div>
+                    </div>
+               </div>
+            
             </RadzenStack>
-
-            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
-                <RadzenText @ref="@_uppercaseCheck" Text="1 uppercase" />
-                @if (_hasUpperChar)
-                {
-                    <RadzenIcon Icon="done" Style="width: 40px;" />
-                }
-                else
-                {
-                    <RadzenIcon Icon="hourglass_empty" Style="width: 40px;" />
-                }
-            </RadzenStack>
-
-            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
-                <RadzenText @ref="@_lowercaseCheck" Text="1 lowercase" />
-                @if (_hasLowerChar)
-                {
-                    <RadzenIcon Icon="done" Style="width: 40px;" />
-                }
-                else
-                {
-                    <RadzenIcon Icon="hourglass_empty" Style="width: 40px;" />
-                }
-            </RadzenStack>
-
-            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
-                <RadzenText @ref="@_numberCheck" Text="1 number" />
-                @if (hasNumber)
-                {
-                    <RadzenIcon Icon="done" Style="width: 40px;" />
-                }
-                else
-                {
-                    <RadzenIcon Icon="hourglass_empty" Style="width: 40px;" />
-                }
-            </RadzenStack>
-            <br />
-
-
-
-
-
-            <RadzenText Text="Please enter your password" />
-            <RadzenPassword Placeholder="Password" @bind-Value="@password" Change="@ValidatePassword" />
-            <RadzenText Visible="@_enterPassword" Text="Please enter a valid password" Style="color: Red;" />
-
-            <RadzenText Text="Please confirm your password" />
-            <RadzenPassword Placeholder="Confirm Password" @bind-Value="@confirmPassword" />
-            <RadzenText Visible="@(!_passwordMatch)" Text="Passwords do not match" Style="color: Red;" />
-            <br />
-
-            <RadzenButton Text="Register" ButtonStyle="ButtonStyle.Secondary" Click="@HandleValidSubmit" />
-
-            <br />
-            <br />
-
-            <RadzenText Text="Already have an account?" />
-            <RadzenButton Text="Log In" ButtonStyle="ButtonStyle.Warning" Click="@NavigateToLogin" />
         </RadzenStack>
-    </RadzenCard>
+    }
+    else if(this._registerStep == 2)
+    {
+        <EditForm Model="registerUser" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+           
+            <RadzenCard style="border-radius: 12px; padding: 2rem;">
+                <div class="flex flex-center text-start flex-col max-w-lg gap-4">
+                    <div>
+                        @if(_isCoach == false)
+                        {
+                            <p class="text-xl font-bold">Create <span class="text-blue-500">Athlete</span> account</p>
+                        }
+                        else
+                        {
+                            <p class="text-3xl mb-4 font-bold">Create <span class="text-blue-500">Coach</span> account</p>
+                            <p class="mb-2">Creating a ProServ coach account will automatically start your 14-day free trial period. </p>
+                            <p class="text-base font-semibold">No credit card is required unless you wish to continue using your coaching account and all its features</p>
+                        }   
+                    </div>         
+                    <RadzenStack AlignItems="AlignItems.Start" Gap="0.1rem">
+                        <p class="text-base font-semibold">Email</p>
+                        <RadzenTextBox @bind-Value="registerUser.Email" Style="width: 100%;" />
+                        <ValidationMessage For="(() => registerUser.Email)" />
+                    </RadzenStack>
+                    <RadzenStack Orientation="Orientation.Horizontal" Style="width: 100%;" >
+                        <RadzenStack AlignItems="AlignItems.Start" Gap="0.1rem" style="width: 100%;">
+                            <p class="text-base font-semibold">First Name</p>
+                            <RadzenTextBox @bind-Value="registerUser.FirstName" Style="width: 100%;" />
+                            <ValidationMessage For="(() => registerUser.FirstName)" />
+                        </RadzenStack>
+                        <RadzenStack AlignItems="AlignItems.Start" Gap="0.1rem" style="width: 100%;">
+                            <p class="text-base font-semibold">Last Name</p>
+                            <RadzenTextBox @bind-Value="registerUser.LastName" Style="width: 100%;" />
+                            <ValidationMessage For="(() => registerUser.LastName)" />
+                        </RadzenStack>
+                    </RadzenStack>
+                    <RadzenStack AlignItems="AlignItems.Start" Gap="0.1rem">
+                        <p class="text-base font-semibold">Password</p>
+                        <RadzenTextBox @bind-Value="registerUser.Password" Style="width: 100%;" />
+                        <ValidationMessage For="(() => registerUser.Password)" />
+                    </RadzenStack>
+                    <RadzenStack AlignItems="AlignItems.Start" Gap="0.1rem">
+                        <p class="text-base font-semibold">Confirm Password</p>
+                        <RadzenTextBox @bind-Value="registerUser.ConfirmPassword" Style="width: 100%;" />
+                        <ValidationMessage For="(() => registerUser.ConfirmPassword)" />
+                    </RadzenStack>
+
+                    <p>WE DONT HAVE A PRIVACY POLICY YET</p>
+
+                    <RadzenButton Size="ButtonSize.Large" Text="Sign Up"  ButtonType="ButtonType.Submit"/>
+
+                    <div class="spacer-vertical"/>
+
+                    <p class="text-base font-bold text-center">Already have an account? <a class="underline text-blue-500 cursor-pointer">Sign In</a></p>
+                    @if(this._isCoach)
+                    {
+                        <RadzenButton Text="Sign Up As Athlete" Style="width: fit-content; align-self: center;" ButtonStyle="ButtonStyle.Warning" Click="RegisterAsAthlete" />
+                    }
+                    else
+                    {
+                        <RadzenButton Text="Sign Up As Coach" Style="width: fit-content; align-self: center;" ButtonStyle="ButtonStyle.Warning" Click="RegisterAsCoach" />
+                    }
+                </div>
+            </RadzenCard>
+        </EditForm>
+    }
+
 </div>
 
-<style>
-    .register-container {
-        margin-top: auto;
-        width: 100vw;
-        height: 100vh;
-        position: relative;
-        justify-content: center;
-        align-items: center;
-        display: flex;
-        margin: auto;
-    }
 
-    .register-content {
-        width: 30%;
-        height: fit-content;
-        padding: 3rem 1.5rem 3rem 1.5rem;
-    }
-</style>
-
-
-
-@code{
-
-    private string email;
-    private string password;
-    private string confirmPassword;
-
-    private Regex _emailRegex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
-    private bool _enterEmail = false;
-    private bool _enterPassword = false;
-    private bool _passwordMatch = false;
-
-    private Regex _numberRegex = new Regex(@"[0-9]+");
-    private bool hasNumber = false;
-    private Regex _upperCharRegex = new Regex(@"[A-Z]+");
-    private bool _hasUpperChar = false;
-    private Regex _lowerCharRegex = new Regex(@"[a-z]+");
-    private bool _hasLowerChar = false;
-    private Regex _minCharRegex = new Regex(@".{8,}");
-    private bool _hasMinChars = false;
-
-    private RadzenText _lowercaseCheck;
-    private RadzenText _numberCheck;
-    private RadzenText _minCharCheck;
-    private RadzenText _uppercaseCheck;
-
-    private RegisterUser _registerUser = new RegisterUser();
-
-    protected override void OnInitialized()
+@code {
+    
+    private void RegisterAsAthlete()
     {
-        _lowercaseCheck = new RadzenText();
-        _numberCheck = new RadzenText();
-        _minCharCheck = new RadzenText();
-        _uppercaseCheck = new RadzenText();
-
-        _lowercaseCheck.Style = "color: Red;";
-        _numberCheck.Style = "color: Red;";
-        _minCharCheck.Style = "color: Red;";
-        _uppercaseCheck.Style = "color: Red;";
-
-        base.OnInitialized();
+        this._registerStep = 2;
+        this._isCoach = false;
+        StateHasChanged();
     }
 
-
-    //validate password strength
-
-
-
-    //validate password strength
-    private void ValidatePassword()
+    private void RegisterAsCoach()
     {
-        //Check password to see if it meets requirements
-        //Requirements: 8 characters, 1 uppercase, 1 lowercase, 1 number,
-
-        if (string.IsNullOrEmpty(password))
-        {
-            //Set all validation flags to false
-            hasNumber = false;
-            _hasUpperChar = false;
-            _hasLowerChar = false;
-            _hasMinChars = false;
-            return;
-        }
-
-        //Check for number
-        if (_numberRegex.IsMatch(password))
-        {
-            hasNumber = true;
-            this._numberCheck.Style = "color: Green;";
-        }
-        else
-        {
-            hasNumber = false;
-            this._numberCheck.Style = "color: Red;";
-        }
-
-        //check for uppercase
-        if (_upperCharRegex.IsMatch(password))
-        {
-            _hasUpperChar = true;
-            this._uppercaseCheck.Style = "color: Green;";
-        }
-        else
-        {
-            _hasUpperChar = false;
-            this._uppercaseCheck.Style = "color: Red;";
-        }
-
-        //check for lowercase
-        if (_lowerCharRegex.IsMatch(password))
-        {
-            _hasLowerChar = true;
-            this._lowercaseCheck.Style = "color: Green;";
-        }
-        else
-        {
-            _hasLowerChar = false;
-            this._lowercaseCheck.Style = "color: Red;";
-        }
-
-        //check for min chars
-        if (_minCharRegex.IsMatch(password))
-        {
-            _hasMinChars = true;
-            this._minCharCheck.Style = "color: Green;";
-        }
-        else
-        {
-            _hasMinChars = false;
-            this._minCharCheck.Style = "color: Red;";
-        }
-
-
-    }
-    private bool ValidatePassword(string ps)
-    {
-        //Check password to see if it meets requirements
-        //Requirements: 8 characters, 1 uppercase, 1 lowercase, 1 number,
-
-        if (string.IsNullOrEmpty(ps))
-        {
-            //Set all validation flags to false
-            hasNumber = false;
-            _hasUpperChar = false;
-            _hasLowerChar = false;
-            _hasMinChars = false;
-            return false;
-        }
-
-        //Check for number
-        if (_numberRegex.IsMatch(ps))
-        {
-            hasNumber = true;
-            this._numberCheck.Style = "color: Green;";
-        }
-        else
-        {
-            hasNumber = false;
-            this._numberCheck.Style = "color: Red;";
-            return false;
-        }
-
-        //check for uppercase
-        if (_upperCharRegex.IsMatch(ps))
-        {
-            _hasUpperChar = true;
-            this._uppercaseCheck.Style = "color: Green;";
-        }
-        else
-        {
-            _hasUpperChar = false;
-            this._uppercaseCheck.Style = "color: Red;";
-            return false;
-        }
-
-        //check for lowercase
-        if (_lowerCharRegex.IsMatch(ps))
-        {
-            _hasLowerChar = true;
-            this._lowercaseCheck.Style = "color: Green;";
-        }
-        else
-        {
-            _hasLowerChar = false;
-            this._lowercaseCheck.Style = "color: Red;";
-            return false;
-        }
-
-        //check for min chars
-        if (_minCharRegex.IsMatch(ps))
-        {
-            _hasMinChars = true;
-            this._minCharCheck.Style = "color: Green;";
-        }
-        else
-        {
-            _hasMinChars = false;
-            this._minCharCheck.Style = "color: Red;";
-            return false;
-        }
-
-        return true;
-    }
-
-    private void ValidateEmail()
-    {
-        if (string.IsNullOrEmpty(email))
-        {
-            _enterEmail = false;
-            return;
-        }
-
-        if (_emailRegex.IsMatch(email))
-        {
-            _enterEmail = false;
-        }
-        else
-        {
-            _enterEmail = true;
-        }
-    }
-
-    private void NavigateToLogin()
-    {
-        NavigationManager.NavigateTo("/");
-    }
-
-    private void NavigateToOnboarding()
-    {
-        NavigationManager.NavigateTo("/Onboarding");
-    }
-
-
-    private async void HandleValidSubmit()
-    {
-        //Check to make sure email and password are valid
-        string _email = email;
-        string _password = password;
-        string _confirmPassword = confirmPassword;
-
-        if (_email == null || _password == null || _confirmPassword == null)
-        {
-            return;
-        }
-
-        if (!password.Equals(confirmPassword))
-        {
-            this._passwordMatch = false;
-            return;
-        }
-        else
-        {
-            //Double check password strength
-            if (!ValidatePassword(password))
-            {
-                return;
-            }
-        }
-
-        _registerUser.Email = _email;
-        _registerUser.Password = _password;
-
-        //register user and then get there id back
-        var response = await Http.PostAsJsonAsync("api/Auth/Register", _registerUser);
-
-        if(response.IsSuccessStatusCode)
-        {
-            var content = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
-            var token = content["token"];
-            var userId = content["userId"];
-
-            //Get JWT and Save to sessionn storage
-            Console.WriteLine($"Received JWT token: { token }"); // Add this line
-            await localStorage.SetItemAsync("token", token);
-
-            await AuthProvider.GetAuthenticationStateAsync();
-
-            //Create Onboarding variable
-            ProfileOnboarding onBoarding = new ProfileOnboarding { UserId = userId, Completed = false };
-            var postOnBoard = await Http.PostAsJsonAsync("api/User/Onboarding", onBoarding);
-
-            if (!postOnBoard.IsSuccessStatusCode)
-            {
-                Console.WriteLine("Error in marking onboarding status");
-            }
-
-
-            NavigateToOnboarding();
-        }
-        else
-        {
-            //TODO: Add error handling
-
-            Console.WriteLine("There was an error registering the user");
-            //Display error message
-            var error = await response.Content.ReadAsStringAsync();
-            Console.WriteLine(error);
-        }
-
-
-
-
-
-
-
-
-
+        this._registerStep = 2;
+        this._isCoach = true;
+        StateHasChanged();
     }
 }
+

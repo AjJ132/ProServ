@@ -6,7 +6,8 @@ namespace ProServ.Shared.Models.Coaches;
 
 public class TeamPackage
 {
-    [Key]
+    [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int EntryId { get; set;}
     public int PackageID { get; set; }
     public int TeamID { get; set; }
     public DateTime PackageStart { get; set; }

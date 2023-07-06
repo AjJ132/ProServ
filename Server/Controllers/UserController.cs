@@ -294,29 +294,21 @@ public class UserController : ControllerBase
     // Post User Information
     [HttpPost("UserInformation")]
     [Authorize]
-    public async Task<IActionResult> UserInformation([FromBody] UserInformation userInformation)
+    public async Task<ActionResult> UserInformation(UserInformation userInformation)
     {
         using (var db = _contextFactory.CreateDbContext())
         {
-
             try
             {
-                var userInfo = await db.UserInformation.Where(n => n.UserId.Equals(userInformation.UserId)).FirstOrDefaultAsync();
-                if (userInfo != null)
+                var user = await _userManager.GetUserAsync(User);
+                if(user == null)
                 {
-                    db.Entry(userInfo).State = EntityState.Detached;
-                    db.UserInformation.Attach(userInformation);
-                    db.Entry(userInformation).State = EntityState.Modified;
-                    await db.SaveChangesAsync();
-                    return Ok();
-
+                    return BadRequest("Error 1001: UserInformation: User is null");
                 }
-                else
-                {
-                    db.UserInformation.Add(userInformation);
-                    await db.SaveChangesAsync();
-                    return Ok();
-                }
+                userInformation.UserId = user.Id;
+                db.UserInformation.Add(userInformation);
+                await db.SaveChangesAsync();
+                return Ok();
             }
             catch (Exception e)
             {

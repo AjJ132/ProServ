@@ -18,6 +18,6 @@ public class WorkoutBlock
 
     public Workout Workout { get; set; }
 
-    public ICollection<Parameter> Parameters { get; set; }
+    public virtual ICollection<Parameter> Parameters { get; set; }
 }
 

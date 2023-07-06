@@ -16,6 +16,7 @@ using ProServ.Shared.Models.UserInfo;
 using Microsoft.IdentityModel.Tokens;
 using ProServ.Server.Contexts;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace ProServ.Server.Controllers
 {
@@ -27,67 +28,93 @@ namespace ProServ.Server.Controllers
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IConfiguration _config;
         private readonly IDbContextFactory<ProServDbContext> _contextFactory;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration config, IDbContextFactory<ProServDbContext> contextFactory)
+        public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration config, IDbContextFactory<ProServDbContext> contextFactory, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _config = config;
             _contextFactory = contextFactory;
+            _roleManager = roleManager;
         }
+
+        [HttpGet("test")]
+        public async Task<ActionResult<string>> Test()
+        {
+           return Ok("Test");
+        }
+
 
         //Register new user
         [HttpPost("Register")]
         public async Task<IActionResult> Register(RegisterUser model)
         {
-            var user = new IdentityUser
+            try
             {
-                Email = model.Email,
-                UserName = model.Email + "-newUser"
-
-            };
-
-            var result = await _userManager.CreateAsync(user, model.Password);
-
-            if (result.Succeeded)
-            {
-                await _userManager.AddToRoleAsync(user, "Member");
-
-                //Ensure that the user is authenticated and log in
-                await _signInManager.SignInAsync(user, isPersistent: false);
-
-                var claims = new List<Claim>
+                var user = new IdentityUser
                 {
-                    new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(ClaimTypes.NameIdentifier, user.Id), // Add this line
+                    Email = model.Email,
+                    UserName = model.Email + "-newUser"
                 };
 
+                var result = await _userManager.CreateAsync(user, model.Password);
 
-                // Fetch these values from the configuration instead of hardcoding
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-                var issuer = _config["Jwt:Issuer"];
-                var audience = _config["Jwt:Audience"];
+                if (!result.Succeeded)
+                    return BadRequest("Unable to register user");
 
-                var token = new JwtSecurityToken(
-                    issuer: issuer,
-                    audience: audience,
-                    claims: claims,
-                    expires: DateTime.Now.AddMinutes(30),
-                    signingCredentials: creds);
+                if (result.Succeeded)
+                {
 
-                return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token), userId = user.Id });
+                    var role = model.IsCoach ? "Coach" : "Member";
+                    var addToRoleResult = await _userManager.AddToRoleAsync(user, role);
+
+                    if (!addToRoleResult.Succeeded)
+                        return BadRequest("Unable to assign role to user");
+
+                    //Ensure that the user is authenticated and log in
+                    await _signInManager.SignInAsync(user, isPersistent: false);
 
 
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, user.UserName),
+                        new Claim(ClaimTypes.NameIdentifier, user.Id),
+                        new Claim(ClaimTypes.Role, role)
+                    };
+
+                    // Fetch these values from the configuration instead of hardcoding
+                    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+                    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                    var issuer = _config["Jwt:Issuer"];
+                    var audience = _config["Jwt:Audience"];
+
+                    var token = new JwtSecurityToken(
+                        issuer: issuer,
+                        audience: audience,
+                        claims: claims,
+                        expires: DateTime.Now.AddDays(2),
+                        signingCredentials: creds);
+
+                    return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token), userId = user.Id });
+
+
+                }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest(result.Errors);
+                Debug.WriteLine(ex.Message);
+                Console.WriteLine(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
 
         [HttpPost("Login")]
-        public async Task<IActionResult> Login(RegisterUser model)
+        public async Task<IActionResult> Login(LoginUser model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
@@ -100,20 +127,15 @@ namespace ProServ.Server.Controllers
 
             if (result.Succeeded)
             {
+                //Get users role
+                var role = await _userManager.GetRolesAsync(user);
+
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
                     new Claim(ClaimTypes.NameIdentifier, user.Id), // Add this line
+                    new Claim(ClaimTypes.Role, role.FirstOrDefault())
                 };
-
-                //fetch user roles
-                var roles = await _userManager.GetRolesAsync(user);
-                foreach (var role in roles)
-                {
-                    claims.Add(new Claim(ClaimTypes.Role, role));
-                }
-
-
 
                 // Fetch these values from the configuration instead of hardcoding
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
@@ -156,6 +178,24 @@ namespace ProServ.Server.Controllers
             return Ok(user.Id);
         }
 
+        [HttpGet("user-role")]
+        [Authorize]
+        public async Task<ActionResult> GetUserRole()
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var user = await _userManager.FindByIdAsync(userId);
+                var roles = await _userManager.GetRolesAsync(user);
+                return Ok(roles.FirstOrDefault().ToString());
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Error: " + ex.Message);
+                Console.WriteLine(ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
 
 
         //Get user email

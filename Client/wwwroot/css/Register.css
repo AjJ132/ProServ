@@ -1,0 +1,52 @@
+﻿.register-container {
+    margin-top: auto;
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    margin: auto;
+    background-color: white;
+}
+
+.register-step-1 {
+    min-width: 300px;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    row-gap: 40px;
+}
+
+  
+
+    .register-step-1-content{
+        border: var(--border-base) 1px solid;
+        border-radius: 12px;
+        width: 100%;
+        height: fit-content;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-self: center;
+
+        text-align: start;
+
+    }
+
+
+
+    .register-step-1-content li{
+        margin-left: 40px;
+    }
+
+
+.register-content {
+    width: 30%;
+    height: fit-content;
+    padding: 3rem 1.5rem 3rem 1.5rem;
+}

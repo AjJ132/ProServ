@@ -1,21 +1,9 @@
 CREATE TABLE [dbo].[Workout] (
-  [WorkoutId] INT PRIMARY KEY IDENTITY(10000,1),
+  [WorkoutId] INT PRIMARY KEY IDENTITY(1,1),
   [WorkoutTypeId] INT,
-  [CoachId] VARCHAR(150),
+  [WorkoutName] VARCHAR(100),
+  [CoachId] VARCHAR(450),
   [Notes] VARCHAR(150),
-);
-
-CREATE TABLE [dbo].[AssignedWorkouts] (
-  [Index] INT PRIMARY KEY IDENTITY(1,1),
-  [WorkoutID] INT,
-  [WorkoutDate] VARCHAR(30),
-  [Notes] VARCHAR(150),
-  [AssigneeId] VARCHAR(450),
-  [ReportBack] BIT,
-  CONSTRAINT [FK_AssignedWorkouts_Workout]
-    FOREIGN KEY ([WorkoutID])
-      REFERENCES [Workout]([WorkoutId])
-      ON DELETE CASCADE
 );
 
 CREATE TABLE [dbo].[WorkoutBlock] (
@@ -31,7 +19,6 @@ CREATE TABLE [dbo].[WorkoutBlock] (
 
 CREATE TABLE [dbo].[WorkoutInfo] (
   [WorkoutID] INT PRIMARY KEY,
-  [WorkoutName] VARCHAR(45),
   [Description] VARCHAR(150),
   [Difficulty] VARCHAR(30),
   [TeamID] INT,
@@ -43,13 +30,15 @@ CREATE TABLE [dbo].[WorkoutInfo] (
       ON DELETE CASCADE
 );
 
-CREATE TABLE [dbo].[WorkoutHistory] (
+CREATE TABLE [dbo].[AssignedWorkouts] (
   [Index] INT PRIMARY KEY IDENTITY(1,1),
-  [UserId] VARCHAR(450),
-  [WorkoutDate] VARCHAR(30),
-  [Notes] VARCHAR(150),
   [WorkoutID] INT,
-  CONSTRAINT [FK_WorkoutHistory_Workout]
+  [WorkoutDate] DATETIME,
+  [Notes] VARCHAR(150),
+  [AssigneeId] VARCHAR(450),
+  [ReportBack] BIT,
+  [WorkoutName] VARCHAR(100)
+  CONSTRAINT [FK_AssignedWorkouts_Workout]
     FOREIGN KEY ([WorkoutID])
       REFERENCES [Workout]([WorkoutId])
       ON DELETE CASCADE
@@ -70,6 +59,19 @@ CREATE TABLE [dbo].[Parameter] (
     FOREIGN KEY ([BlockId])
       REFERENCES [WorkoutBlock]([BlockId])
 );
+
+CREATE TABLE [dbo].[WorkoutHistory] (
+  [Index] INT PRIMARY KEY IDENTITY(1,1),
+  [UserId] VARCHAR(450),
+  [WorkoutDate] VARCHAR(30),
+  [Notes] VARCHAR(150),
+  [WorkoutID] INT,
+  CONSTRAINT [FK_WorkoutHistory_Workout]
+    FOREIGN KEY ([WorkoutID])
+      REFERENCES [Workout]([WorkoutId])
+      ON DELETE CASCADE
+);
+
 
 CREATE TABLE [dbo].[WorkoutReports] (
   [WorkoutId] INT PRIMARY KEY,

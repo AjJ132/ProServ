@@ -16,29 +16,29 @@ namespace ProServ.Server.Contexts
         }
 
         //User tables
-        public DbSet<UserProfile> UserProfile { get; set; }
-        public DbSet<UserTrackRecords> UserTrackRecords { get; set; }
-        public DbSet<UserCoachingStyle> UserCoachingStyle { get; set; }
-        public DbSet<UserSubscription> UserSubscription { get; set; }
-        public DbSet<ProfileOnboarding> ProfileOnboarding { get; set; }
-        public DbSet<ReportedInjuries> ReportedInjuries { get; set; }
-        public DbSet<UserGoals> UserGoals { get; set; }
-        public DbSet<UserInformation> UserInformation { get; set; }
+        public virtual DbSet<UserProfile> UserProfile { get; set; }
+        public virtual DbSet<UserTrackRecords> UserTrackRecords { get; set; }
+        public virtual DbSet<UserCoachingStyle> UserCoachingStyle { get; set; }
+        public virtual DbSet<UserSubscription> UserSubscription { get; set; }
+        public virtual DbSet<ProfileOnboarding> ProfileOnboarding { get; set; }
+        public virtual DbSet<ReportedInjuries> ReportedInjuries { get; set; }
+        public virtual DbSet<UserGoals> UserGoals { get; set; }
+        public virtual DbSet<UserInformation> UserInformation { get; set; }
 
         //All Workout Tables
-        public DbSet<Workout> Workouts { get; set; }
-        public DbSet<AssignedWorkout> AssignedWorkouts { get; set; }
-        public DbSet<WorkoutBlock> WorkoutBlocks { get; set; }
-        public DbSet<WorkoutInfo> WorkoutInfos { get; set; }
-        public DbSet<WorkoutHistory> WorkoutHistories { get; set; }
-        public DbSet<Parameter> Parameters { get; set; }
-        public DbSet<WorkoutReports> WorkoutReports { get; set; }
+        public virtual DbSet<Workout> Workouts { get; set; }
+        public virtual DbSet<AssignedWorkout> AssignedWorkouts { get; set; }
+        public virtual DbSet<WorkoutBlock> WorkoutBlocks { get; set; }
+        public virtual DbSet<WorkoutInfo> WorkoutInfos { get; set; }
+        public virtual DbSet<WorkoutHistory> WorkoutHistories { get; set; }
+        public virtual DbSet<Parameter> Parameters { get; set; }
+        public virtual DbSet<WorkoutReports> WorkoutReports { get; set; }
 
         //All team tables
-        public DbSet<Team> Teams { get; set; }
-        public DbSet<TeamInfo> TeamInfo { get; set; }
-        public DbSet<TeamPackage> TeamPackage { get; set; }
-        public DbSet<AllTeamPackages> AllTeamPackages { get; set; }
+        public virtual DbSet<Team> Teams { get; set; }
+        public virtual DbSet<TeamInfo> TeamInfo { get; set; }
+        public virtual DbSet<TeamPackage> TeamPackage { get; set; }
+        public virtual DbSet<AllTeamPackages> AllTeamPackages { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -46,15 +46,22 @@ namespace ProServ.Server.Contexts
             modelBuilder.Entity<Workout>()
                 .HasMany(w => w.WorkoutBlocks)
                 .WithOne(wb => wb.Workout)
-                .HasForeignKey(wb => wb.WorkoutId);
+                .HasForeignKey(wb => wb.WorkoutId)
+                .IsRequired(false);
 
             modelBuilder.Entity<Workout>()
                 .HasOne(w => w.WorkoutInfo)
                 .WithOne(wi => wi.Workout)
                 .HasForeignKey<Workout>(wi => wi.WorkoutId);
 
-            //All Team stuff
-            modelBuilder.Entity<Team>()
+			modelBuilder.Entity<WorkoutBlock>()
+                .HasMany(wb => wb.Parameters)
+                .WithOne(p => p.WorkoutBlock)
+                .HasForeignKey(p => p.BlockId)
+                .IsRequired(false);
+
+			//All Team stuff
+			modelBuilder.Entity<Team>()
                 .HasOne(t => t.TeamInfo)
                 .WithOne(ti => ti.Team)
                 .HasForeignKey<Team>(ti => ti.TeamID);
@@ -64,10 +71,7 @@ namespace ProServ.Server.Contexts
                 .WithOne(tp => tp.Team)
                 .HasForeignKey<Team>(tp => tp.TeamID);
 
-            //modelBuilder.Entity<IdentityUserLogin<string>>().HasKey(x => new { x.LoginProvider, x.ProviderKey });
-            //modelBuilder.Entity<IdentityUserRole<string>>().HasKey(x => new { x.UserId, x.RoleId });
-            //modelBuilder.Entity<IdentityUserToken<string>>().HasKey(x => new { x.UserId, x.LoginProvider, x.Name });
-
+           
             base.OnModelCreating(modelBuilder);
         }
 

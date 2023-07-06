@@ -8,9 +8,6 @@ namespace ProServ.Shared.Models.Workouts
         [Key]
         public int WorkoutID { get; set; }
 
-        [MaxLength(45)]
-        public string WorkoutName { get; set; }
-
         [MaxLength(150)]
         public string Description { get; set; }
 
@@ -24,6 +21,7 @@ namespace ProServ.Shared.Models.Workouts
 
         public bool SharePublic { get; set; }
 
-        public Workout Workout { get; set; }
+
+        public virtual Workout Workout { get; set; }
     }
 }

@@ -29,7 +29,6 @@ public class Parameter
 
     public int BlockType { get; set; }
 
-    // Navigation property
-    [ForeignKey("BlockId")]
-    public WorkoutBlock WorkoutBlock { get; set; }
+    
+    public virtual WorkoutBlock WorkoutBlock { get; set; }
 }

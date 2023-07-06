@@ -15,461 +15,306 @@
 
 <div class="coaches-registration-main-container">
     <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center" Style="height: 100%;">
-        <RadzenSteps>
-            <Steps>
-                <RadzenStepsItem Text="General Information">
-                    <h2>Lets Confirm Some Information</h2>
-                    <RadzenTemplateForm Submit="@SubmitGeneralInfoForm" TItem="CoachRegistration" InvalidSubmit="OnInvalidSubmitGeneralInfoForm" Data="@_coachRegistration">
-                        <RadzenStack Orientation="Orientation.Vertical">
-                          
-                                <RadzenFieldset Text="General Info">
-                                    <RadzenStack Orientation="Orientation.Vertical">
-                                        <RadzenRow AlignItems="AlignItems.Center">
-                                            <RadzenColumn Size="12" SizeMD="4">
-                                                <RadzenLabel Text="Confirm Email" />
-                                            </RadzenColumn>
-                                            <RadzenColumn Size="12" SizeMD="8">
-                                                <RadzenTextBox @bind-Value="@_coachRegistration.Email" Disabled="@(_doesntNeedNewEmail)" Name="ConfirmEmail" />
-                                                <RadzenRequiredValidator Component="ConfirmEmail" Text="Email is Required" Popup="true" />
-                                                <RadzenText Text="Email is Correct" />
-                                                <RadzenSwitch @bind-Value="@_doesntNeedNewEmail" />
-                                            </RadzenColumn>
-                                        </RadzenRow>
-                                    </RadzenStack>
-                                </RadzenFieldset>
-                                <RadzenFieldset Text="Billing Address">
-                                    <RadzenStack>
-                                        <RadzenRow AlignItems="AlignItems.Center">
-                                            <RadzenColumn Size="12" SizeMD="4">
-                                                <RadzenLabel Text="Address Line 1" />
-                                            </RadzenColumn>
-                                            <RadzenColumn Size="12" SizeMD="8">
-                                                <RadzenTextBox Style="width: 100%;" Name="Address1" @bind-Value="@_coachRegistration.Address" />
-                                                <RadzenRequiredValidator Component="Address1" Text="Address is Required" Popup="true" />
-                                            </RadzenColumn>
-                                        </RadzenRow>
-                                        <RadzenRow AlignItems="AlignItems.Center">
-                                            <RadzenColumn Size="12" SizeMD="4">
-                                                <RadzenLabel Text="Address Line 2" />
-                                            </RadzenColumn>
-                                            <RadzenColumn Size="12" SizeMD="8">
-                                                <RadzenTextBox Style="width: 100%;" Name="Address2" @bind-Value="@_coachRegistration.Address2" />
+        <RadzenCard class="coaches-registration-steps-container" Style="border-radius: 12px;">
+            <RadzenStack JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center">
+                <RadzenSteps Style="margin: 50px;">
+                    <Steps >
+                        <RadzenStepsItem Text="General Information" >
+                           <RadzenStack AlignItems="AlignItems.Center">
+                                <h2>Lets Confirm Some Information</h2>
+                           </RadzenStack>
+                            <RadzenCard Style="border-radius: 12px; padding: 1rem;">
+                                <RadzenTemplateForm TItem="CoachRegistration" Data="@_coachRegistration">
+                                    <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center" Gap="15px">
 
-                                            </RadzenColumn>
-                                        </RadzenRow>
-                                        <RadzenRow AlignItems="AlignItems.Center">
-                                            <RadzenColumn Size="12" SizeMD="4">
-                                                <RadzenLabel Text="City" />
-                                            </RadzenColumn>
-                                            <RadzenColumn Size="12" SizeMD="8">
-                                                <RadzenTextBox Style="width: 100%;" Name="City" @bind-Value="@_coachRegistration.City" />
-                                                <RadzenRequiredValidator Component="City" Text="City is Required" Popup="true" />
-                                            </RadzenColumn>
-                                        </RadzenRow>
+                                        <RadzenFieldset Text="General Info" Style="min-width: 540px; max-width: 540px">
+                                            <RadzenStack Orientation="Orientation.Vertical">
+                                                <RadzenRow AlignItems="AlignItems.Center">
+                                                    <RadzenColumn Size="4">
+                                                        <RadzenLabel Text="Confirm Email" />
+                                                    </RadzenColumn>
+                                                    <RadzenColumn Size="8">
+                                                        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center">
+                                                            <RadzenStack>
+                                                                <RadzenTextBox @bind-Value="@_coachRegistration.Email" Disabled="@(_coachRegistration.EmailIsCorrect)" Name="ConfirmEmail" />
+                                                                <RadzenRequiredValidator Component="ConfirmEmail" Text="Email is Required" Popup="true" />
+                                                            </RadzenStack>
 
-                                        <RadzenRow AlignItems="AlignItems.Center">
-                                            <RadzenColumn Size="12" SizeMD="4">
-                                                <RadzenLabel Text="State" />
-                                            </RadzenColumn>
-                                            <RadzenColumn Size="12" SizeMD="8">
-                                                <RadzenDropDown Style="width: 100%;" Name="State" Data="@_states" @bind-Value="@_coachRegistration.State" />
-                                                <RadzenRequiredValidator Component="State" Text="State is Required" Popup="true" />
-                                            </RadzenColumn>
-                                        </RadzenRow>
+                                                            <RadzenText Text="Email is Correct" />
+                                                            <RadzenSwitch @bind-Value="@_coachRegistration.EmailIsCorrect" />
 
-                                        <RadzenRow AlignItems="AlignItems.Center">
-                                            <RadzenColumn Size="12" SizeMD="4">
-                                                <RadzenLabel Text="Zip / Postal Code" />
-                                            </RadzenColumn>
-                                            <RadzenColumn Size="12" SizeMD="8">
-                                                <RadzenTextBox Style="width: 100%;" Name="Zip" @bind-Value="@_coachRegistration.Zipcode" />
-                                                <RadzenRequiredValidator Component="Zip" Text="Zip Code is Required" Popup="true" />
-                                            </RadzenColumn>
-                                        </RadzenRow>
-
-                                        <RadzenRow AlignItems="AlignItems.Center">
-                                            <RadzenStack Orientation="Orientation.Horizontal">
-                                                <RadzenStack>
-                                                    <RadzenText Text="Are you afiliated with any school?" />
-                                                    <RadzenSwitch @bind-Value="@_coachRegistration.IsSchoolOrganization" />
-                                                </RadzenStack>
-                                                <RadzenTextBox Style="width: 100%;" Name="SchoolName" @bind-Value="@_coachRegistration.AffliatedSchool" Disabled="@(!_isAffiliatedWithSchool)" />
-                                                @if (_isAffiliatedWithSchool)
-                                                {
-                                                    <RadzenRequiredValidator Component="SchoolName" Text="School Name is Required" Popup="true" />
-                                                }
+                                                        </RadzenStack>
+                                                    </RadzenColumn>
+                                                </RadzenRow>
                                             </RadzenStack>
-                                        </RadzenRow>
-                                    </RadzenStack>
-                                </RadzenFieldset>
+                                        </RadzenFieldset>
+                                        <RadzenFieldset Text="Billing Address" Style="min-width: 540px; max-width: 540px">
+                                            <RadzenStack Gap="20px">
+                                                <RadzenRow AlignItems="AlignItems.Center">
+                                                    <RadzenColumn Size="6">
+                                                        <RadzenLabel Text="Address Line 1" />
+                                                    </RadzenColumn>
+                                                    <RadzenColumn Size="6">
+                                                        <RadzenTextBox Style="width: 100%;" Name="Address1" @bind-Value="@_coachRegistration.Address" />
+                                                        <RadzenRequiredValidator Component="Address1" Text="Address is Required" Popup="true" />
+                                                    </RadzenColumn>
+                                                </RadzenRow>
+                                                <RadzenRow AlignItems="AlignItems.Center">
+                                                    <RadzenColumn Size="6">
+                                                        <RadzenLabel Text="Address Line 2" />
+                                                    </RadzenColumn>
+                                                    <RadzenColumn Size="6">
+                                                        <RadzenTextBox Style="width: 100%;" Name="Address2" @bind-Value="@_coachRegistration.Address2" />
 
-                        
-                        </RadzenStack>
-                        <RadzenStack>
-                            <RadzenButton Text="Submit"/>
-                        </RadzenStack>
-                    </RadzenTemplateForm>
-                </RadzenStepsItem>
-                <RadzenStepsItem Text="Create Team">
-                    <RadzenStack JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center">
-                        @if (!_createTeamNow)
-                        {
-                            <h3>Would you like to create your team now?</h3>
-                            <h4>You can skip this for now and create one later if you would like</h4>
-                            <RadzenButton Text="Create Team Now" Click="@CreateTeamLater" />
-                        }
-                        else
-                        {
-                            <h3>Team Creation</h3>
-                            <h4>Let's get your team created</h4>
-                            <RadzenTemplateForm @ref="_teamInfoForm" Data="_coachRegistration">
-                                <RadzenStack>
-                                    <RadzenFieldset Text="General Info">
-                                        <RadzenStack Orientation="Orientation.Vertical">
-                                            <RadzenRow AlignItems="AlignItems.Center">
-                                                <RadzenColumn Size="12" SizeMD="4">
-                                                    <RadzenLabel Text="Team Name" />
-                                                    <h5>Please choose wisely as you can only change your name 1 more time for free</h5>
-                                                </RadzenColumn>
-                                                <RadzenColumn Size="12" SizeMD="8">
-                                                    <RadzenTextBox Style="width: 100%;" Name="TeamName" @bind-Value="@_coachRegistration.TeamName" />
-                                                    <RadzenRequiredValidator Component="TeamName" Text="Team Name is Required" Popup="true" />
-                                                </RadzenColumn>
-                                            </RadzenRow>
-                                            <RadzenRow AlignItems="AlignItems.Center">
-                                                <RadzenColumn Size="12" SizeMD="4">
-                                                    <RadzenLabel Text="Team Location" />
-                                                    <h5>This is optional</h5>
-                                                </RadzenColumn>
-                                                <RadzenColumn Size="12" SizeMD="8">
-                                                    <RadzenTextBox Style="width: 100%;" Name="TeamLocation" @bind-Value="@_coachRegistration.TeamLocationCity" Placeholder="City" />
-                                                    <RadzenDropDown Style="width: 100%;" Name="TeamState" Data="@_states" @bind-Value="@_coachRegistration.TeamLocationState" Placeholder="State" />
-                                                </RadzenColumn>
-                                            </RadzenRow>
-                                        </RadzenStack>
-                                    </RadzenFieldset>
-                                    <RadzenStack>
-                                        <RadzenButton ButtonType="ButtonType.Submit" Size="ButtonSize.Large" Icon="save" Text="Save" />
+                                                    </RadzenColumn>
+                                                </RadzenRow>
+                                                <RadzenRow AlignItems="AlignItems.Center">
+                                                    <RadzenColumn Size="6">
+                                                        <RadzenLabel Text="City" />
+                                                    </RadzenColumn>
+                                                    <RadzenColumn Size="6">
+                                                        <RadzenTextBox Style="width: 100%;" Name="City" @bind-Value="@_coachRegistration.City" />
+                                                        <RadzenRequiredValidator Component="City" Text="City is Required" Popup="true" />
+                                                    </RadzenColumn>
+                                                </RadzenRow>
+
+                                                <RadzenRow AlignItems="AlignItems.Center">
+                                                    <RadzenColumn Size="6">
+                                                        <RadzenLabel Text="State" />
+                                                    </RadzenColumn>
+                                                    <RadzenColumn Size="6">
+                                                        <RadzenDropDown Style="width: 100%;" Name="State" Data="@_states" @bind-Value="@_coachRegistration.State" />
+                                                        <RadzenRequiredValidator Component="State" Text="State is Required" Popup="true" />
+                                                    </RadzenColumn>
+                                                </RadzenRow>
+
+                                                <RadzenRow AlignItems="AlignItems.Center">
+                                                    <RadzenColumn Size="6">
+                                                        <RadzenLabel Text="Zip / Postal Code" />
+                                                    </RadzenColumn>
+                                                    <RadzenColumn Size="6">
+                                                        <RadzenTextBox Style="width: 100%;" Name="Zip" @bind-Value="@_coachRegistration.Zipcode" />
+                                                        <RadzenRequiredValidator Component="Zip" Text="Zip Code is Required" Popup="true" />
+                                                    </RadzenColumn>
+                                                </RadzenRow>
+
+
+                                                <RadzenRow AlignItems="AlignItems.Center">
+                                                    <RadzenColumn Size="6">
+                                                        <RadzenLabel Text="Are you afiliated with any school?" />
+                                                        <RadzenText Text="If so please enter school name here." />
+                                                    </RadzenColumn>
+                                                    <RadzenColumn Size="6">
+                                                        <RadzenTextBox Style="width: 100%;" Name="SchoolName" @bind-Value="@_coachRegistration.AffliatedSchool" />
+                                                    </RadzenColumn>
+                                                </RadzenRow>
+                                            </RadzenStack>
+                                        </RadzenFieldset>
+
+
                                     </RadzenStack>
-                                </RadzenStack>
-                            </RadzenTemplateForm>
-                        }
-                    </RadzenStack>
-                </RadzenStepsItem>
-                @if (_createTeamNow)
-                {
-                    <RadzenStepsItem Text="Select Package">
-                        @foreach (var package in _teamPackages)
-                        {
-                            <RadzenCard Class="rz-my-12 rz-mx-auto" Style="max-width: 420px">
-                                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start" Gap="1rem" Class="rz-p-4">
-                                    @*<RadzenImage Path="@order?.Employee?.Photo" Style="width: 100px; height: 100px; border-radius: 50%;" />*@
-                                    <p>image</p>
-                                    <RadzenStack Gap="0">
-                                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-2 rz-my-0">Package</RadzenText>
-                                        <RadzenText TextStyle="TextStyle.Body1"><b>@(package.PackageName)</b></RadzenText>
-                                        <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0">Subtext</RadzenText>
-                                        <RadzenText TextStyle="TextStyle.Body1"><b>Some subtext</b></RadzenText>
+                                    @*
+                                    <RadzenStack AlignItems="AlignItems.Center" Style="margin-top: 20px;">
+                                    <RadzenButton Text="Submit" Size="ButtonSize.Large" ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Style="max-width: 200px;"/>
                                     </RadzenStack>
-                                </RadzenStack>
-                                <RadzenCard class="rz-background-color-primary-light rz-shadow-0 rz-border-radius-0 rz-p-8" style="margin: 1rem calc(-1 * var(--rz-card-padding));">
-                                    <RadzenText TextStyle="TextStyle.H6" class="rz-color-on-primary-light"><strong> Information</strong></RadzenText>
-                                    <RadzenRow RowGap="0">
-                                        <RadzenColumn SizeSM="4">
-                                            <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Max Members</RadzenText>
-                                            <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>@(package.PackageMaxMembers.ToString())</b></RadzenText>
-                                            <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Max Assitant Coaches</RadzenText>
-                                            <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>@(package.PackageMaxAssistantCoaches)</b></RadzenText>
-                                        </RadzenColumn>
-                                        <RadzenColumn SizeSM="8">
-                                            <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Price</RadzenText>
-                                            <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>@(package.PackagePrice)</b></RadzenText>
-                                            <RadzenText TextStyle="TextStyle.Overline" class="rz-color-on-primary-light rz-display-flex rz-mt-4 rz-mb-0">Description</RadzenText>
-                                            <RadzenText TextStyle="TextStyle.Body1" class="rz-color-on-primary-light"><b>@(package.PackageDescription)</b></RadzenText>
-                                            ]
-                                        </RadzenColumn>
-                                    </RadzenRow>
-                                </RadzenCard>
-                                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0">
-                                    <RadzenButton Variant="Variant.Text" class="rz-text-secondary-color" Text="Cancel" />
-                                    <RadzenButton Variant="Variant.Text" Text="Send" />
-                                </RadzenStack>
+                                    *@
+                                </RadzenTemplateForm>
                             </RadzenCard>
-                        }
-                    </RadzenStepsItem>
-                }
-                <RadzenStepsItem Text="Finalize">
+                        </RadzenStepsItem>
+                        <RadzenStepsItem Text="Create Team">
+                            <RadzenStack JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center">
+                                
+                               
+                                <h2>Team Creation</h2>
+                                <h3>Let's get your team created</h3>
+                                <RadzenTemplateForm @ref="_teamInfoForm" Data="_coachRegistration">
+                                    <RadzenStack>
+                                    <RadzenFieldset Text="Team Info" Style="min-width: 540px; max-width: 540px">
+                                            <RadzenStack Orientation="Orientation.Vertical" Gap="30px">
+                                                <RadzenRow AlignItems="AlignItems.Center">
+                                                    
+                                                     <RadzenStack JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center">
+                                                        <div class="header-subtext" style="width: 80%">
+                                                            <h3>Team Name</h3>
+                                                            <p>Please choose wisely as you can only change your name 1 more time for free</p>
+                                                        </div>
 
-                </RadzenStepsItem>
-            </Steps>
-        </RadzenSteps>
+                                                        <RadzenTextBox Style="max-width: 300px; min-width: 250px;" MaxLength="50" Name="TeamName" @bind-Value="@_coachRegistration.TeamName" Placeholder="Team Name"/>
+                                                        <RadzenRequiredValidator Component="TeamName" Text="Team Name is Required" Popup="true" />
+                                                     </RadzenStack>
+                                                    
+                                                </RadzenRow>
+
+                                                <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+                                                    <div class="header-subtext" style="width: 80%;">
+                                                        <h3>Sport</h3>
+                                                        <p>What sport will you be coaching?</p>
+                                                    </div>
+                                                    <RadzenStack Orientation="Orientation.Horizontal">
+                                                        <RadzenDropDown Data="_sports" @bind-Value="_coachRegistration.TeamSport" Placeholder="Sport" TValue="string" Change="@(args => TeamSportDropDownChange(args.ToString()))" />
+                                                        @if(_otherSportSelected)
+                                                        {
+                                                            <RadzenTextBox Placeholder="Please Specify" @bind-Value="_coachRegistration.TeamSportSpecify"  />
+                                                        }
+                                                    </RadzenStack>
+                                                </RadzenRow>
+
+                                                <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+                                                    <div class="header-subtext">
+                                                        <h3>Location</h3>
+                                                        <p>This is optional and doesnt affect your ability to coach from afar</p>
+                                                    </div>
+                                                   <RadzenStack Orientation="Orientation.Horizontal">
+                                                        <RadzenTextBox Style="max-width: 250px; min-width: 250px;" Name="TeamLocation" @bind-Value="@_coachRegistration.TeamLocationCity" Placeholder="City" />
+                                                        <RadzenDropDown Style="max-width: 200px; min-width: 200px;" Name="TeamState" Data="@_states" @bind-Value="@_coachRegistration.TeamLocationState" Placeholder="State" />
+                                                   </RadzenStack>
+                                                </RadzenRow>
+                                            </RadzenStack>
+                                        </RadzenFieldset>
+                                       
+                                    </RadzenStack>
+                                </RadzenTemplateForm>
+                                
+                            </RadzenStack>
+                        </RadzenStepsItem>
+                        
+                        <RadzenStepsItem Text="Select Package">
+                            <div class="spacer-vertical"/>
+                            <div class="packages-container">
+                                <RadzenStack AlignItems="AlignItems.Center">
+                                    <h2>Please Select A Package</h2>
+                                    <RadzenSelectBar @bind-Value=@_monthlyOrYearly TValue="bool" Change="YearlMonthlySwitchChange" Size="ButtonSize.Large">
+                                        <Items>
+                                            <RadzenSelectBarItem Text="Monthly" Value="false" />
+                                            <RadzenSelectBarItem Text="Yearly" Value="true" />
+                                        </Items>
+                                    </RadzenSelectBar>
+
+                                    <RadzenStack Orientation="Orientation.Horizontal" Gap="20px" Style=" padding: 1.5rem;">
+                                        @foreach (var package in _allPackages)
+                                        {
+                                            <div class="coach-registration-package-card @(_selectedPackage == null ? "none-selected" : _selectedPackage == package ? "selected" : "")" style="min-width: 445px; max-width: 450px;" @onclick="() => SelectPackage(package)">
+
+
+                                                <RadzenCard Style=" margin: 50px; border-radius: 12px; min-height: 650px; height: 650px;">
+                                                    <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center" Gap="1rem">
+                                                        <RadzenStack Gap="0">
+                                                            <div class="header-subtext">
+                                                              <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center">
+                                                                    <h3><b>@(package.PackageName)</b></h3>
+                                                                    <p>@(package.PackageSubtext)</p>
+                                                              </RadzenStack>
+                                                            </div>
+                                                        </RadzenStack>
+                                                        <div class="line-horizontal"></div>
+                                                       
+                                                        <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center"> 
+                                                            @if(package.PackageID == 4)
+                                                            {
+                                                                <h1><b>Free!</b></h1>
+                                                            }
+                                                            else
+                                                            {
+                                                                @if (this._monthlyOrYearly)
+                                                                {
+                                                                    <h1 ><b>$@(package.PackagePriceYearly)</b></h1>
+                                                                    <p>Per Month</p>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <h1 ><b>$@(package.PackagePriceMonthly)</b></h1>
+                                                                    <p>Per Year</p>
+                                                                }                                                                
+                                                            }
+                                                        </RadzenStack>
+                                                        
+                                                        <div class="line-horizontal" />
+                                                        <RadzenStack Gap="10px">
+
+                                                            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start">
+                                                                <div class="header-subtext">
+                                                                    <h4>Up To @(package.PackageMaxMembers.ToString()) Athletes</h4>
+                                                                </div>
+                                                            </RadzenStack>
+                                                           
+                                                            @if(package.PackageID == 1)
+                                                            {
+                                                                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start">
+                                                                    <div class="header-subtext">
+                                                                        <h4>Up To @(package.PackageMaxAssistantCoaches.ToString()) Assistant Coaches</h4>
+                                                                    </div>
+
+                                                                </RadzenStack>
+                                                            }
+                                                            else if(package.PackageID == 2)
+                                                            {
+                                                                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start">
+                                                                    <div class="header-subtext">
+                                                                        <h4>@(package.PackageMaxAssistantCoaches.ToString()) Assistant Coach</h4>
+                                                                    </div>
+                                                                </RadzenStack>                                                                
+                                                            }
+
+                                                            <div class="spacer-vertical"/>
+
+                                                            @foreach(var feature in package.PackageFeatures)
+                                                            {
+                                                                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Start">
+                                                                    <RadzenIcon Icon="done"/>
+                                                                    <p>@feature</p>
+                                                                </RadzenStack>
+                                                            }
+
+
+                                                        </RadzenStack>
+                                                    </RadzenStack>
+                                                    
+                                                        
+                                                    
+                                                   
+                                                </RadzenCard>
+
+                                            </div>
+                                        }
+                                    </RadzenStack>
+                                </RadzenStack>
+                            </div>
+                        </RadzenStepsItem>
+                        
+                        <RadzenStepsItem Text="Finalize">
+                           <RadzenStack Gap="20px" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+                               <h2>Almost There!</h2>
+                               <h3>Confirm Info and Press Submit</h3>
+                               <RadzenButton Text="Info To Console" />
+                               <RadzenButton Text="Submit" Click="SubmitRegistration"/>
+                           </RadzenStack>
+                        </RadzenStepsItem>
+                    </Steps>
+                </RadzenSteps>
+         </RadzenStack>
+       </RadzenCard>
     </RadzenStack>
 </div>
 
-
 <style>
-    .coaches-registration-main-container {
-        width: 100vw;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
+    .rz-steps-next{
+        font-size: 2rem;
+        font-weight: 600;
     }
+    .rz-steps-prev{
+        font-size: 2rem;
+        font-weight: 600;
+    }
+
+    .rz-steps-next.rz-state-disabled {
+            opacity: 0 !important;
+    }
+    .rz-steps-prev.rz-state-disabled {
+        opacity: 0 !important;
+    }
+
 </style>
 
-@code {
-
-    //List of all avaliable team packages
-    private List<AllTeamPackages> _teamPackages = new List<AllTeamPackages>();
-
-    private RadzenTemplateForm<CoachRegistration> _genInfoform;
-    private string _errorMessageGenInfo;
-    private bool _genInfoHasErrors = false;
-
-    private RadzenTemplateForm<CoachRegistration> _teamInfoForm;
-    private string _errorMessageTeamInfo;
-    private bool _teamInfoHasErrors = false;
 
 
-    //Coaches Registration Data
-    private CoachRegistration _coachRegistration = new CoachRegistration();
-
-    private bool _createTeamNow = false;
-
-    //bool to check if new email is needed
-    private bool _doesntNeedNewEmail = true;
-
-
-    //Afiliated with a school
-    private bool _isAffiliatedWithSchool = false;
-
-
-
-    protected override async Task OnInitializedAsync()
-    {
-        //Get user permission state
-        try
-        {
-            var authState = await AuthProvider.GetAuthenticationStateAsync();
-            var user = authState.User;
-
-            if (user.Identity.IsAuthenticated)
-            {
-                await GetUserInformation();
-            }
-            else
-            {
-                //Return user to homepage if they are unable to be authenticated
-                Console.WriteLine("There was an error authenticating the user");
-                NavigationManager.NavigateTo("/Dashboard");
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine("Error: " + ex);
-            Console.WriteLine("Error : " + ex);
-            NavigationManager.NavigateTo("/Dashboard");
-        }
-
-        await GetAllTeamPackages();
-
-        await base.OnInitializedAsync();
-    }
-
-
-    //pull all team packages
-    private async Task GetAllTeamPackages()
-    {
-        try
-        {
-            //Get all team packages from api endpoint
-            var teamPackagesResponse = await Http.GetAsync("api/Info/all-packages");
-            if (teamPackagesResponse.IsSuccessStatusCode)
-            {
-                try
-                {
-                    _teamPackages = await teamPackagesResponse.Content.ReadFromJsonAsync<List<AllTeamPackages>>();
-                }
-                catch (Exception ex)
-                {
-                    _teamPackages = new List<AllTeamPackages>();
-                    Debug.WriteLine("Error: " + ex);
-                    Console.WriteLine("Error : " + ex);
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine("Error: " + ex);
-            Console.WriteLine("Error : " + ex);
-        }
-    }
-
-    //pull user information
-    private async Task GetUserInformation()
-    {
-        var userInfoResponse = await Http.GetAsync($"api/User/user-information");
-        if (userInfoResponse.IsSuccessStatusCode)
-        {
-            try
-            {
-                //## NEED TO IMPLEMENT PROPER ERROR HANDLING
-                UserInformation userInfo = await userInfoResponse.Content.ReadFromJsonAsync<UserInformation>();
-                this._coachRegistration = new CoachRegistration();
-                var userEmailResponse = await Http.GetAsync($"api/Auth/email");
-
-                if (userEmailResponse.IsSuccessStatusCode)
-                {
-                    try
-                    {
-                        string userEmail = await userEmailResponse.Content.ReadAsStringAsync();
-                        this._coachRegistration.Email = userEmail;
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine("Error: " + ex);
-                        Console.WriteLine("Error : " + ex);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("Error: " + ex);
-                Console.WriteLine("Error : " + ex);
-                NavigationManager.NavigateTo("/Settings");
-            }
-        }
-    }
-
-    private void CreateTeamLater()
-    {
-        if (_createTeamNow)
-        {
-            _createTeamNow = false;
-            StateHasChanged();
-        }
-        else
-        {
-            _createTeamNow = true;
-            StateHasChanged();
-        }
-    }
-
-    private async void SubmitGeneralInfoForm(CoachRegistration coachRegistration)
-    {
-        //TODO: Add validation to form
-
-
-        //
-        return;
-    }
-
-    private void OnInvalidSubmitGeneralInfoForm()
-    {
-        //TODO: Add invalid submit to form
-    }
-
-    private async Task SubmitTeamInfoForm()
-    {
-        //TODO: Add validation to form
-        //validate that team name has not already been taken
-        var teamNameResponse = await Http.GetAsync($"api/Info/team-name/{_coachRegistration.TeamName}");
-        if (teamNameResponse.IsSuccessStatusCode)
-        {
-            try
-            {
-                bool teamNameTaken = await teamNameResponse.Content.ReadFromJsonAsync<bool>();
-                if (teamNameTaken)
-                {
-                    //TODO: implement error message to form
-                    this._errorMessageTeamInfo = "Team name has already been taken";
-                    this._teamInfoHasErrors = true;
-                    StateHasChanged();
-                    return;
-                }
-                else
-                {
-                    this._errorMessageTeamInfo = "";
-                    this._teamInfoHasErrors = false;
-                    StateHasChanged();
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("Error: " + ex);
-                Console.WriteLine("Error : " + ex);
-            }
-        }
-
-        //combine city and state into team location
-        //TODO: create team, team info, and team package objects
-    }
-    private void OnInvalidSubmitTeamInfoForm()
-    {
-        //TODO: Add invalid submit to form
-    }
-
-    private void CancelRegistration()
-    {
-        //Navigate back to previous page
-        NavigationManager.NavigateTo("/Settings");
-    }
-
-
-    private List<string> _states = new List<string>
-{
-        "Alabama",
-        "Alaska",
-        "Arizona",
-        "Arkansas",
-        "California",
-        "Colorado",
-        "Connecticut",
-        "Delaware",
-        "Florida",
-        "Georgia",
-        "Hawaii",
-        "Idaho",
-        "Illinois",
-        "Indiana",
-        "Iowa",
-        "Kansas",
-        "Kentucky",
-        "Louisiana",
-        "Maine",
-        "Maryland",
-        "Massachusetts",
-        "Michigan",
-        "Minnesota",
-        "Mississippi",
-        "Missouri",
-        "Montana",
-        "Nebraska",
-        "Nevada",
-        "New Hampshire",
-        "New Jersey",
-        "New Mexico",
-        "New York",
-        "North Carolina",
-        "North Dakota",
-        "Ohio",
-        "Oklahoma",
-        "Oregon",
-        "Pennsylvania",
-        "Rhode Island",
-        "South Carolina",
-        "South Dakota",
-        "Tennessee",
-        "Texas",
-        "Utah",
-        "Vermont",
-        "Virginia",
-        "Washington",
-        "West Virginia",
-        "Wisconsin",
-        "Wyoming"
-    };
-
-}
 

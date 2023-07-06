@@ -1,58 +1,54 @@
 @page "/"
 @layout EmptyLayout;
 
-@inject HttpClient Http
-@inject Blazored.LocalStorage.ILocalStorageService localStorage;
-@inject NavigationManager NavigationManager
-@inject AuthenticationStateProvider AuthProvider;
-
-@using ProServ.Shared.Models.NET_CORE_USER;
-@using System.Net.Http.Json;
-@using System.Net.Http;
-@using System.Net.Http.Headers;
-@using ProServ.Client.Controllers;
-@using System.Security.Cryptography;
 
 @namespace ProServ.Client.Pages.Login_and_Onboarding.Login
 
 
 
 
-<div class="login-container">
+@if(this._loading)
+{
+    <RadzenStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+        <RadzenProgressBar ProgressBarStyle="ProgressBarStyle.Primary" Value="100" ShowValue="false" Mode="ProgressBarMode.Indeterminate" />
+    </RadzenStack>
+}
+else
+{
+    <div class="login-container">
 
-    <RadzenCard class="login-content rz-border-radius-6" style="padding: 0;">
-    <div class="login-split-left">
-        <div class="center-login-content">
-            <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Start">
-                <h2>Welcome To ProServ</h2>
-                <span>Welcome back,<br />Please Login to your Account</span>
-                <br />
+        <RadzenCard class="login-content rz-border-radius-6" style="padding: 0;">
+            <div class="login-split-left">
+                <div class="center-login-content">
+                    <RadzenStack Orientation="Orientation.Vertical" AlignItems="AlignItems.Start">
+                        <h2>Welcome To ProServ</h2>
+                        <span>Welcome back,<br />Please Login to your Account</span>
+                        <br />
 
-                <span><p>Email</p></span>
-                <RadzenTextBox @bind-Value="@_email" style="width: 100%;" />
-                <span><p>Password</p></span>
-                <RadzenPassword @bind-Value="@_password" style="width: 100%;" />
-                <div>
+                        <span><p>Email</p></span>
+                        <RadzenTextBox @bind-Value="@_email" style="width: 100%;" />
+                        <span><p>Password</p></span>
+                        <RadzenPassword @bind-Value="@_password" style="width: 100%;" />
+                        <div>
+                        </div>
+                        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start">
+                            <RadzenButton Text="Login" Click="@HandleValidSubmit" />
+                            <RadzenButton Text="Register" Click="@NavigateToRegister" ButtonStyle="ButtonStyle.Warning" />
+                            <RadzenButton Text="SudoLogin" Click="@FillNLogin" ButtonStyle="ButtonStyle.Secondary" />
+                            <RadzenButton Text="CoachLogin" Click="@CoachLogin" ButtonStyle="ButtonStyle.Secondary" />
+                        </RadzenStack>
 
+                    </RadzenStack>
                 </div>
-                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Start">
-                    <RadzenButton Text="Login" Click="@HandleValidSubmit" />
-                    <RadzenButton Text="Register" Click="@NavigateToRegister" ButtonStyle="ButtonStyle.Warning" />
-                    <RadzenButton Text="SudoLogin" Click="@FillNLogin" ButtonStyle="ButtonStyle.Secondary" />
-                    <RadzenButton Text="CoachLogin" Click="@CoachLogin" ButtonStyle="ButtonStyle.Secondary" />
-                </RadzenStack>
+            </div>
 
-            </RadzenStack>
-        </div>
+            <div class="login-split-right">
+            </div>
+        </RadzenCard>
+
+
     </div>
-
-    <div class="login-split-right">
-        
-    </div>
-</RadzenCard>
-
-
-</div>
+}
 
 <style>
     .login-container {
@@ -130,123 +126,3 @@
 
 </style>
 
-@code{
-
-    private RegisterUser _registerUser = new RegisterUser();
-    private string _email = "";
-    private string _password = "";
-
-
-    protected override async Task OnInitializedAsync()
-    {
-        var token = await localStorage.GetItemAsync<string>("authToken");
-
-        Console.WriteLine($"LoginPage() Retrieved token: {token}");
-
-        var authState = await AuthProvider.GetAuthenticationStateAsync();
-        if (authState.User.Identity.IsAuthenticated)
-        {
-            // User is authenticated
-            NavigateToHome();
-        }
-        else
-        {
-            // User is not authenticated
-
-        }
-    }
-
-    private void FillNLogin()
-    {
-        _email = "aj132@icloud.com";
-        _password = "Johnson132";
-
-        HandleValidSubmit();
-    }
-
-    private void CoachLogin()
-    {
-        _email = "testcoach@gmail.com";
-        _password = "TestCoach123";
-
-        HandleValidSubmit();
-    }
-
-
-    private async Task HandleValidSubmit()
-    {
-        this._registerUser.Email = _email;
-        this._registerUser.Password = _password;
-        var response = await Http.PostAsJsonAsync("api/auth/Login", _registerUser);
-
-        if (response.IsSuccessStatusCode)
-        {
-            var token = await response.Content.ReadAsStringAsync();
-            Console.WriteLine(token);
-            await localStorage.SetItemAsync("token", token);
-            var authState = await AuthProvider.GetAuthenticationStateAsync();
-
-            if(authState.User.Identity.IsAuthenticated)
-            {
-                //TODO Error handling for finding userid
-                //get user id from custom AuthenticationStateProvider
-                string userID = authState.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-                // Check if user has completed onboarding process, if not, redirect to onboarding
-                var onboardingStatus = await Http.GetAsync($"api/User/Onboarding/Completed");
-
-                if (onboardingStatus.IsSuccessStatusCode)
-                {
-                    // Get variable 'completed' to see if user completed onboarding
-                    var didCompleteContent = await onboardingStatus.Content.ReadFromJsonAsync<bool>();
-                    if (didCompleteContent)
-                    {
-                        // Navigate to home page
-                        NavigateToHome();
-                    }
-                    else
-                    {
-                        // Navigate to onboarding process if they are new user or previously exited process
-                        NavigateToOnboarding();
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Error getting onboarding status");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Error 1005: ProServ Login");
-            }
-
-
-
-
-        }
-        else
-        {
-            Console.WriteLine("Error logging in");
-        }
-    }
-
-
-
-
-    private void NavigateToHome()
-    {
-        NavigationManager.NavigateTo("/Dashboard");
-    }
-
-    private void NavigateToOnboarding()
-    {
-        NavigationManager.NavigateTo("/Onboarding");
-    }
-
-    private void NavigateToRegister()
-    {
-        NavigationManager.NavigateTo("/Register");
-    }
-
-
-}
