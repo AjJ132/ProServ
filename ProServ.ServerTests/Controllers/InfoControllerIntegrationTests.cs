@@ -11,11 +11,11 @@ using Xunit;
 
 namespace ProServ.Server.IntegrationTests
 {
-    public class InfoControllerIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+    public class TeamControllerIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
     {
         private readonly WebApplicationFactory<Program> _factory;
 
-        public InfoControllerIntegrationTests(WebApplicationFactory<Program> factory)
+        public TeamControllerIntegrationTests(WebApplicationFactory<Program> factory)
         {
             _factory = factory;
         }
