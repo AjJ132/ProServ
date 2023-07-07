@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace ProServ.Shared.Models.Coaches;
 
@@ -14,5 +15,6 @@ public class TeamInfo
     public int TimeChanged { get; set; }
     public string TeamSport { get; set; }
 
+    [JsonIgnore]
     public virtual Team Team { get; set; }
 }

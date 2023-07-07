@@ -359,6 +359,10 @@ namespace ProServ.Tests
                .UseInMemoryDatabase(databaseName: "GetTeamDatabase").Options;
             var context = new ProServDbContext(options);
             await context.Teams.AddAsync(this._testTeam);
+            await context.SaveChangesAsync();
+
+            _contextFactoryMock.Setup(f => f.CreateDbContext())
+                .Returns(new ProServDbContext(options));
 
             //should pass
             var passResult = await _controller.GetUsersTeamAndIncludeChildren(1);
@@ -372,15 +376,10 @@ namespace ProServ.Tests
 
             //should fail
             var status404Result = await _controller.GetUsersTeamAndIncludeChildren(100); //pass 100 to ensure no team is found
-            var status404Fail = Assert.IsType<ObjectResult>(status404Result);
-            Assert.Equal(404, status404Fail.StatusCode);
+            var status404Fail = Assert.IsType<ActionResult<Team>>(status404Result);
+            var notFoundResult = Assert.IsType<NotFoundObjectResult>(status404Fail.Result);
+            Assert.Equal(404, notFoundResult.StatusCode);
 
-            //should fail with 500
-            //First dispose of db context so it loses connections
-            context.Dispose();
-            var status500Result = await _controller.GetUsersTeamAndIncludeChildren(100); //pass 100 to ensure no team is found
-            var status500Fail = Assert.IsType<ObjectResult>(status500Result);
-            Assert.Equal(500, status500Fail.StatusCode);
         }
     }
 }

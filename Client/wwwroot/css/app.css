@@ -1,5 +1,7 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
@@ -10,6 +12,7 @@ h1:focus {
 
 a, .btn-link {
     color: #0071c1;
+    cursor: pointer;
 }
 
 .btn-primary {
