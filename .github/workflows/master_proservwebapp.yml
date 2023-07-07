@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build_and_test:
+  build:
     runs-on: windows-latest
 
     steps:
@@ -32,27 +32,37 @@ jobs:
       - name: Build with dotnet
         run: dotnet build --configuration Release --no-restore
 
-      - name: Test
-        run: dotnet ProServ.ServerTests --no-build --verbosity normal
-
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
-      - name: Upload artifact for deployment job
+      - name: Upload artifact for test and deploy jobs
         uses: actions/upload-artifact@v2
         with:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
 
-  deploy:
+  test:
+    needs: build
     runs-on: windows-latest
-    needs: build_and_test
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v2
+        with:
+          name: .net-app
+
+      - name: Test
+        run: dotnet ProServ.ServerTests --no-build --verbosity normal
+
+  deploy:
+    needs: test
+    runs-on: windows-latest
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
-      - name: Download artifact from build job
+      - name: Download artifact from test job
         uses: actions/download-artifact@v2
         with:
           name: .net-app
