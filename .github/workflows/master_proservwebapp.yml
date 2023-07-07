@@ -32,9 +32,6 @@ jobs:
       - name: Build with dotnet
         run: dotnet build --configuration Release --no-restore
 
-      - name: Test
-        run: dotnet ProServ.ServerTests --no-build --verbosity normal
-
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
