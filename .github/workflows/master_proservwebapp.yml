@@ -42,16 +42,25 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v2
+      - uses: actions/checkout@v2
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v1
         with:
-          name: .net-app
+          dotnet-version: '7.0'
+          include-prerelease: true
+
+      - name: Install wasm-tools workload
+        run: dotnet workload install wasm-tools
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build with dotnet
+        run: dotnet build --configuration Release --no-restore
 
       - name: Test
         run: dotnet test ProServ.Tests/ProServ.Tests.csproj --no-build --verbosity normal
-
-
-
 
   deploy:
     needs: test
