@@ -61,30 +61,37 @@ namespace ProServ.Server.Controllers
 
 
         }
+
+
         [HttpGet("team-name-exists/{teamName}")]
         [Authorize]
         public async Task<ActionResult<bool>> TeamNameExistsAsync(string teamName)
         {
-            using (var db = _contextFactory.CreateDbContext())
+            var db = _contextFactory.CreateDbContext();
+            
+            try
             {
-                try
+                if(string.IsNullOrEmpty(teamName))
                 {
-                    var team = await db.Teams.FirstOrDefaultAsync(n => n.TeamName.Equals(teamName));
-                    if (team == null)
-                    {
-                        return Ok(false);
-                    }
+                    return BadRequest("Team name cannot be null or empty.");
+                }
+                    
+                var team = await db.Teams.FirstOrDefaultAsync(n => n.TeamName.Equals(teamName));
+                if (team == null)
+                {
+                    return Ok(false);
+                }
 
-                    return Ok(true);
-                }
-                catch (Exception ex)
-                {
-                    //TODO: Research loggers
-                    // Log error here, for example, using NLog, Log4Net, or any other logging framework
-                    // logger.Error(ex, "An error occurred while getting all team packages.");
-                    return StatusCode(500, $"Internal server error: {ex.Message}");
-                }
+                return Ok(true);
             }
+            catch (Exception ex)
+            {
+                //TODO: Research loggers
+                // Log error here, for example, using NLog, Log4Net, or any other logging framework
+                // logger.Error(ex, "An error occurred while getting all team packages.");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+            
 
         }
 
@@ -121,9 +128,6 @@ namespace ProServ.Server.Controllers
                         OwnerID = user.Id,
                     };
 
-                    await db.Teams.AddAsync(team);
-                    await db.SaveChangesAsync();
-
                     var teamInfo = new TeamInfo
                     {
                         TeamID = team.TeamID,
@@ -143,11 +147,16 @@ namespace ProServ.Server.Controllers
                         PackageEnd = DateTime.Now.AddDays(30),
                     };
 
-                    await db.TeamInfo.AddAsync(teamInfo);
-                    await db.TeamPackage.AddAsync(teamPackage);
+                    team.TeamPackage = teamPackage;
+                    team.TeamInfo = teamInfo;
+
+                    await db.Teams.AddAsync(team);
+                    await db.SaveChangesAsync();
+                    //await db.TeamInfo.AddAsync(teamInfo);
+                    //await db.TeamPackage.AddAsync(teamPackage);
 
                     //Update user information table so the coach now points towards the team
-                    var userInformation = await db.UserInformation.FirstOrDefaultAsync(n => n.UserId == user.Id);
+                    var userInformation = await db.UserInformation.Where(n => n.UserId.Equals(user.Id)).FirstOrDefaultAsync();
                     userInformation.TeamID = team.TeamID;
                     userInformation.City = coachRegistration.TeamLocationCity;
                     userInformation.State = coachRegistration.TeamLocationState;
