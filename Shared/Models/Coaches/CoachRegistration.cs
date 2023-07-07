@@ -7,7 +7,6 @@ namespace ProServ.Shared.Models.Coaches
     {
         
         public string UserID { get; set; }
-        public bool CompletedCoachingOnBoarding { get; set; }
         public string TeamName { get; set; }
         public string TeamLocationCity { get; set; }
         public string TeamLocationState { get; set; }
@@ -36,7 +35,6 @@ namespace ProServ.Shared.Models.Coaches
 
         public CoachRegistration()
         {
-            this.CompletedCoachingOnBoarding = false;
             this.TeamName = "";
             this.TeamLocationCity = "";
             this.TeamLocationState = "";
