@@ -48,7 +48,8 @@ jobs:
           name: .net-app
 
       - name: Test
-        run: dotnet test ProServ.Tests.csproj --no-build --verbosity normal
+        run: dotnet test ProServ.Tests/ProServ.Tests.csproj --no-build --verbosity normal
+
 
 
 
