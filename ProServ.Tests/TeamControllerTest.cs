@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using ProServ.Shared.Models.UserInfo;
+using Microsoft.Extensions.Options;
 
 namespace ProServ.Tests
 {
@@ -20,6 +21,9 @@ namespace ProServ.Tests
         private Mock<UserManager<IdentityUser>> _userManagerMock;
         private readonly Mock<IDbContextFactory<ProServDbContext>> _contextFactoryMock;
         private readonly TeamController _controller;
+
+        //Variables to be reused
+        private Team _testTeam;
 
         //Setup
         public TeamControllerTest()
@@ -31,6 +35,9 @@ namespace ProServ.Tests
             _controller = new TeamController(_contextFactoryMock.Object, _userManagerMock.Object);
 
             SetupUserForController();
+            CreateReusedVariables();
+            
+
         }
 
         public void SetupUserForController()
@@ -65,6 +72,37 @@ namespace ProServ.Tests
             _controller.ControllerContext = controllerContextMock.Object;
         }
 
+        private void CreateReusedVariables()
+        {
+            _testTeam = new Team()
+            {
+                TeamID = 1,
+                TeamName = "Test Team",
+                Location = "Test Location",
+                CoachesCode = "Test Code",
+                UsersCode = "Test Code",
+                Terminated = false,
+                OwnerID = "1",
+                TeamInfo = new TeamInfo()
+                { 
+                    TeamID = 1,
+                    DateCreated = DateTime.Now,
+                    OwnerID = "1",
+                    IsSchoolOrganization = false,
+                    TeamPackageID = 4,
+                    TimeChanged = 0,
+                    TeamSport = "Track and Field"
+                },
+                TeamPackage = new TeamPackage()
+                {
+                    TeamID = 1,
+                    PackageID = 4,
+                    PackageStart = DateTime.Now,
+                    PackageEnd = DateTime.Now.AddDays(30),
+                }   
+
+            };
+        }
 
         private void ResetUserForController()
         {
@@ -243,18 +281,7 @@ namespace ProServ.Tests
                .UseInMemoryDatabase(databaseName: "RegisterTeamDatabase").Options;
 
             //First insert a user into user mananger
-            var user = new IdentityUser()
-            {
-                Id = "1",
-                UserName = "Test User",
-                Email = "testing@gmail.com",
-
-            };
-            string userPassword = "TestPassword123!";
-
-            //insert to user manager
-            await _userManagerMock.Object.CreateAsync(user, userPassword);
-
+           
             //TODO allow for coaches to update email 
 
             //Arrange
@@ -320,6 +347,38 @@ namespace ProServ.Tests
 
             //Assert if the coach registration failed to update and returned a 500 status code
             var status500Result = await _controller.SubmitCoachRegistration(registration);
+            var status500Fail = Assert.IsType<ObjectResult>(status500Result);
+            Assert.Equal(500, status500Fail.StatusCode);
+        }
+
+        [Fact]
+        public async Task GetUsersTeamAndIncludeChildren()
+        {
+            var options = new DbContextOptionsBuilder<ProServDbContext>()
+               .EnableSensitiveDataLogging()
+               .UseInMemoryDatabase(databaseName: "GetTeamDatabase").Options;
+            var context = new ProServDbContext(options);
+            await context.Teams.AddAsync(this._testTeam);
+
+            //should pass
+            var passResult = await _controller.GetUsersTeamAndIncludeChildren(1);
+            var statsOkPass = Assert.IsType<ActionResult<Team>>(passResult);
+            var okResult = Assert.IsType<OkObjectResult>(statsOkPass.Result);
+            var teamModel = Assert.IsAssignableFrom<Team>(okResult.Value);
+
+            Assert.Equal(this._testTeam.TeamID, teamModel.TeamID);
+            //ensure its not null
+            Assert.NotNull(teamModel);
+
+            //should fail
+            var status404Result = await _controller.GetUsersTeamAndIncludeChildren(100); //pass 100 to ensure no team is found
+            var status404Fail = Assert.IsType<ObjectResult>(status404Result);
+            Assert.Equal(404, status404Fail.StatusCode);
+
+            //should fail with 500
+            //First dispose of db context so it loses connections
+            context.Dispose();
+            var status500Result = await _controller.GetUsersTeamAndIncludeChildren(100); //pass 100 to ensure no team is found
             var status500Fail = Assert.IsType<ObjectResult>(status500Result);
             Assert.Equal(500, status500Fail.StatusCode);
         }

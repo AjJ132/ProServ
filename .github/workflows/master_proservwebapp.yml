@@ -52,7 +52,7 @@ jobs:
           name: .net-app
 
       - name: Test
-        run: dotnet ProServ.ServerTests --no-build --verbosity normal
+        run: dotnet ProServ.Tests --no-build --verbosity normal
 
   deploy:
     needs: test

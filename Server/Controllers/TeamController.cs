@@ -177,7 +177,7 @@ namespace ProServ.Server.Controllers
 
         [HttpGet("team-athletes/{teamID}")]
         [Authorize]
-        public async Task<ActionResult<List<UserInformation>>> GetTeamsAthletes(int teamID)
+        public async Task<ActionResult<List<UserInformation>>> GetTeamAthletes(int teamID)
         {
             try
             {
@@ -218,7 +218,7 @@ namespace ProServ.Server.Controllers
 
         [HttpGet("team/include-children/{teamID}")]
         [Authorize]
-        public async Task<ActionResult<Team>> GetUsersTeam(int teamID)
+        public async Task<ActionResult<Team>> GetUsersTeamAndIncludeChildren(int teamID)
         {
             try
             {
