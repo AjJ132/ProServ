@@ -123,25 +123,6 @@ namespace ProServ.Client.Pages.Login_and_Onboarding
             }
         }
 
-        private void CreateTeamLater()
-        {
-            if (_createTeamNow)
-            {
-                _createTeamNow = false;
-                StateHasChanged();
-            }
-            else
-            {
-                _createTeamNow = true;
-                StateHasChanged();
-            }
-        }
-
-        private void OnInvalidSubmitTeamInfoForm()
-        {
-        //TODO: Add invalid submit to form
-        }
-
         private async Task SubmitRegistration()
         {
             try
@@ -203,6 +184,9 @@ namespace ProServ.Client.Pages.Login_and_Onboarding
                     var coachRegistrationResponse = await Http.PostAsJsonAsync<CoachRegistration>("api/Team/coach-registration", _coachRegistration);
                     if (coachRegistrationResponse.IsSuccessStatusCode)
                     {
+                        
+
+
                         Debug.WriteLine("Coach Registration Successful");
                         NavigationManager.NavigateTo("/Coaches-Dashboard");
                     //TODO Send email to new coach and when navigate allow for tutorial

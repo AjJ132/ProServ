@@ -23,7 +23,7 @@ public class AssignedWorkout
 
     public bool ReportBack { get; set; }
 
-[MaxLength(100)]
+    [MaxLength(100)]
     public string WorkoutName {get;set;}
 
     // Navigation property
