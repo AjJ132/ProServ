@@ -21,6 +21,12 @@ jobs:
         with:
           dotnet-version: '3.1'
           include-prerelease: true
+          
+      - name: Install wasm-tools workload
+        run: dotnet workload install wasm-tools
+
+      - name: Restore dependencies
+        run: dotnet restore
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
