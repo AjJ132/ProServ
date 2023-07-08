@@ -39,6 +39,16 @@ jobs:
         with:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
+          
+  test:
+    needs: build
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Test
+        run: dotnet test ProServ.Tests/ProServ.Tests.csproj
 
   deploy:
     runs-on: windows-latest
