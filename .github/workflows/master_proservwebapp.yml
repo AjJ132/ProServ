@@ -1,4 +1,7 @@
-name: Build, test and deploy ASP.Net Core app to Azure Web App - ProServWebApp
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy ASP.Net Core app to Azure Web App - ProServWebApp
 
 on:
   push:
@@ -18,7 +21,7 @@ jobs:
         with:
           dotnet-version: '7.0'
           include-prerelease: true
-
+          
       - name: Install wasm-tools workload
         run: dotnet workload install wasm-tools
 
@@ -26,18 +29,17 @@ jobs:
         run: dotnet restore
 
       - name: Build with dotnet
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build --configuration Release
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
-      - name: Upload artifact for test and deploy jobs
+      - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: .net-app
-          path: .
-
-
+          path: ${{env.DOTNET_ROOT}}/myapp
+          
   test:
     needs: build
     runs-on: windows-latest
@@ -48,16 +50,15 @@ jobs:
       - name: Test
         run: dotnet test ProServ.Tests/ProServ.Tests.csproj
 
-
   deploy:
-    needs: test
     runs-on: windows-latest
+    needs: test
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
-      - name: Download artifact from test job
+      - name: Download artifact from build job
         uses: actions/download-artifact@v2
         with:
           name: .net-app
@@ -68,5 +69,5 @@ jobs:
         with:
           app-name: 'ProServWebApp'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_22CF3E236BD8411D8C0AD45FB5166639 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3766A2AB673D40C4969537C0A79BED50 }}
           package: .
