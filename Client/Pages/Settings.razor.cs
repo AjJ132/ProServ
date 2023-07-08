@@ -52,7 +52,7 @@ public partial class Settings : ComponentBase
     //Coaching variables
     private string _userRole = "Member";
     private Team _myTeam;
-
+    
     protected override async Task OnInitializedAsync()
     {
         //Fetch user data from API
@@ -129,6 +129,7 @@ public partial class Settings : ComponentBase
 
     }
 
+
     private void ProfileChangesInvalid()
     {
         Console.WriteLine("The changes you made to your profile are invalid.");
@@ -138,6 +139,8 @@ public partial class Settings : ComponentBase
     {
 
     }
+
+
 
     //all coaches and team
     private async Task SaveTeamChanges(Team team)

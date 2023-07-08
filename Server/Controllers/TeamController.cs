@@ -177,7 +177,7 @@ namespace ProServ.Server.Controllers
 
         [HttpGet("team-athletes/{teamID}")]
         [Authorize]
-        public async Task<ActionResult<List<UserInformation>>> GetTeamsAthletes(int teamID)
+        public async Task<ActionResult<List<UserInformation>>> GetTeamAthletes(int teamID)
         {
             try
             {
@@ -217,13 +217,13 @@ namespace ProServ.Server.Controllers
         }
 
         [HttpGet("team/include-children/{teamID}")]
-        [Authorize]
-        public async Task<ActionResult<Team>> GetUsersTeam(int teamID)
+        //[Authorize]
+        public async Task<ActionResult<Team>> GetUsersTeamAndIncludeChildren(int teamID)
         {
             try
             {
-                using(var db = _contextFactory.CreateDbContext())
-                {
+                var db = _contextFactory.CreateDbContext();
+                
                     //Get Team and include children
                     var team = await db.Teams.Where(n => n.TeamID == teamID)
                         .Include(n => n.TeamInfo)
@@ -236,9 +236,9 @@ namespace ProServ.Server.Controllers
                     }
                     else
                     {
-                        return StatusCode(404, "Team does not exist");
+                       return NotFound("Team does not exist");
                     }
-                }
+                
             }
             catch (Exception ex)
             {

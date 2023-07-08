@@ -48,6 +48,7 @@ jobs:
       - name: Test
         run: dotnet test ProServ.Tests/ProServ.Tests.csproj
 
+
   deploy:
     needs: test
     runs-on: windows-latest
