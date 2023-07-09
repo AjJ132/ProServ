@@ -7,7 +7,7 @@
 
 
 <PageTitle>Dashboard</PageTitle>
-
+`   
 <AuthorizeView>
     <Authorized>
         @if(_isLoading)
@@ -18,14 +18,15 @@
         }
         else
         {
-            <div class="bg-white dark:bg-slate-800 w-full h-screen flex flex-col justify-center content-center p-4">
-                <RadzenStack JustifyContent="JustifyContent.Center" Gap="1.5rem">
-                    <div class="flex justify-between content-center">
-                        <p class="text-4xl font-medium">Welcome @_myInformation.FirstName</p>
-                        <p class="text-4xl font-medium">@DateTime.Now.ToString("MMMM d yyyy")</p>
+            <div class="dashboard-container">
+                <div class="bg-red dark:bg-slate-800 w-full h-full flex flex-col justify-center content-center p-4 left-0 top-0">
+                <RadzenStack JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Start" style=" " Gap="1.5rem">
+                    <div class="flex justify-between content-cente w-full">
+                        <p class="text-4xl font-semibold">Welcome @_myInformation.FirstName</p>
+                        <p class="text-4xl font-semibold">@DateTime.Now.ToString("MMMM d yyyy")</p>
                     </div>
-                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center">
-                        <RadzenCard style="border-radius: 12px; min-width: 950px; max-width: 950px;">
+                    <div class="dashboard-responsive-stack">
+                        <RadzenCard style="border-radius: 12px;" class="calendar-container">
                             <RadzenScheduler @ref=@_calendar SlotRender=@OnSlotRender style="height: 768px;" TItem="AssignedWorkout" Data="@_assignedWorkouts" StartProperty="WorkoutDate" EndProperty="WorkoutDate"
                                              TextProperty="WorkoutName" SelectedIndex="2"
                                              SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect AppointmentRender=@OnAppointmentRender>
@@ -35,7 +36,7 @@
                                 <RadzenYearView />
                             </RadzenScheduler>
                         </RadzenCard>
-                        <RadzenCard style="border-radius: 12px; min-width: 600px; max-width: 1000px; height: fit-content;">
+                        <RadzenCard class="athlete-container" style="border-radius: 12px;">
                             <div class="flex justify-center flex-col content-start p-4">
                                @if(_loadingMyteam)
                                {
@@ -58,8 +59,9 @@
                                }
                             </div>
                         </RadzenCard>
-                    </RadzenStack>
+                    </div>
                 </RadzenStack>
+            </div>
             </div>
         }
     </Authorized>

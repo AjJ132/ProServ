@@ -166,11 +166,11 @@ namespace ProServ.Tests
             };
 
             // Insert seed data into the database using one instance of the context
-            using (var context = new ProServDbContext(options))
-            {
-                await context.AllTeamPackages.AddRangeAsync(packages);
-                context.SaveChanges();
-            }
+            var context = new ProServDbContext(options);
+            
+            await context.AllTeamPackages.AddRangeAsync(packages);
+            context.SaveChanges();
+            
 
             // Setup your context factory mock to return your context with seeded data
             _contextFactoryMock.Setup(f => f.CreateDbContext())
@@ -188,6 +188,9 @@ namespace ProServ.Tests
             //Assert.Single(model);
             //Assert.Equal(packages, model);
             Assert.NotNull(model);
+
+            //dispose of the context
+            context.Dispose();
         }
 
         [Fact]
@@ -271,6 +274,9 @@ namespace ProServ.Tests
             Assert.True(modelFail);
             Assert.False(modelPass);
 
+
+            //dispose of the context
+            context.Dispose();
         }
 
         [Fact]
@@ -349,6 +355,9 @@ namespace ProServ.Tests
             var status500Result = await _controller.SubmitCoachRegistration(registration);
             var status500Fail = Assert.IsType<ObjectResult>(status500Result);
             Assert.Equal(500, status500Fail.StatusCode);
+
+            //dispose of the context
+            context.Dispose();
         }
 
         [Fact]
@@ -380,6 +389,179 @@ namespace ProServ.Tests
             var notFoundResult = Assert.IsType<NotFoundObjectResult>(status404Fail.Result);
             Assert.Equal(404, notFoundResult.StatusCode);
 
+
+            //dispose of the context
+            context.Dispose();
+        }
+
+        [Fact]
+        public async Task GetAllAthletesByTeamID()
+        {
+
+            //Arrange
+            var options = new DbContextOptionsBuilder<ProServDbContext>()
+             .EnableSensitiveDataLogging()
+             .UseInMemoryDatabase(databaseName: "GetAllAthleteByTeamIDDatabase").Options;
+            var context = new ProServDbContext(options);
+
+            
+            
+            var user1 = new UserInformation()
+            {
+                UserId = "1",
+                TeamID = 1
+            };
+            var user2 = new UserInformation()
+            {
+                UserId = "2",
+                TeamID = 1
+            };
+            var user3 = new UserInformation()
+            {
+                UserId = "3",
+                TeamID = 1
+            };
+
+
+
+
+            context.UserInformation.Add(user1);
+            context.UserInformation.Add(user2);
+            context.UserInformation.Add(user3);
+
+            await context.SaveChangesAsync();
+
+            _contextFactoryMock.Setup(f => f.CreateDbContext())
+                .Returns(new ProServDbContext(options));
+
+            var passResult = await _controller.GetAllAthltesByTeamIdAsync(1);
+            var failResult = await _controller.GetAllAthltesByTeamIdAsync(2);
+            var failResult2 = await _controller.GetAllAthltesByTeamIdAsync(-1);
+
+            //Assert
+            var actionResultPass = Assert.IsType<ActionResult<List<UserInformation>>>(passResult);
+            var okResultPass = Assert.IsAssignableFrom<ObjectResult>(actionResultPass.Result);
+
+            //look for 404 error
+            var actionResultFail = Assert.IsType<ActionResult<List<UserInformation>>>(failResult);
+            var notFoundResult = Assert.IsType<NotFoundObjectResult>(actionResultFail.Result);
+            Assert.Equal(404, notFoundResult.StatusCode);
+
+            //look for bad request
+            var actionResultFail2 = Assert.IsType<ActionResult<List<UserInformation>>>(failResult2);
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(actionResultFail2.Result);
+            Assert.Equal(400, badRequestResult.StatusCode);
+
+            //look for correct team id
+            
+            /*
+             * foreach (UserInformation user in users)
+            {
+                Assert.Equal(1, user.TeamID);
+            } */
+
+            //dispose of the context
+            context.Dispose();
+        }
+
+        [Fact]
+        public async Task GetAthletesDataByTeamIdAndCount()
+        {
+            //Pass by default for now
+
+
+
+           //Arrange
+             var options = new DbContextOptionsBuilder<ProServDbContext>()
+              .EnableSensitiveDataLogging()
+              .UseInMemoryDatabase(databaseName: "GetAllAthleteDataDatabase").Options;
+             var context = new ProServDbContext(options);
+
+             var user1 = new UserInformation()
+             {
+                 UserId = "1",
+                 TeamID = 1
+             };
+             var user2 = new UserInformation()
+             {
+                 UserId = "2",
+                 TeamID = 1
+             };
+             var user3 = new UserInformation()
+             {
+                 UserId = "3",
+                 TeamID = 1
+             };
+
+             context.UserInformation.Add(user1);
+             context.UserInformation.Add(user2);
+             context.UserInformation.Add(user3);
+
+             await context.SaveChangesAsync();
+
+             _contextFactoryMock.Setup(f => f.CreateDbContext())
+                 .Returns(new ProServDbContext(options));
+
+
+             var passResult = await _controller.GetAthletesDataByTeamIdAndCount(1, 0, 10);
+
+             //Assert
+             var actionResultPass = Assert.IsType<ActionResult<IEnumerable<UserInformation>>>(passResult);
+             var okResultPass = Assert.IsAssignableFrom<OkObjectResult>(actionResultPass.Result);
+
+            //dispose of the context
+            context.Dispose();
+             
+        }
+
+        [Fact]
+        public async Task GetAthletesCountByTeamID()
+        {
+            var options = new DbContextOptionsBuilder<ProServDbContext>()
+              .EnableSensitiveDataLogging()
+              .UseInMemoryDatabase(databaseName: "GetAllAthleteDatabase").Options;
+            var context = new ProServDbContext(options);
+
+            var user1 = new UserInformation()
+            {
+                UserId = "1",
+                TeamID = 1
+            };
+            var user2 = new UserInformation()
+            {
+                UserId = "2",
+                TeamID = 1
+            };
+            var user3 = new UserInformation()
+            {
+                UserId = "3",
+                TeamID = 1
+            };
+
+            context.UserInformation.Add(user1);
+            context.UserInformation.Add(user2);
+            context.UserInformation.Add(user3);
+
+            await context.SaveChangesAsync();
+
+            _contextFactoryMock.Setup(f => f.CreateDbContext())
+                .Returns(new ProServDbContext(options));
+
+            var passResult = await _controller.GetAthletesCount(1);
+            var failResult = await _controller.GetAthletesCount(-1);
+
+            //Assert
+            var actionResultPass = Assert.IsType<ActionResult<int>>(passResult);
+            var okResultPass = Assert.IsAssignableFrom<OkObjectResult>(actionResultPass.Result);
+            Assert.Equal(3, okResultPass.Value);
+
+            //look for zero
+            var actionResultFail = Assert.IsType<ActionResult<int>>(failResult);
+            var okResultFail = Assert.IsAssignableFrom<OkObjectResult>(actionResultFail.Result);
+            Assert.Equal(0, okResultFail.Value);
+
+            //dispose of the context
+            context.Dispose();
         }
     }
 }

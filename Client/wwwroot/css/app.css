@@ -27,6 +27,11 @@ a, .btn-link {
 
 .content {
     padding-top: 1.1rem;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
 }
 
 .valid.modified:not([type=checkbox]) {

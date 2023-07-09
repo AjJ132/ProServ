@@ -217,7 +217,7 @@ namespace ProServ.Server.Controllers
         }
 
         [HttpGet("team/include-children/{teamID}")]
-        //[Authorize]
+        [Authorize]
         public async Task<ActionResult<Team>> GetUsersTeamAndIncludeChildren(int teamID)
         {
             try
@@ -247,6 +247,84 @@ namespace ProServ.Server.Controllers
                 return StatusCode(500, $"Internal Server Error: {ex.Message}");
             }
         }
+
+        [HttpGet("team/athletes/all/{teamID}")]
+        [Authorize]
+        public async Task<ActionResult<List<UserInformation>>> GetAllAthltesByTeamIdAsync(int teamID)
+        {
+            try
+            {
+                //Never will have 50,000 teams so dont need to check for that and waste a db call
+                if(teamID < 0 || teamID > 50000)
+                {
+                    return BadRequest("Invalid team ID");
+                }
+
+                var db = _contextFactory.CreateDbContext();
+                var athletes = await db.UserInformation.Where(n => n.TeamID == teamID).ToListAsync();
+
+                if (athletes == null)
+                {
+                    return BadRequest("No users were found");
+                }
+
+                if (athletes.Count() == 0)
+                {
+                    return NotFound("No users were found");
+                }
+                else
+                {
+                    return Ok(athletes);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("team/athletes/data/{teamID}")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<UserInformation>>> GetAthletesDataByTeamIdAndCount(int teamID, [FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var db = _contextFactory.CreateDbContext();
+                return Ok(await db.UserInformation.Where(n => n.TeamID == teamID)
+                    .Skip(pageIndex * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync());
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
+
+
+        [HttpGet("team/athletes/count/{teamID}")]
+        [Authorize]
+        public async Task<ActionResult<int>> GetAthletesCount(int teamId)
+        {
+            try
+            {
+                var db = _contextFactory.CreateDbContext();
+                return Ok(await db.UserInformation
+                    .Where(n => n.TeamID == teamId)
+                    .CountAsync());
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex);
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
+        }
+
     }
 }
 

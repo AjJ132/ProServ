@@ -804,6 +804,14 @@ input[data-autocompleted] {
   position: relative;
 }
 
+.left-0 {
+  left: 0px;
+}
+
+.top-0 {
+  top: 0px;
+}
+
 .mb-2 {
   margin-bottom: 0.5rem;
 }
@@ -871,10 +879,6 @@ input[data-autocompleted] {
 
 .h-full {
   height: 100%;
-}
-
-.h-screen {
-  height: 100vh;
 }
 
 .w-6 {
@@ -980,11 +984,6 @@ input[data-autocompleted] {
   background-color: rgb(17 24 39 / var(--tw-bg-opacity));
 }
 
-.bg-white {
-  --tw-bg-opacity: 1;
-  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-}
-
 .fill-current {
   fill: currentColor;
 }
@@ -995,6 +994,10 @@ input[data-autocompleted] {
 
 .p-4 {
   padding: 1rem;
+}
+
+.p-2 {
+  padding: 0.5rem;
 }
 
 .px-2 {
