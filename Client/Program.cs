@@ -11,6 +11,9 @@ using System.Net.Http.Headers;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 
+string serverApiBaseUrl = builder.Configuration["ServerApi:BaseUrl"];
+
+
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped<DialogService>();
@@ -18,7 +21,7 @@ builder.Services.AddScoped<DialogService>();
 
 builder.Services.AddScoped(sp => new HttpClient
 {
-    BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
+    BaseAddress = new Uri(serverApiBaseUrl)
 
 });
 

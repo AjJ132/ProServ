@@ -79,8 +79,13 @@ else
 
 app.UseHttpsRedirection();
 
-app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
+
+app.UseCors(policy =>
+    policy.WithOrigins("https://proservclient.azurewebsites.net")  // Client URL
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials());
 
 app.UseRouting();
 
@@ -91,6 +96,10 @@ app.UseAuthorization();
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
+
+
+
+
 
 app.Run();
 
