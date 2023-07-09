@@ -11,7 +11,8 @@ using System.Net.Http.Headers;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 
-string serverApiBaseUrl = builder.Configuration["ServerApi:BaseUrl"];
+//string serverApiBaseUrl = builder.Configuration["ServerApi:BaseUrl"];
+string serverApiBaseUrl = "https://proserv.azurewebsites.net";
 
 
 builder.RootComponents.Add<HeadOutlet>("head::after");
