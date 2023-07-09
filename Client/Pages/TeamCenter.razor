@@ -1,0 +1,110 @@
+@page "/Team-Center"
+
+@attribute [Authorize(Roles = "Coach")]
+@inject HttpClient Http;
+@inject NavigationManager NavigationManager;
+@layout MainLayout;
+
+
+<PageTitle>Dashboard</PageTitle>
+
+@if(_isLoading)
+{
+    <div class=" justify-center content-center">
+        <div class="loader"></div>
+    </div>
+}
+else
+{
+    <AuthorizeView>
+        <Authorized>
+            <div class="athlete-center-container">
+                
+                <p class=" text-4xl font-semibold">Athlete Center</p>
+                
+                <RadzenCard style="border-radius: 12px;" class=" athlete-center-container-card">
+                    <RadzenDataGrid AllowFiltering="true" style="max-width: 1400px;" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="10" AllowPaging="true" 
+                    PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                        Data="@_myAthletesTest" TItem="UserInformation" LogicalFilterOperator="LogicalFilterOperator.Or">
+                        <Columns>
+                            <RadzenDataGridColumn TItem="UserInformation" Title="Photo" Frozen="true" Sortable="false" Filterable="false" Width="120px"  TextAlign="TextAlign.Center" >
+                                <Template Context="data">
+                                    <p>Image</p>
+                                </Template>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="UserInformation" Property="FirstName" Title="First Name" Frozen="true" Width="120px" />
+                            <RadzenDataGridColumn TItem="UserInformation" Property="LastName" Title="Last Name" Width="120px"/>
+                            <RadzenDataGridColumn TItem="UserInformation" Property="Height" Title="Height"  Width="120px"/>
+                            <RadzenDataGridColumn TItem="UserInformation" Property="Weight" Title="Weight" Width="120px"/>
+                            <RadzenDataGridColumn TItem="UserInformation"  Title="High School" FormatString="{0:d}" Width="120px" >
+                                <Template Context="data">
+                                    <!--High School-->
+                                    @if(data.IsInHighschool)
+                                    { 
+                                        <p>Yes</p>
+                                    }
+                                    else
+                                    {
+                                        <p>No</p>
+                                    }
+                                </Template>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="UserInformation" Property="School" Title="School" FormatString="{0:d}" Width="180px" />
+                            <RadzenDataGridColumn TItem="UserInformation" Title="Age" Width="120px" >
+                                <Template Context="data">
+                                    <!--Age-->
+                                    <p>@(DateTime.Now.Year - data.Birthday.Year)</p>
+                                </Template>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="UserInformation" Property="Gender" Title="Gender" Width="120px" />
+                            <RadzenDataGridColumn TItem="UserInformation" Title="Remove" Width="120px" >
+                                <Template Context="data">
+                                    <RadzenButton Text="Remove"/>
+                                </Template>
+                            </RadzenDataGridColumn>
+                            
+                        </Columns>
+                    </RadzenDataGrid>
+                </RadzenCard>
+               <div class=" athlete-center-responsive-stack">
+                    <RadzenCard class=" w-full" style="border-radius: 12px;">
+                        <p class=" text-2xl font-semibold">Send Athlete Invite</p>
+                    </RadzenCard>
+                    <RadzenCard class=" w-full" style="border-radius: 12px; max-width: 850px;">
+                        <div class=" flex flex-col justify-center">
+                            <p class="text-2xl font-semibold">Assitant Coach's</p>
+                            <div class="line-horizontal w-full self-center" style="width: 50%;"/>
+                            <RadzenDataGrid AllowFiltering="true" style="max-width: 1400px; margin-top: 25px;" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="10" AllowPaging="true" 
+                                PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                                    Data="@_myAssistantCoachesTest" TItem="UserInformation" LogicalFilterOperator="LogicalFilterOperator.Or">
+                                    <Columns>
+                                        <RadzenDataGridColumn TItem="UserInformation" Title="Photo" Frozen="true" Sortable="false" Filterable="false" Width="120px"  TextAlign="TextAlign.Center" >
+                                            <Template Context="data">
+                                                <p>Image</p>
+                                            </Template>
+                                        </RadzenDataGridColumn>
+                                        <RadzenDataGridColumn TItem="UserInformation" Property="FirstName" Title="Name" Frozen="true" Width="120px" >
+                                            <Template Context="data">
+                                                <p>@data.FirstName @data.LastName</p>
+                                            </Template>
+                                        </RadzenDataGridColumn>
+                                        
+                                        
+                                    </Columns>
+                            </RadzenDataGrid>
+                            <div class="spacer-vertical"/>
+                            <div class="flex flex-col justify-center">
+                                <p class="text-2xl font-semibold">Add Assitant Coach</p>
+                                <div class="line-horizontal w-full self-center" style="width: 50%;"/>
+                                <div class="flex flex-row justify-between content-center" style="margin-top: 25px;">
+                                    <p class="text-lg p-2 font-medium">Assitant Coaches Code: CodeHere</p>
+                                    <RadzenButton ButtonStyle="ButtonStyle.Primary" Text="Generate Code" Size="ButtonSize.Large" />
+                                </div>
+                            </div>
+                        </div>
+                    </RadzenCard>
+               </div>
+            </div>
+        </Authorized>
+    </AuthorizeView>
+}
