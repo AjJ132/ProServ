@@ -182,11 +182,6 @@ namespace ProServ.Server.Controllers
         [Authorize]
         public async Task<ActionResult> GetUserRole()
         {
-            int test = 1;
-            if (test == 1)
-            {
-                return Ok("test");
-            }
             try
             {
                 var user = await _userManager.GetUserAsync(User);
