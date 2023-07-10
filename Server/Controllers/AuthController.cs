@@ -42,7 +42,7 @@ namespace ProServ.Server.Controllers
         [HttpGet("test")]
         public async Task<ActionResult<string>> Test()
         {
-           return Ok("Test");
+            return Ok("Test");
         }
 
 
@@ -184,9 +184,18 @@ namespace ProServ.Server.Controllers
         {
             try
             {
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var user = await _userManager.FindByIdAsync(userId);
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return Unauthorized("User not found");
+                }
+
                 var roles = await _userManager.GetRolesAsync(user);
+                if (roles == null)
+                {
+                    return Unauthorized("Role not found");
+                }
+
                 return Ok(roles.FirstOrDefault().ToString());
             }
             catch (Exception ex)

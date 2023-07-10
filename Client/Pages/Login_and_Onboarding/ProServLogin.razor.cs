@@ -6,6 +6,8 @@ using System.Net.Http.Json;
 using System.Diagnostics;
 using static System.Net.WebRequestMethods;
 using System.Text.Json;
+using System.Linq.Dynamic.Core.Tokenizer;
+using System.Net.Http.Headers;
 
 namespace ProServ.Client.Pages.Login_and_Onboarding.Login
 {
@@ -115,6 +117,9 @@ namespace ProServ.Client.Pages.Login_and_Onboarding.Login
                 var tokenObj = JsonSerializer.Deserialize<Dictionary<string, string>>(responseContent);
                 await localStorage.SetItemAsync("token", tokenObj["token"]);
                 var authState = await AuthProvider.GetAuthenticationStateAsync();
+
+                
+
                 if (authState.User.Identity.IsAuthenticated)
                 {
                     Console.WriteLine("User is authenticated");
