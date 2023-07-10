@@ -27,13 +27,13 @@ builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddDbContextFactory<ProServDbContext>(options =>
     options.UseSqlServer(
         configuration.GetConnectionString("DefaultConnection"),
-		sqlServerOptionsAction: sqlOptions =>
-		{
-			sqlOptions.EnableRetryOnFailure(
-				maxRetryCount: 5,
-				maxRetryDelay: TimeSpan.FromSeconds(30),
-				errorNumbersToAdd: null);
-		}));
+        sqlServerOptionsAction: sqlOptions =>
+        {
+            sqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(30),
+                errorNumbersToAdd: null);
+        }));
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
@@ -45,7 +45,17 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<ProServDbContext>();
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("https://proservclient.azurewebsites.net",
+                                              "https://localhost:7046");
+                      });
+});
 
 
 var app = builder.Build();
@@ -65,29 +75,27 @@ var app = builder.Build();
 //    }
 //}
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
+
 }
 else
 {
     app.UseExceptionHandler("/Error");
+
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
 
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
-app.UseCors(policy =>
-    policy.WithOrigins("https://proservclient.azurewebsites.net")  // Client URL
-        .AllowAnyMethod()
-        .AllowAnyHeader()
-        .AllowCredentials());
-
 app.UseRouting();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -97,9 +105,7 @@ app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
 
-
-
-
+app.UseHttpsRedirection();
 
 app.Run();
 
