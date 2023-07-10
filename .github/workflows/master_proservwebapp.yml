@@ -1,73 +1,47 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy ASP.Net Core app to Azure Web App - ProServWebApp
+name: Build and Deploy
 
 on:
   push:
     branches:
       - master
-  workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: windows-latest
+  build_and_deploy:
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up .NET Core
+      - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '7.0'
-          include-prerelease: true
-          
-      - name: Install wasm-tools workload
-        run: dotnet workload install wasm-tools
+          dotnet-version: "7.0"
 
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
 
-      - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
-
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v2
-        with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
-          
-  test:
-    needs: build
-    runs-on: windows-latest
-
-    steps:
-      - uses: actions/checkout@v2
-      
       - name: Test
         run: dotnet test ProServ.Tests/ProServ.Tests.csproj
 
-  deploy:
-    runs-on: windows-latest
-    needs: test
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+      - name: Publish Server
+        run: dotnet publish --configuration Release --no-build --output ./published/Server Server/ProServ.Server.csproj
 
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v2
-        with:
-          name: .net-app
+      - name: Publish Client
+        run: dotnet publish --configuration Release --no-build --output ./published/Client Client/ProServ.Client.csproj
 
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
+      - name: Deploy Server to Azure
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'ProServWebApp'
-          slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3766A2AB673D40C4969537C0A79BED50 }}
-          package: .
+          app-name: "ProServ"
+          publish-profile: ${{ secrets.AZURE_PROSERV_PUBLISH_KEY }}
+          package: ./published/Server
+
+      - name: Deploy Client to Azure
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: "ProServClient"
+          publish-profile: ${{ secrets.AZURE_PROSERVCLIENT_PUBLISH_KEY }}
+          package: ./published/Client

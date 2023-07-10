@@ -27,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Client\ProServ.Client.csproj" />
     <ProjectReference Include="..\Shared\ProServ.Shared.csproj" />
   </ItemGroup>
 
