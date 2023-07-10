@@ -62,6 +62,8 @@ namespace ProServ.Client.Pages.Login_and_Onboarding.Login
                         {
                             Debug.WriteLine("Error finding users role");
                             Console.WriteLine("Error finding users role");
+                            Console.WriteLine($"User Found: {authState.User.Identity.Name}");
+                            Console.WriteLine($"Role: {role}");
                         }
                     }
                     else
@@ -108,40 +110,52 @@ namespace ProServ.Client.Pages.Login_and_Onboarding.Login
             var response = await Http.PostAsJsonAsync("api/Auth/Login", _loginUser);
             if (response.IsSuccessStatusCode)
             {
+                Console.WriteLine("Success loggin in writing token");
                 var responseContent = await response.Content.ReadAsStringAsync();
                 var tokenObj = JsonSerializer.Deserialize<Dictionary<string, string>>(responseContent);
                 await localStorage.SetItemAsync("token", tokenObj["token"]);
                 var authState = await AuthProvider.GetAuthenticationStateAsync();
                 if (authState.User.Identity.IsAuthenticated)
                 {
+                    Console.WriteLine("User is authenticated");
                     //TODO Error handling for finding userid
                     //get user id from custom AuthenticationStateProvider
-                    
+
                     //check for users role
+                    Console.WriteLine("Checking for user role");
                     var userRolesResponse = await Http.GetAsync("api/Auth/user-role");
-                            
-                    if(userRolesResponse.IsSuccessStatusCode)
+
+                    if (userRolesResponse.IsSuccessStatusCode)
                     {
+                        Console.WriteLine("User role success status code");
                         var userRole = await userRolesResponse.Content.ReadAsStringAsync();
                         if (userRole == "Coach")
                         {
                             // Navigate to home page if they are returning user
+                            Console.WriteLine("User is coache");
                             NavigateToCoachesDashboard();
                         }
                         else if (userRole == "Member")
                         {
+                            Console.WriteLine("User is Member");
                             // Navigate to onboarding process if they are new user or previously exited process
                             NavigateToHome();
                         }
                         else if (userRole == "Sudo")
                         {
                             // Navigate to onboarding process if they are new user or previously exited process
+                            Console.WriteLine("User is Sudo");
                             NavigateToHome();
                         }
                         else
                         {
+                            Console.WriteLine($"User is {userRole}");
                             Console.WriteLine("Error finding user role");
                         }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error fetching user role");
                     }
                 }
                 else
