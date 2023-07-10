@@ -185,7 +185,7 @@ namespace ProServ.Server.Controllers
             int test = 1;
             if (test == 1)
             {
-                return Ok("Coach");
+                return Ok("test");
             }
             try
             {

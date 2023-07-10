@@ -57,6 +57,39 @@ builder.Services.AddCors(options =>
                       });
 });
 
+var key = configuration.GetSection("Jwt:Key").Get<string>();
+var issuer = configuration.GetSection("Jwt:Issuer").Get<string>();
+var audience = configuration.GetSection("Jwt:Audience").Get<string>();
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = issuer,
+        ValidAudience = audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+    };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnChallenge = context =>
+        {
+            context.HandleResponse();
+            context.Response.StatusCode = 401;
+            return Task.CompletedTask;
+        }
+    };
+});
+
+
 
 var app = builder.Build();
 
