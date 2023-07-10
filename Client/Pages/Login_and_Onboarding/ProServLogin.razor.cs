@@ -118,7 +118,9 @@ namespace ProServ.Client.Pages.Login_and_Onboarding.Login
                 await localStorage.SetItemAsync("token", tokenObj["token"]);
                 var authState = await AuthProvider.GetAuthenticationStateAsync();
 
-                
+                var token = await localStorage.GetItemAsync<string>("token");
+                Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
 
                 if (authState.User.Identity.IsAuthenticated)
                 {
