@@ -7,23 +7,21 @@ using ProServ.Client.Controllers;
 using Blazored.LocalStorage;
 using System.Net.Http.Headers;
 
-
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 
-//string serverApiBaseUrl = builder.Configuration["ServerApi:BaseUrl"];
-string serverApiBaseUrl = "https://proserv.azurewebsites.net";
-
+// Determine base API URL based on environment
+var baseApiUrl = builder.HostEnvironment.IsDevelopment()
+    ? "https://localhost:5000"   // Replace with your actual development server URL
+    : "https://proserv.azurewebsites.net";  // Replace with your actual production server URL
 
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped<DialogService>();
 
-
 builder.Services.AddScoped(sp => new HttpClient
 {
-    BaseAddress = new Uri(serverApiBaseUrl)
-
+    BaseAddress = new Uri(baseApiUrl)
 });
 
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
@@ -31,5 +29,3 @@ builder.Services.AddAuthorizationCore();
 builder.Services.AddBlazoredLocalStorage();
 
 await builder.Build().RunAsync();
-
-
