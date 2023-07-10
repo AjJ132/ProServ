@@ -179,7 +179,7 @@ namespace ProServ.Server.Controllers
         }
 
         [HttpGet("user-role")]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult> GetUserRole()
         {
             try
