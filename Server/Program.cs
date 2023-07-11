@@ -53,9 +53,12 @@ builder.Services.AddCors(options =>
                       policy =>
                       {
                           policy.WithOrigins("https://proservclient.azurewebsites.net",
-                                              "https://localhost:7046");
+                                              "https://localhost:7046")
+                                .WithHeaders("content-type", "authorization") // Specify exact headers to allow
+                                .WithMethods("GET", "POST"); // Specify exact methods to allow
                       });
 });
+
 
 var key = configuration.GetSection("Jwt:Key").Get<string>();
 var issuer = configuration.GetSection("Jwt:Issuer").Get<string>();

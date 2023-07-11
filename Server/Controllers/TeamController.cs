@@ -250,7 +250,7 @@ namespace ProServ.Server.Controllers
 
         [HttpGet("team/athletes/all/{teamID}")]
         [Authorize]
-        public async Task<ActionResult<List<UserInformation>>> GetAllAthltesByTeamIdAsync(int teamID)
+        public async Task<ActionResult<List<UserInformation>>> GetAllAthletesByTeamIdAsync(int teamID)
         {
             try
             {

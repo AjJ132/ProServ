@@ -36,7 +36,7 @@ namespace ProServ.Tests
 
             SetupUserForController();
             CreateReusedVariables();
-            
+
 
         }
 
@@ -84,7 +84,7 @@ namespace ProServ.Tests
                 Terminated = false,
                 OwnerID = "1",
                 TeamInfo = new TeamInfo()
-                { 
+                {
                     TeamID = 1,
                     DateCreated = DateTime.Now,
                     OwnerID = "1",
@@ -99,7 +99,7 @@ namespace ProServ.Tests
                     PackageID = 4,
                     PackageStart = DateTime.Now,
                     PackageEnd = DateTime.Now.AddDays(30),
-                }   
+                }
 
             };
         }
@@ -126,7 +126,7 @@ namespace ProServ.Tests
                 .UseInMemoryDatabase(databaseName: "GetPackagesDatabase").Options;
 
             var packages = new List<AllTeamPackages>() {
-                
+
                 new AllTeamPackages()
                 {
                     PackageID = 1,
@@ -167,10 +167,10 @@ namespace ProServ.Tests
 
             // Insert seed data into the database using one instance of the context
             var context = new ProServDbContext(options);
-            
+
             await context.AllTeamPackages.AddRangeAsync(packages);
             context.SaveChanges();
-            
+
 
             // Setup your context factory mock to return your context with seeded data
             _contextFactoryMock.Setup(f => f.CreateDbContext())
@@ -243,11 +243,11 @@ namespace ProServ.Tests
             // Insert seed data into the database using one instance of the context
             var context = new ProServDbContext(options);
 
-                await context.Teams.AddRangeAsync(teams);
-                context.SaveChanges();
-            
+            await context.Teams.AddRangeAsync(teams);
+            context.SaveChanges();
 
-            
+
+
             _contextFactoryMock.Setup(f => f.CreateDbContext())
                 .Returns(new ProServDbContext(options));
 
@@ -287,7 +287,7 @@ namespace ProServ.Tests
                .UseInMemoryDatabase(databaseName: "RegisterTeamDatabase").Options;
 
             //First insert a user into user mananger
-           
+
             //TODO allow for coaches to update email 
 
             //Arrange
@@ -325,7 +325,7 @@ namespace ProServ.Tests
 
             context.UserInformation.Add(ui);
             await context.SaveChangesAsync();
-            
+
             _contextFactoryMock.Setup(f => f.CreateDbContext())
                 .Returns(new ProServDbContext(options));
 
@@ -404,8 +404,8 @@ namespace ProServ.Tests
              .UseInMemoryDatabase(databaseName: "GetAllAthleteByTeamIDDatabase").Options;
             var context = new ProServDbContext(options);
 
-            
-            
+
+
             var user1 = new UserInformation()
             {
                 UserId = "1",
@@ -434,9 +434,9 @@ namespace ProServ.Tests
             _contextFactoryMock.Setup(f => f.CreateDbContext())
                 .Returns(new ProServDbContext(options));
 
-            var passResult = await _controller.GetAllAthltesByTeamIdAsync(1);
-            var failResult = await _controller.GetAllAthltesByTeamIdAsync(2);
-            var failResult2 = await _controller.GetAllAthltesByTeamIdAsync(-1);
+            var passResult = await _controller.GetAllAthletesByTeamIdAsync(1);
+            var failResult = await _controller.GetAllAthletesByTeamIdAsync(2);
+            var failResult2 = await _controller.GetAllAthletesByTeamIdAsync(-1);
 
             //Assert
             var actionResultPass = Assert.IsType<ActionResult<List<UserInformation>>>(passResult);
@@ -453,7 +453,7 @@ namespace ProServ.Tests
             Assert.Equal(400, badRequestResult.StatusCode);
 
             //look for correct team id
-            
+
             /*
              * foreach (UserInformation user in users)
             {
@@ -471,47 +471,47 @@ namespace ProServ.Tests
 
 
 
-           //Arrange
-             var options = new DbContextOptionsBuilder<ProServDbContext>()
-              .EnableSensitiveDataLogging()
-              .UseInMemoryDatabase(databaseName: "GetAllAthleteDataDatabase").Options;
-             var context = new ProServDbContext(options);
+            //Arrange
+            var options = new DbContextOptionsBuilder<ProServDbContext>()
+             .EnableSensitiveDataLogging()
+             .UseInMemoryDatabase(databaseName: "GetAllAthleteDataDatabase").Options;
+            var context = new ProServDbContext(options);
 
-             var user1 = new UserInformation()
-             {
-                 UserId = "1",
-                 TeamID = 1
-             };
-             var user2 = new UserInformation()
-             {
-                 UserId = "2",
-                 TeamID = 1
-             };
-             var user3 = new UserInformation()
-             {
-                 UserId = "3",
-                 TeamID = 1
-             };
+            var user1 = new UserInformation()
+            {
+                UserId = "1",
+                TeamID = 1
+            };
+            var user2 = new UserInformation()
+            {
+                UserId = "2",
+                TeamID = 1
+            };
+            var user3 = new UserInformation()
+            {
+                UserId = "3",
+                TeamID = 1
+            };
 
-             context.UserInformation.Add(user1);
-             context.UserInformation.Add(user2);
-             context.UserInformation.Add(user3);
+            context.UserInformation.Add(user1);
+            context.UserInformation.Add(user2);
+            context.UserInformation.Add(user3);
 
-             await context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
-             _contextFactoryMock.Setup(f => f.CreateDbContext())
-                 .Returns(new ProServDbContext(options));
+            _contextFactoryMock.Setup(f => f.CreateDbContext())
+                .Returns(new ProServDbContext(options));
 
 
-             var passResult = await _controller.GetAthletesDataByTeamIdAndCount(1, 0, 10);
+            var passResult = await _controller.GetAthletesDataByTeamIdAndCount(1, 0, 10);
 
-             //Assert
-             var actionResultPass = Assert.IsType<ActionResult<IEnumerable<UserInformation>>>(passResult);
-             var okResultPass = Assert.IsAssignableFrom<OkObjectResult>(actionResultPass.Result);
+            //Assert
+            var actionResultPass = Assert.IsType<ActionResult<IEnumerable<UserInformation>>>(passResult);
+            var okResultPass = Assert.IsAssignableFrom<OkObjectResult>(actionResultPass.Result);
 
             //dispose of the context
             context.Dispose();
-             
+
         }
 
         [Fact]
