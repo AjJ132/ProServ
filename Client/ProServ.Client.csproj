@@ -32,8 +32,10 @@
 
   <ItemGroup>
     <None Remove="Controllers\" />
+    <None Remove="Pages\Workout Components\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
+    <Folder Include="Pages\Workout Components\" />
   </ItemGroup>
 </Project>
