@@ -49,16 +49,18 @@ namespace ProServ.Server.Contexts
                 .HasForeignKey(wb => wb.WorkoutId)
                 .IsRequired(false);
 
-            modelBuilder.Entity<Workout>()
-                .HasOne(w => w.WorkoutInfo)
-                .WithOne(wi => wi.Workout)
-                .HasForeignKey<Workout>(wi => wi.WorkoutId);
 
-			modelBuilder.Entity<WorkoutBlock>()
+            modelBuilder.Entity<WorkoutBlock>()
                 .HasMany(wb => wb.Parameters)
                 .WithOne(p => p.WorkoutBlock)
                 .HasForeignKey(p => p.BlockId)
                 .IsRequired(false);
+            /*
+             *  modelBuilder.Entity<Workout>()
+                 .HasOne(w => w.WorkoutInfo)
+                 .WithOne(wi => wi.Workout)
+                 .HasForeignKey<Workout>(wi => wi.WorkoutId);
+             */
 
 			//All Team stuff
 			modelBuilder.Entity<Team>()

@@ -10,6 +10,8 @@ using System.Text;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using ProServ.Server.Contexts;
+using System.Diagnostics;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -92,6 +94,9 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddControllers().AddJsonOptions(x =>
+    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve
+);
 
 
 var app = builder.Build();
@@ -142,8 +147,16 @@ app.MapControllers();
 app.MapFallbackToFile("index.html");
 
 app.UseHttpsRedirection();
+try
+{
 
-app.Run();
+    app.Run();
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+    Debug.WriteLine(ex.Message);
+}
 
 
 

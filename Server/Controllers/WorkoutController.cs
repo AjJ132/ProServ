@@ -36,8 +36,16 @@ namespace ProServ.Server.Controllers
             _userManager = userManager;
         }
 
-        [HttpGet("add-workout")]
+        [HttpGet("test")]
         [Authorize]
+        public async Task<ActionResult> TestConnection()
+        {
+            string s = "";
+            return Ok();
+        }
+
+        [HttpPost("create-workout")]
+        //[Authorize]
         public async Task<ActionResult> AddNewWorkout(Workout newWorkout)
         {
             try
@@ -66,22 +74,6 @@ namespace ProServ.Server.Controllers
                 await db.Workouts.AddAsync(newWorkout);
                 await db.SaveChangesAsync();
 
-                //Now Insert parameters and blocks
-                var blocks = newWorkout.WorkoutBlocks;
-                foreach (var block in blocks)
-                {
-                    block.WorkoutId = newWorkout.WorkoutId;
-                    await db.WorkoutBlocks.AddAsync(block);
-                    await db.SaveChangesAsync();
-
-                    var parameters = block.Parameters;
-                    foreach (var parameter in parameters)
-                    {
-                        parameter.BlockId = block.BlockId;
-                        await db.Parameters.AddAsync(parameter);
-                        await db.SaveChangesAsync();
-                    }
-                }
 
                 return Ok("New Workout Created");
 
