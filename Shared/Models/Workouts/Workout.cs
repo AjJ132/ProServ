@@ -11,12 +11,12 @@ namespace ProServ.Shared.Models.Workouts
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int WorkoutId { get; set; }
 
-        public int WorkoutTypeId { get; set; }
+        //public int WorkoutTypeId { get; set; }
 
-		[MaxLength(100)]
-		public string WorkoutName { get; set; }
+        [MaxLength(100)]
+        public string WorkoutName { get; set; }
 
-		[MaxLength(450)]
+        [MaxLength(450)]
         public string CoachId { get; set; }
 
         [MaxLength(150)]
@@ -25,9 +25,9 @@ namespace ProServ.Shared.Models.Workouts
 
 
         // Navigation properties
-        public ICollection<WorkoutBlock> WorkoutBlocks { get; set; }
+        public virtual ICollection<WorkoutBlock> WorkoutBlocks { get; set; }
 
-        public virtual WorkoutInfo WorkoutInfo { get; set; }
+        //public virtual WorkoutInfo WorkoutInfo { get; set; }
     }
 
 }

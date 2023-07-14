@@ -12,7 +12,7 @@ builder.RootComponents.Add<App>("#app");
 
 // Determine base API URL based on environment
 var baseApiUrl = builder.HostEnvironment.IsDevelopment()
-    ? "https://localhost:5000"   // Replace with your actual development server URL
+    ? "https://localhost:5001"   // Replace with your actual development server URL
     : "https://proserv.azurewebsites.net";  // Replace with your actual production server URL
 
 builder.RootComponents.Add<HeadOutlet>("head::after");

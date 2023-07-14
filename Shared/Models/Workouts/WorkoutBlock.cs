@@ -9,14 +9,16 @@ public class WorkoutBlock
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int BlockId { get; set; }
 
+    public int BlockOrder { get; set; }
+
     public int WorkoutId { get; set; }
 
     [MaxLength(50)]
     public string BlockName { get; set; }
 
-    public int BlockType { get; set; }
+    public string BlockType { get; set; }
 
-    public Workout Workout { get; set; }
+
 
     public virtual ICollection<Parameter> Parameters { get; set; }
 }

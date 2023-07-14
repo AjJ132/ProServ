@@ -21,14 +21,10 @@ public class Parameter
 
     public TimeSpan TTime2 { get; set; }
 
-    public TimeSpan sDistance1 { get; set; }
+    public double sDistance1 { get; set; }
 
-    public TimeSpan sDistance2 { get; set; }
+    public double sDistance2 { get; set; }
 
-    public int ParameterType { get; set; }
+    //public int ParameterType { get; set; }
 
-    public int BlockType { get; set; }
-
-    
-    public virtual WorkoutBlock WorkoutBlock { get; set; }
 }

@@ -1,0 +1,82 @@
+@namespace ProServ.Client.Pages
+
+<RadzenStack AlignItems="AlignItems.Start">
+    <p class="text-lg font-medium">Instructions</p>
+    <RadzenTextArea @bind-Value=_instructions style="width: 100%;" MaxLength="100" />
+
+    <p class="text-lg font-medium">Distance</p>
+    <RadzenNumeric @bind-Value=_distance style="width: 100%;" />
+
+    <RadzenSelectBar @bind-Value=@_paceOrTotal TValue="bool" class="mt-2" Style="align-self: center;" Size="ButtonSize.Large">
+        <Items>
+            <RadzenSelectBarItem Text="Pace" Value="true" />
+            <RadzenSelectBarItem Text="Total Time" Value="false" />
+        </Items>
+    </RadzenSelectBar>
+    @if (_paceOrTotal == true)
+    {
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
+
+            <RadzenStack AlignItems="AlignItems.Center">
+                <p class="text-lg font-medium">Minutes</p>
+                <RadzenNumeric @bind-Value=_paceMinutes style="width: 60%;" />
+            </RadzenStack>
+
+            <RadzenStack AlignItems="AlignItems.Center">
+                <p class="text-lg font-medium">Seconds</p>
+                <RadzenNumeric @bind-Value=_paceSeconds style="width: 60%;" />
+            </RadzenStack>
+
+        </RadzenStack>
+    }
+    else
+    {
+        <RadzenStack AlignItems="AlignItems.Center">
+            <p class="text-lg font-medium">Minutes</p>
+            <RadzenNumeric @bind-Value=_paceMinutes style="width: 60%;" />
+        </RadzenStack>
+    }
+    <RadzenButton Text="Save" Click="HandleChange" />
+</RadzenStack>
+
+@code
+{
+    [Parameter] public EventCallback<CustomData> OnChange { get; set; }
+
+    private string _instructions = "";
+    private double _distance = 3.0;
+    private bool _paceOrTotal = true;
+
+    private int _paceMinutes = 7;
+    private int _paceSeconds = 30;
+
+
+    private Parameter ExportParameter()
+    {
+        return new();
+    }
+
+    private async Task HandleChange()
+    {
+        TimeSpan time;
+        if(_paceOrTotal == true)
+        {
+            time = new TimeSpan(0, _paceMinutes, _paceSeconds);
+        }
+        else
+        {
+            time = new TimeSpan(0, _paceMinutes, 0);
+        }
+
+        var data = new CustomData
+        {
+            Comments = _instructions,
+            Distance = _distance,
+            Time = time
+        };
+
+        await OnChange.InvokeAsync(data);
+    }
+
+}
+
