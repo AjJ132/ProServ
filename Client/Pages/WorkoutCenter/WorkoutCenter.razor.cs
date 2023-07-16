@@ -52,13 +52,13 @@ namespace ProServ.Client.Pages.WorkoutCenter
             string userID = authState.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             workout.CoachId = userID;
-            
 
-            var testResponse = await Http.GetAsync("api/Workout/test");
+
+
 
             //Send workout over HTTP
             var createWorkoutResponse = await Http.PostAsJsonAsync("api/Workout/create-workout", workout);
-            if(createWorkoutResponse.IsSuccessStatusCode)
+            if (createWorkoutResponse.IsSuccessStatusCode)
             {
                 //TODO: Reset interface
                 Console.WriteLine("Workout Created");
@@ -107,7 +107,7 @@ namespace ProServ.Client.Pages.WorkoutCenter
             }
 
             this._selectedBlock.Parameters.Clear();
-            this._selectedBlock.Parameters.Add(new Parameter() );
+            this._selectedBlock.Parameters.Add(new Parameter());
 
         }
 
