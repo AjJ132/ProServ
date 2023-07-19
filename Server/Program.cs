@@ -57,7 +57,7 @@ builder.Services.AddCors(options =>
                           policy.WithOrigins("https://proservclient.azurewebsites.net",
                                               "https://localhost:7046")
                                 .WithHeaders("content-type", "authorization") // Specify exact headers to allow
-                                .WithMethods("GET", "POST"); // Specify exact methods to allow
+                                .WithMethods("GET", "POST", "PUT", "DELETE"); // Specify exact methods to allow
                       });
 });
 
