@@ -68,14 +68,14 @@ namespace ProServ.Server.Controllers
         public async Task<ActionResult<bool>> TeamNameExistsAsync(string teamName)
         {
             var db = _contextFactory.CreateDbContext();
-            
+
             try
             {
-                if(string.IsNullOrEmpty(teamName))
+                if (string.IsNullOrEmpty(teamName))
                 {
                     return BadRequest("Team name cannot be null or empty.");
                 }
-                    
+
                 var team = await db.Teams.FirstOrDefaultAsync(n => n.TeamName.Equals(teamName));
                 if (team == null)
                 {
@@ -91,8 +91,38 @@ namespace ProServ.Server.Controllers
                 // logger.Error(ex, "An error occurred while getting all team packages.");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
-            
 
+
+        }
+
+        [HttpGet("team/name/{id}")]
+        [Authorize]
+        public async Task<ActionResult<Team>> GetTeam(int id)
+        {
+            var db = _contextFactory.CreateDbContext();
+
+            try
+            {
+                if (id == 0)
+                {
+                    return BadRequest("Team ID cannot be 0");
+                }
+
+                var team = await db.Teams.Where(n => n.TeamID == id).FirstOrDefaultAsync();
+
+                if (team == null)
+                {
+                    return StatusCode(500, "Team was null");
+                }
+
+                return Ok(team);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         [HttpPost("coach-registration")]
@@ -195,7 +225,7 @@ namespace ProServ.Server.Controllers
                     {
                         //Get user information for all athletes on the team
                         IdentityUser user = await _userManager.GetUserAsync(User);
-                        if(user != null)
+                        if (user != null)
                         {
                             List<UserInformation> athleteInformation = await db.UserInformation.Where(n => n.TeamID == teamID && !n.UserId.Equals(user.Id)).ToListAsync();
                             return Ok(athleteInformation);
@@ -223,22 +253,22 @@ namespace ProServ.Server.Controllers
             try
             {
                 var db = _contextFactory.CreateDbContext();
-                
-                    //Get Team and include children
-                    var team = await db.Teams.Where(n => n.TeamID == teamID)
-                        .Include(n => n.TeamInfo)
-                        .Include(n => n.TeamPackage)
-                        .FirstOrDefaultAsync();
 
-                    if(team != null)
-                    {
-                        return Ok(team);
-                    }
-                    else
-                    {
-                       return NotFound("Team does not exist");
-                    }
-                
+                //Get Team and include children
+                var team = await db.Teams.Where(n => n.TeamID == teamID)
+                    .Include(n => n.TeamInfo)
+                    .Include(n => n.TeamPackage)
+                    .FirstOrDefaultAsync();
+
+                if (team != null)
+                {
+                    return Ok(team);
+                }
+                else
+                {
+                    return NotFound("Team does not exist");
+                }
+
             }
             catch (Exception ex)
             {
@@ -255,7 +285,7 @@ namespace ProServ.Server.Controllers
             try
             {
                 //Never will have 50,000 teams so dont need to check for that and waste a db call
-                if(teamID < 0 || teamID > 50000)
+                if (teamID < 0 || teamID > 50000)
                 {
                     return BadRequest("Invalid team ID");
                 }
@@ -317,7 +347,7 @@ namespace ProServ.Server.Controllers
                     .Where(n => n.TeamID == teamId)
                     .CountAsync());
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex);
                 Console.WriteLine(ex.Message);
