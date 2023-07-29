@@ -563,5 +563,12 @@ namespace ProServ.Tests
             //dispose of the context
             context.Dispose();
         }
+
+        [Fact]
+        public async Task GetTeamTest()
+        {
+            Assert.Fail("Fail by default");
+        }
+
     }
 }

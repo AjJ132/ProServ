@@ -28,6 +28,8 @@ namespace ProServ.Shared.Models.Workouts
         public virtual ICollection<WorkoutBlock> WorkoutBlocks { get; set; }
 
         //public virtual WorkoutInfo WorkoutInfo { get; set; }
+
+        public virtual ICollection<AssignedWorkout> AssignedWorkouts { get; set; }
     }
 
 }

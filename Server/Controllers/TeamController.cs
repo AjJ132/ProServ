@@ -95,6 +95,44 @@ namespace ProServ.Server.Controllers
 
         }
 
+        [HttpGet("team")]
+        [Authorize]
+        public async Task<ActionResult<Team>> GetTeam()
+        {
+            var db = _contextFactory.CreateDbContext();
+
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var teamID = await db.UserInformation.Where(n => n.UserId.Equals(user.Id)).Select(p => p.TeamID).FirstOrDefaultAsync();
+
+                if (teamID == 0)
+                {
+                    return BadRequest("User is not apart of a team");
+                }
+
+                var team = await db.Teams.FirstOrDefaultAsync(n => n.TeamID == teamID);
+
+
+                if (team == null)
+                {
+                    return BadRequest("Team was not found");
+                }
+
+                return Ok(team);
+            }
+            catch (Exception ex)
+            {
+                //TODO: Research loggers
+                // Log error here, for example, using NLog, Log4Net, or any other logging framework
+                // logger.Error(ex, "An error occurred while getting all team packages.");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+
+
+        }
+
+
         [HttpGet("team/name/{id}")]
         [Authorize]
         public async Task<ActionResult<Team>> GetTeam(int id)

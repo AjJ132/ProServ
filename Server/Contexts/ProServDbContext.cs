@@ -62,12 +62,12 @@ namespace ProServ.Server.Contexts
                  .HasForeignKey<Workout>(wi => wi.WorkoutId);
              */
 
-			//All Team stuff
-			modelBuilder.Entity<Team>()
+            //All Team stuff
+            modelBuilder.Entity<Team>()
                 .HasOne(t => t.TeamInfo)
                 .WithOne(ti => ti.Team)
                 .HasForeignKey<Team>(ti => ti.TeamID)
-                .IsRequired(false); 
+                .IsRequired(false);
 
             modelBuilder.Entity<Team>()
                 .HasOne(t => t.TeamPackage)
@@ -75,7 +75,14 @@ namespace ProServ.Server.Contexts
                 .HasForeignKey<Team>(tp => tp.TeamID)
                 .IsRequired(false);
 
-           
+            modelBuilder.Entity<AssignedWorkout>()
+                .HasOne(t => t.Workout)
+                .WithMany(p => p.AssignedWorkouts)
+                .HasForeignKey(t => t.WorkoutId)
+                .IsRequired(false);
+
+
+
             base.OnModelCreating(modelBuilder);
         }
 
