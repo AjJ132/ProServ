@@ -23,6 +23,12 @@ public class AssignedWorkout
 
     public bool ReportBack { get; set; }
 
+    [Required, MaxLength(450)]
+    public string CoachId { get; set; }
+
+    [NotMapped]
+    public string CoachName { get; set; }
+
     [MaxLength(100)]
     public string WorkoutName { get; set; }
 

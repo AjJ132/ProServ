@@ -113,13 +113,15 @@ namespace ProServ.Server.Controllers
 
                 //Get all workouts for this week
                 //Apply filter for user
-                var assignedWorkouts = db.AssignedWorkouts.Where(n => n.AssigneeId == user.Id);
+                //var assignedWorkouts = db.AssignedWorkouts.Where(n => n.AssigneeId == user.Id);
 
                 //Apply filter for this week
-                assignedWorkouts = assignedWorkouts.Where(n => n.WorkoutDate >= startOfWeek && n.WorkoutDate <= endOfWeek);
+                //assignedWorkouts = assignedWorkouts.Where(n => n.WorkoutDate >= startOfWeek && n.WorkoutDate <= endOfWeek);
 
                 //Include workout info
-                assignedWorkouts = assignedWorkouts.Include(n => n.Workout);
+                //assignedWorkouts = assignedWorkouts.Include(n => n.Workout);
+
+                List<AssignedWorkout> assignedWorkouts = new List<AssignedWorkout>();
 
                 //ensure count
                 if (assignedWorkouts.Count() == 0)
@@ -167,37 +169,59 @@ namespace ProServ.Server.Controllers
                     var assignedWorkout1 = new AssignedWorkout
                     {
                         Workout = workout1,
+                        Index = 1,
+                        CoachName = "Sarah",
                         WorkoutDate = startOfWeek.AddDays(1),
+                        WorkoutName = "Workout 1",
+                        Notes = "This is a note for workout 1",
                         AssigneeId = user.Id
                     };
 
                     var assignedWorkout2 = new AssignedWorkout
                     {
                         Workout = workout2,
+                        Index = 2,
+                        CoachName = "Sarah",
                         WorkoutDate = startOfWeek.AddDays(2),
+                        WorkoutName = "Workout 2",
+                        Notes = "This is a note for workout 2",
                         AssigneeId = user.Id
                     };
 
                     var assignedWorkout3 = new AssignedWorkout
                     {
                         Workout = workout3,
+                        Index = 3,
+                        CoachName = "Sarah",
                         WorkoutDate = startOfWeek.AddDays(3),
+                        WorkoutName = "Workout 3",
+                        Notes = "This is a note for workout 3",
                         AssigneeId = user.Id
                     };
 
                     var assignedWorkout4 = new AssignedWorkout
                     {
                         Workout = workout4,
+                        Index = 4,
+                        CoachName = "Sarah",
                         WorkoutDate = startOfWeek.AddDays(4),
+                        WorkoutName = "Workout 4",
+                        Notes = "This is a note for workout 4",
                         AssigneeId = user.Id
                     };
 
                     var assignedWorkout5 = new AssignedWorkout
                     {
                         Workout = workout5,
+                        Index = 5,
+                        CoachName = "Sarah",
                         WorkoutDate = startOfWeek.AddDays(5),
+                        WorkoutName = "Workout 5",
+                        Notes = "This is a note for workout 5",
                         AssigneeId = user.Id
                     };
+
+                    Console.WriteLine("Adding fake workouts to list");
 
                     //return fake workouts
                     return Ok(new List<AssignedWorkout> { assignedWorkout1, assignedWorkout2, assignedWorkout3, assignedWorkout4, assignedWorkout5 });
