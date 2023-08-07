@@ -239,5 +239,74 @@ namespace ProServ.Server.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+
+        [HttpGet("workouts-by-date-range/{startDate}/{endDate}")]
+        [Authorize]
+        public async Task<ActionResult<List<Workout>>> GetWorkoutsByDateRange(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                using var db = _contextFactory.CreateDbContext();
+
+                //First ensure user is logged in
+                var user = await _userManager.GetUserAsync(User);
+
+                if (user == null)
+                {
+                    return BadRequest("User not found");
+                }
+
+                //Get Workouts in the date range under the user id
+                //From assigned workouts grab the workout ids that fall within the date range
+                //Then grab the workouts that have those ids
+                var workoutIds = db.AssignedWorkouts.Where(n => n.AssigneeId == user.Id && n.WorkoutDate >= startDate.Date && n.WorkoutDate.Date <= endDate.Date).Select(n => n.WorkoutId).ToList();
+
+                //if no workouts found return empty list
+                if (workoutIds.Count() == 0)
+                {
+                    //TESTING PURPOSES ONLY
+                    //return NotFound("No workouts found for this date range");
+                    workoutIds.Add(6);
+                }
+
+                //Grab the workouts that have the ids
+                var workouts = db.Workouts.Where(n => workoutIds.Contains(n.WorkoutId));
+
+                //if no workouts found return empty list
+                if (workouts.Count() == 0)
+                {
+                    return NotFound("No workouts found for this date range");
+                }
+
+                //else grab workout blocks under the ids
+                var workoutBlocks = db.WorkoutBlocks.Where(n => workoutIds.Contains(n.WorkoutId)).Include(n => n.Parameters);
+
+                //if no workout blocks found return empty list
+                if (workoutBlocks.Count() == 0)
+                {
+                    return NotFound("No workout blocks found for this date range");
+                }
+
+                //Attach workout blocks to workouts
+                foreach (var workout in workouts)
+                {
+                    workout.WorkoutBlocks = workoutBlocks.Where(n => n.WorkoutId == workout.WorkoutId).ToList();
+                }
+
+                var workoutsList = await workouts.ToListAsync();
+
+                await db.DisposeAsync();
+
+                //return workouts
+                return Ok(workoutsList);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }
