@@ -1,5 +1,5 @@
 
- using System.Net.Http.Json;
+using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
@@ -36,8 +36,8 @@ public partial class Settings : ComponentBase
     private bool _isOnTeam = false;
     private bool _isCoach = false;
 
-   
-   
+
+
     //bool to make user settings not displayed
     private bool _missingUserInformation = false;
     private bool _missingUserProfile = false;
@@ -52,7 +52,7 @@ public partial class Settings : ComponentBase
     //Coaching variables
     private string _userRole = "Member";
     private Team _myTeam;
-    
+
     protected override async Task OnInitializedAsync()
     {
         //Fetch user data from API
@@ -92,21 +92,21 @@ public partial class Settings : ComponentBase
             Console.WriteLine(ex.Message);
         }
 
-        if (_userInformation.TeamID != 0 )
+        if (_userInformation.TeamID != 0)
         {
             this._isOnTeam = true;
             var teamResponse = await Http.GetAsync($"api/Team/team/include-children/{_userInformation.TeamID}");
-            if(teamResponse.IsSuccessStatusCode)
+            if (teamResponse.IsSuccessStatusCode)
             {
                 this._myTeam = await teamResponse.Content.ReadFromJsonAsync<Team>();
                 teamResponse = null;
             }
 
             var userRoleResponse = await Http.GetAsync($"api/Auth/user-role");
-            if(userRoleResponse.IsSuccessStatusCode)
+            if (userRoleResponse.IsSuccessStatusCode)
             {
                 this._userRole = await userRoleResponse.Content.ReadAsStringAsync();
-                if(this._userRole == "Coach")
+                if (this._userRole == "Coach")
                 {
                     this._isCoach = true;
                 }
@@ -119,7 +119,7 @@ public partial class Settings : ComponentBase
             }
         }
 
-        
+
 
         _isloading = false;
     }
@@ -218,4 +218,3 @@ public partial class Settings : ComponentBase
     };
 }
 
- 

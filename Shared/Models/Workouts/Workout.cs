@@ -22,12 +22,19 @@ namespace ProServ.Shared.Models.Workouts
         [MaxLength(150)]
         public string Notes { get; set; }
 
+        [NotMapped]
+        public DateTime DateToComplete { get; set; }
+        [NotMapped]
+        public string CoachName { get; set; }
+
 
 
         // Navigation properties
         public virtual ICollection<WorkoutBlock> WorkoutBlocks { get; set; }
 
         //public virtual WorkoutInfo WorkoutInfo { get; set; }
+
+        public virtual ICollection<AssignedWorkout> AssignedWorkouts { get; set; }
     }
 
 }

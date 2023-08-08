@@ -164,6 +164,7 @@ public class UserController : ControllerBase
 
     //Check if user profile exists
     [HttpGet("user-information/exists")]
+    [Authorize]
     public async Task<ActionResult<bool>> CheckIfUserInfoExists()
     {
         try
@@ -209,8 +210,9 @@ public class UserController : ControllerBase
     {
         try
         {
-            var user = await _userManager.GetUserAsync(User);
-
+            //Temporary for IOS TESTING ## TODO REMOVE ME
+            //var user = await _userManager.GetUserAsync(User);
+            var user = await _userManager.FindByEmailAsync("aj132@icloud.com");
             try
             {
                 using (var db = _contextFactory.CreateDbContext())

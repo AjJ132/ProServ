@@ -19,7 +19,7 @@ public class WorkoutBlock
     public string BlockType { get; set; }
 
 
-
+    public virtual Workout? Workout { get; set; }
     public virtual ICollection<Parameter> Parameters { get; set; }
 }
 

@@ -12,7 +12,7 @@ public class AssignedWorkout
 
     public int WorkoutId { get; set; }
 
-    
+
     public DateTime WorkoutDate { get; set; }
 
     [MaxLength(150)]
@@ -23,10 +23,16 @@ public class AssignedWorkout
 
     public bool ReportBack { get; set; }
 
+    [Required, MaxLength(450)]
+    public string CoachId { get; set; }
+
+    [NotMapped]
+    public string CoachName { get; set; }
+
     [MaxLength(100)]
-    public string WorkoutName {get;set;}
+    public string WorkoutName { get; set; }
 
     // Navigation property
-    [ForeignKey("WorkoutId")]
-    public Workout Workout { get; set; }
+    //[ForeignKey("WorkoutId")]
+    public virtual Workout Workout { get; set; }
 }
