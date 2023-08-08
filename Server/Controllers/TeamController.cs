@@ -113,6 +113,9 @@ namespace ProServ.Server.Controllers
 
                 var team = await db.Teams.FirstOrDefaultAsync(n => n.TeamID == teamID);
 
+                //pre convert team to json and print to console
+                var teamJson = Newtonsoft.Json.JsonConvert.SerializeObject(team);
+                Console.WriteLine(teamJson);
 
                 if (team == null)
                 {

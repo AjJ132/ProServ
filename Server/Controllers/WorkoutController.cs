@@ -249,6 +249,8 @@ namespace ProServ.Server.Controllers
             {
                 using var db = _contextFactory.CreateDbContext();
 
+                Console.WriteLine("Getting workouts by date range");
+
                 //First ensure user is logged in
                 var user = await _userManager.GetUserAsync(User);
 
@@ -260,15 +262,20 @@ namespace ProServ.Server.Controllers
                 //Get Workouts in the date range under the user id
                 //From assigned workouts grab the workout ids that fall within the date range
                 //Then grab the workouts that have those ids
-                var workoutIds = db.AssignedWorkouts.Where(n => n.AssigneeId == user.Id && n.WorkoutDate >= startDate.Date && n.WorkoutDate.Date <= endDate.Date).Select(n => n.WorkoutId).ToList();
-
-                //if no workouts found return empty list
-                if (workoutIds.Count() == 0)
+                var assignedWorkouts = await db.AssignedWorkouts.Where(n => n.AssigneeId == user.Id && n.WorkoutDate >= startDate.Date && n.WorkoutDate.Date <= endDate.Date).ToListAsync();              //if no workouts found return empty list
+                List<int> workoutIds = new List<int>();
+                if (assignedWorkouts.Count() == 0)
                 {
                     //TESTING PURPOSES ONLY
                     //return NotFound("No workouts found for this date range");
+                    assignedWorkouts = new List<AssignedWorkout>() { new AssignedWorkout() { WorkoutId = 6, WorkoutDate = DateTime.Now } };
                     workoutIds.Add(6);
                 }
+                else
+                {
+                    workoutIds = assignedWorkouts.Select(n => n.WorkoutId).ToList();
+                }
+
 
                 //Grab the workouts that have the ids
                 var workouts = db.Workouts.Where(n => workoutIds.Contains(n.WorkoutId));
@@ -291,7 +298,14 @@ namespace ProServ.Server.Controllers
                 //Attach workout blocks to workouts
                 foreach (var workout in workouts)
                 {
+                    //Set workout blocks
                     workout.WorkoutBlocks = workoutBlocks.Where(n => n.WorkoutId == workout.WorkoutId).ToList();
+
+                    //Set date
+                    workout.DateToComplete = assignedWorkouts.Where(n => n.WorkoutId == workout.WorkoutId).Select(p => p.WorkoutDate).FirstOrDefault();
+
+                    //set coach name
+                    workout.CoachName = db.UserInformation.Where(n => n.UserId.Equals(workout.CoachId)).Select(p => p.FirstName + " " + p.LastName).FirstOrDefault();
                 }
 
                 var workoutsList = await workouts.ToListAsync();

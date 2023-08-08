@@ -95,7 +95,10 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddControllers().AddJsonOptions(x =>
-    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve
+    {
+        x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+        x.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.Never;
+    }
 );
 
 
