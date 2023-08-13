@@ -36,14 +36,6 @@ namespace ProServ.Server.Controllers
             _userManager = userManager;
         }
 
-        [HttpGet("test")]
-        [Authorize]
-        public async Task<ActionResult> TestConnection()
-        {
-            string s = "";
-            return Ok();
-        }
-
         [HttpPost("create-workout")]
         [Authorize]
         public async Task<ActionResult> AddNewWorkout(Workout newWorkout)
@@ -247,6 +239,7 @@ namespace ProServ.Server.Controllers
         {
             try
             {
+                Console.WriteLine("Init DB");
                 using var db = _contextFactory.CreateDbContext();
 
                 Console.WriteLine("Getting workouts by date range");
@@ -256,6 +249,7 @@ namespace ProServ.Server.Controllers
 
                 if (user == null)
                 {
+                    Console.WriteLine("User not found");
                     return BadRequest("User not found");
                 }
 
@@ -266,10 +260,12 @@ namespace ProServ.Server.Controllers
                 List<int> workoutIds = new List<int>();
                 if (assignedWorkouts.Count() == 0)
                 {
-                    //TESTING PURPOSES ONLY
-                    //return NotFound("No workouts found for this date range");
-                    assignedWorkouts = new List<AssignedWorkout>() { new AssignedWorkout() { WorkoutId = 6, WorkoutDate = DateTime.Now } };
-                    workoutIds.Add(6);
+                    if (assignedWorkouts.Count() == 0)
+                    {
+                        var response = new { Message = "No workouts found for this date range" };
+                        return Ok(response);
+                    }
+
                 }
                 else
                 {
@@ -283,7 +279,8 @@ namespace ProServ.Server.Controllers
                 //if no workouts found return empty list
                 if (workouts.Count() == 0)
                 {
-                    return NotFound("No workouts found for this date range");
+                    var response = new { Message = "No workouts found for this date range" };
+                    return Ok(response);
                 }
 
                 //else grab workout blocks under the ids
@@ -292,7 +289,8 @@ namespace ProServ.Server.Controllers
                 //if no workout blocks found return empty list
                 if (workoutBlocks.Count() == 0)
                 {
-                    return NotFound("No workout blocks found for this date range");
+                    var response = new { Message = "No workout blocks found for this date range" };
+                    return Ok(response);
                 }
 
                 //Attach workout blocks to workouts
@@ -305,22 +303,40 @@ namespace ProServ.Server.Controllers
                     workout.DateToComplete = assignedWorkouts.Where(n => n.WorkoutId == workout.WorkoutId).Select(p => p.WorkoutDate).FirstOrDefault();
 
                     //set coach name
-                    workout.CoachName = db.UserInformation.Where(n => n.UserId.Equals(workout.CoachId)).Select(p => p.FirstName + " " + p.LastName).FirstOrDefault();
+                    string coachName = db.UserInformation
+                        .Where(n => n.UserId.Equals(workout.CoachId))
+                        .Select(p => p.FirstName + " " + p.LastName)
+                        .FirstOrDefault() ?? "404";
+
+                    workout.CoachName = coachName;
                 }
 
                 var workoutsList = await workouts.ToListAsync();
 
                 await db.DisposeAsync();
 
+                Console.WriteLine("Good Return");
                 //return workouts
                 return Ok(workoutsList);
             }
             catch (Exception ex)
             {
+                Console.WriteLine("ERROR: " + ex.Message);
                 Debug.WriteLine(ex.Message);
                 Console.WriteLine(ex.Message);
                 return StatusCode(500, ex.Message);
             }
         }
+
+        // [HttpPost("generate-test-workout")]
+        // [Authorize]
+        // public async Task<ActionResult> GenerateTestWorkout()
+        // {
+
+        // }
+
     }
+
+
+
 }
