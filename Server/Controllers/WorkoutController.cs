@@ -239,7 +239,7 @@ namespace ProServ.Server.Controllers
         {
             try
             {
-                Console.WriteLine("Init DB");
+
                 using var db = _contextFactory.CreateDbContext();
 
                 Console.WriteLine("Getting workouts by date range");
@@ -262,8 +262,11 @@ namespace ProServ.Server.Controllers
                 {
                     if (assignedWorkouts.Count() == 0)
                     {
-                        var response = new { Message = "No workouts found for this date range" };
-                        return Ok(response);
+                        //var response = new { Message = "No workouts found for this date range" };
+                        //return Ok(response);
+
+                        //TEST CODE
+                        workoutIds = new List<int> { 6 };
                     }
 
                 }
@@ -300,7 +303,9 @@ namespace ProServ.Server.Controllers
                     workout.WorkoutBlocks = workoutBlocks.Where(n => n.WorkoutId == workout.WorkoutId).ToList();
 
                     //Set date
-                    workout.DateToComplete = assignedWorkouts.Where(n => n.WorkoutId == workout.WorkoutId).Select(p => p.WorkoutDate).FirstOrDefault();
+                    //workout.DateToComplete = assignedWorkouts.Where(n => n.WorkoutId == workout.WorkoutId).Select(p => p.WorkoutDate).FirstOrDefault();
+                    //TEST CODE
+                    workout.DateToComplete = DateTime.Now;
 
                     //set coach name
                     string coachName = db.UserInformation
