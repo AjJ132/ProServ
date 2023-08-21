@@ -41,7 +41,7 @@ namespace ProServ.Client.Pages
             //Get user permission state
             try
             {
-                var response = await Http.GetAsync("api/User/user-role");
+                var response = await Http.GetAsync("api/Auth/user-role");
                 if (response.IsSuccessStatusCode)
                 {
                     this._userRole = await response.Content.ReadAsStringAsync();

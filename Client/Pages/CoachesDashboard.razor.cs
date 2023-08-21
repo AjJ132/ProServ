@@ -32,11 +32,11 @@ namespace ProServ.Client.Pages
     public partial class CoachesDashboard : IDisposable
     {
         private bool _isLoading = true;
-        
+
         RadzenScheduler<AssignedWorkout> _calendar;
         private IEnumerable<AssignedWorkout> _assignedWorkouts;
-        
-        
+
+
         private IEnumerable<UserInformation> _myAtheletes;
         private bool _loadingMyteam = true;
         private bool _userHasNoTeam = false;
@@ -50,13 +50,16 @@ namespace ProServ.Client.Pages
             try
             {
                 var userInfoResponse = await Http.GetAsync("api/User/user-information");
-                if(userInfoResponse.IsSuccessStatusCode)
+                if (userInfoResponse.IsSuccessStatusCode)
                 {
+                    Console.WriteLine("Success getting user ifnormation");
                     var info = await userInfoResponse.Content.ReadFromJsonAsync<UserInformation>();
-                    if(info != null)
+                    Console.WriteLine("Content was read from json");
+                    if (info != null)
                     {
-                        if(info.UserId != null)
+                        if (info.UserId != null)
                         {
+                            Console.WriteLine("User id is not null");
                             _myInformation = info;
                             info = null;
                             userInfoResponse = null;
@@ -69,30 +72,34 @@ namespace ProServ.Client.Pages
                     NavigationManager.NavigateTo("/");
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
                 Console.WriteLine(ex.Message);
             }
-            
+
             //Load the athletes on my team
+            Console.WriteLine("Loading my team");
             await LoadMyTeam();
+            Console.WriteLine("My team was loaded");
 
             _isLoading = false;
             //Get Coach's assigned workouts    
             await base.OnInitializedAsync();
         }
-    
+
 
         private async Task LoadMyTeam()
         {
-            if(_myInformation.TeamID != 0)
+            if (_myInformation.TeamID != 0)
             {
                 var ahtleteInformationResponse = await Http.GetAsync($"api/Team/team-athletes/{_myInformation.TeamID}");
-                if(ahtleteInformationResponse.IsSuccessStatusCode)
+                if (ahtleteInformationResponse.IsSuccessStatusCode)
                 {
+                    Console.WriteLine("Success getting athletes");
                     var athletes = await ahtleteInformationResponse.Content.ReadFromJsonAsync<List<UserInformation>>();
-                    if(athletes.Count() > 0)
+                    Console.WriteLine("Atheletes: " + athletes.Count());
+                    if (athletes.Count() > 0)
                     {
                         _myAtheletes = athletes;
                         athletes = null;
@@ -119,22 +126,22 @@ namespace ProServ.Client.Pages
 
         void OnSlotRender(SchedulerSlotRenderEventArgs args)
         {
-        
+
         }
 
         async Task OnSlotSelect(SchedulerSlotSelectEventArgs args)
         {
-            
+
         }
 
         async Task OnAppointmentSelect(SchedulerAppointmentSelectEventArgs<AssignedWorkout> args)
         {
-        
+
         }
 
         void OnAppointmentRender(SchedulerAppointmentRenderEventArgs<AssignedWorkout> args)
         {
-            
+
         }
 
         public void Dispose()
@@ -143,5 +150,5 @@ namespace ProServ.Client.Pages
             GC.Collect();
         }
     }
-    
+
 }
