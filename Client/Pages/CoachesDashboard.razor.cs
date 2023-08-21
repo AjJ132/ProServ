@@ -97,7 +97,8 @@ namespace ProServ.Client.Pages
                 if (ahtleteInformationResponse.IsSuccessStatusCode)
                 {
                     Console.WriteLine("Success getting athletes");
-                    var athletes = await ahtleteInformationResponse.Content.ReadFromJsonAsync<List<UserInformation>>();
+                    var athleteWrapper = await ahtleteInformationResponse.Content.ReadFromJsonAsync<AthleteWrapper>();
+                    var athletes = athleteWrapper?.Values ?? new List<UserInformation>();
                     Console.WriteLine("Atheletes: " + athletes.Count());
                     if (athletes.Count() > 0)
                     {
