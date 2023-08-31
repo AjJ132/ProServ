@@ -10,6 +10,7 @@ using ProServ.Shared.Models.Workouts;
 
 using Microsoft.AspNetCore.Components;
 using ProServ.Client.Data;
+using Radzen;
 
 namespace ProServ.Client.Pages.WorkoutCenter
 {
@@ -24,12 +25,13 @@ namespace ProServ.Client.Pages.WorkoutCenter
         [Inject]
         public NavigationManager NavManager { get; set; }
 
+
+        private List<UserInformation> _workoutAssignees = new List<UserInformation>();
+        private IEnumerable<UserInformation> _myAtheletes;
+
         private List<string> _blockTypes = new List<string>() { "Warmup", "Strength", "Long Run", "Cooldown", "Custom" };
         private string _selectedBlockTypes = "Warmup";
-
-
         public Workout NewWorkout { get; set; }
-
         private int? _selectedBlockOrder = null;
         private WorkoutBlock _selectedBlock;
         private Parameter _selectedBlockParameter;
@@ -79,7 +81,6 @@ namespace ProServ.Client.Pages.WorkoutCenter
             this.NewWorkout.WorkoutBlocks.Add(newBlock);
             StateHasChanged();
         }
-
         void SelectBlock(int blockOrder)
         {
             _selectedBlockOrder = blockOrder;
@@ -91,7 +92,6 @@ namespace ProServ.Client.Pages.WorkoutCenter
 
             this._selectedBlock = this.NewWorkout.WorkoutBlocks.Where(x => x.BlockOrder == blockOrder).FirstOrDefault();
         }
-
         void BlockTypeDropDownChange(object updatedType)
         {
             this._selectedBlock.BlockType = updatedType.ToString();
@@ -110,8 +110,6 @@ namespace ProServ.Client.Pages.WorkoutCenter
             this._selectedBlock.Parameters.Add(new Parameter());
 
         }
-
-
         private void UpdateLongRunData(LongRunData data)
         {
             //Grab the first parameter from the selected block
@@ -133,7 +131,6 @@ namespace ProServ.Client.Pages.WorkoutCenter
                 }
             }
         }
-
         private void UpdateCustomData(CustomData data)
         {
             //Grab the first parameter from the selected block
@@ -147,7 +144,21 @@ namespace ProServ.Client.Pages.WorkoutCenter
             }
         }
 
+        void MyTeamLoadDataEvent(LoadDataArgs args)
+        {
+            var query = dbContext.Customers.AsQueryable();
 
+            if (!string.IsNullOrEmpty(args.Filter))
+            {
+                query = query.Where(c => c.CustomerID.ToLower().Contains(args.Filter.ToLower()) || c.ContactName.ToLower().Contains(args.Filter.ToLower()));
+            }
+
+            count = query.Count();
+
+            customers = query.Skip(args.Skip.HasValue ? args.Skip.Value : 0).Take(args.Top.HasValue ? args.Top.Value : 10).ToList();
+
+            InvokeAsync(StateHasChanged);
+        }
     }
 }
 

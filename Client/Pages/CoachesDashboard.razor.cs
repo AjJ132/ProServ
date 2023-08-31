@@ -27,6 +27,7 @@ using System.Net.Http.Headers;
 using System.Diagnostics;
 using ProServ.Shared.Models.Workouts;
 using ProServ.Shared.Models.Util;
+using Newtonsoft.Json.Bson;
 
 namespace ProServ.Client.Pages
 {
@@ -97,30 +98,39 @@ namespace ProServ.Client.Pages
         {
             if (_myInformation.TeamID != 0)
             {
-                var ahtleteInformationResponse = await Http.GetAsync($"api/Team/team-athletes/{_myInformation.TeamID}");
-                if (ahtleteInformationResponse.IsSuccessStatusCode)
+                try
                 {
-                    Console.WriteLine("Success getting athletes");
-                    var athleteWrapper = await ahtleteInformationResponse.Content.ReadFromJsonAsync<AthleteWrapper>();
-                    var athletes = athleteWrapper?.Values ?? new List<UserInformation>();
-                    Console.WriteLine("Atheletes: " + athletes.Count());
-                    if (athletes.Count() > 0)
+                    var athleteInformationResponse = await Http.GetAsync($"api/Team/team-athletes/{_myInformation.TeamID}");
+
+                    if (athleteInformationResponse.IsSuccessStatusCode)
                     {
-                        _myAtheletes = athletes;
-                        athletes = null;
-                        ahtleteInformationResponse = null;
+                        Console.WriteLine("Success getting athletes");
+
+                        var athleteWrapper = await athleteInformationResponse.Content.ReadFromJsonAsync<ResponseWrapper<UserInformation>>();
+
+                        if (athleteWrapper?.values != null && athleteWrapper.values.Count > 0)
+                        {
+                            Console.WriteLine("Athlete Wrapper Count: " + athleteWrapper.values.Count);
+                            _myAtheletes = athleteWrapper.values;
+                        }
+                        else
+                        {
+                            Console.WriteLine("No athletes found");
+                            _myAtheletes = new List<UserInformation>();
+                        }
                     }
                     else
                     {
                         _myAtheletes = new List<UserInformation>();
-                        athletes = null;
-                        ahtleteInformationResponse = null;
+                        Console.WriteLine("API call unsuccessful");
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    _myAtheletes = new List<UserInformation>();
+                    Console.WriteLine("Error during deserialization: " + ex.Message);
                 }
+
+
             }
             else
             {
@@ -139,7 +149,7 @@ namespace ProServ.Client.Pages
             if (assignedWorkoutsResponse.IsSuccessStatusCode)
             {
                 var wrapper = await assignedWorkoutsResponse.Content.ReadFromJsonAsync<ResponseWrapper<AssignedWorkout>>();
-                var assignedWorkouts = wrapper.Values ?? new List<AssignedWorkout>();
+                var assignedWorkouts = wrapper.values ?? new List<AssignedWorkout>();
                 if (assignedWorkouts.Count() > 0)
                 {
                     _assignedWorkouts = assignedWorkouts;
@@ -163,15 +173,36 @@ namespace ProServ.Client.Pages
             //if no workout display no workout message
         }
 
+        private async Task OnDateSelect(DateTime date)
+        {
+            _selectedDate = date;
+            Console.WriteLine("Selected date: " + _selectedDate);
+            _workoutsForDay = _assignedWorkouts.Where(x => x.WorkoutDate.Date == _selectedDate.Date).ToList();
+            await InvokeAsync(StateHasChanged);
+        }
+
         void OnSlotRender(SchedulerSlotRenderEventArgs args)
         {
+            if (args.View.Text == "Month" && args.Start.Date == DateTime.Today)
+            {
+                args.Attributes["style"] = "background: rgba(255,220,40,.2);";
+            }
 
+            if (args.View.Text == "Month" && args.Start.Date == _selectedDate.Date)
+            {
+                args.Attributes["style"] = "background: rgba(40,220,40,.2);";
+
+            }
         }
 
         async Task OnSlotSelect(SchedulerSlotSelectEventArgs args)
         {
-
+            //set selected date
+            await OnDateSelect(args.Start);
+            await InvokeAsync(StateHasChanged);
         }
+
+
 
         async Task OnAppointmentSelect(SchedulerAppointmentSelectEventArgs<AssignedWorkout> args)
         {

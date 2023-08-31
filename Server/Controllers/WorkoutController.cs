@@ -403,6 +403,53 @@ namespace ProServ.Server.Controllers
             }
         }
 
+
+        [HttpGet("search-athletes")]
+        [Authorize]
+        public async Task<ActionResult<List<Tuple<string, string>>>> SearchAthletes([FromQuery] string searchFilter)
+        {
+            try
+            {
+                //ensure user is logged in
+                var user = await _userManager.GetUserAsync(User);
+
+                if (user == null)
+                {
+                    return BadRequest("User not found");
+                }
+
+                //Get database context
+                using var db = _contextFactory.CreateDbContext();
+
+                //Search athletes via first and last name based on search filter and only on users team
+                var athletes = db.UserInformation.AsQueryable();
+
+                //Filter by team
+                athletes = athletes.Where(n => n.TeamID == db.UserInformation.Where(p => p.UserId == user.Id).Select(p => p.TeamID).FirstOrDefault());
+
+                //apply search filter
+                athletes = athletes.Where(n => n.FirstName.Contains(searchFilter) || n.LastName.Contains(searchFilter));
+
+                //if no athletes found return empty list
+                if (athletes.Count() == 0)
+                {
+                    return Ok(new List<Tuple<string, string>>());
+                }
+
+                //Create list of tuples to return, <id, name>
+                List<Tuple<string, string>> athletesList = new List<Tuple<string, string>>();
+
+                //dispose of db context
+                await db.DisposeAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("ERROR: " + ex.Message);
+                Debug.WriteLine(ex.Message);
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 
 
