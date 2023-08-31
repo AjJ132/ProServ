@@ -26,6 +26,7 @@ using Blazored.LocalStorage;
 using System.Net.Http.Headers;
 using System.Diagnostics;
 using ProServ.Shared.Models.Workouts;
+using ProServ.Shared.Models.Util;
 
 namespace ProServ.Client.Pages
 {
@@ -35,6 +36,8 @@ namespace ProServ.Client.Pages
 
         RadzenScheduler<AssignedWorkout> _calendar;
         private IEnumerable<AssignedWorkout> _assignedWorkouts;
+        private List<AssignedWorkout> _workoutsForDay;
+        private DateTime _selectedDate = DateTime.Now;
 
 
         private IEnumerable<UserInformation> _myAtheletes;
@@ -63,7 +66,6 @@ namespace ProServ.Client.Pages
                             _myInformation = info;
                             info = null;
                             userInfoResponse = null;
-
                         }
                     }
                 }
@@ -82,12 +84,14 @@ namespace ProServ.Client.Pages
             Console.WriteLine("Loading my team");
             await LoadMyTeam();
             Console.WriteLine("My team was loaded");
+            Console.WriteLine("Loading calendar data");
+            await LoadCalendarData();
+            Console.WriteLine("Calendar data was loaded");
 
             _isLoading = false;
             //Get Coach's assigned workouts    
             await base.OnInitializedAsync();
         }
-
 
         private async Task LoadMyTeam()
         {
@@ -123,6 +127,40 @@ namespace ProServ.Client.Pages
                 _userHasNoTeam = true;
             }
             _loadingMyteam = false;
+        }
+
+        private async Task LoadCalendarData()
+        {
+            //First load all the workouts for the month
+            var assignedWorkoutsResponse = await Http.GetAsync($"api/workout/my-team-workouts-by-month?todaysDate={DateTime.Now}");
+
+
+            //if response is successful
+            if (assignedWorkoutsResponse.IsSuccessStatusCode)
+            {
+                var wrapper = await assignedWorkoutsResponse.Content.ReadFromJsonAsync<ResponseWrapper<AssignedWorkout>>();
+                var assignedWorkouts = wrapper.Values ?? new List<AssignedWorkout>();
+                if (assignedWorkouts.Count() > 0)
+                {
+                    _assignedWorkouts = assignedWorkouts;
+
+                    //Get the workouts for the selected day
+                    _workoutsForDay = _assignedWorkouts.Where(x => x.WorkoutDate.Date == _selectedDate.Date).ToList();
+                }
+                else
+                {
+                    _assignedWorkouts = new List<AssignedWorkout>();
+                    _workoutsForDay = new List<AssignedWorkout>();
+                }
+            }
+            else
+            {
+                _assignedWorkouts = new List<AssignedWorkout>();
+            }
+            //Use Load data event based on start date and end date. 
+            //Display workouts for each day
+            //In athletes container display workouts for each athlete for that day.
+            //if no workout display no workout message
         }
 
         void OnSlotRender(SchedulerSlotRenderEventArgs args)

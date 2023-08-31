@@ -37,6 +37,7 @@ namespace ProServ.Server.Controllers
         }
 
         [HttpPost("create-workout")]
+        //Endpoint: api/Workout/create-workout
         [Authorize]
         public async Task<ActionResult> AddNewWorkout(Workout newWorkout)
         {
@@ -79,6 +80,7 @@ namespace ProServ.Server.Controllers
         }
 
         [HttpGet("this-weeks-workouts/overview")]
+        //Endpoint: api/Workout/this-weeks-workouts/overview
         [Authorize]
         public async Task<ActionResult<List<AssignedWorkout>>> GetThisWeeksWorkouts()
         {
@@ -232,8 +234,8 @@ namespace ProServ.Server.Controllers
             }
         }
 
-
         [HttpGet("workouts-by-date-range/{startDate}/{endDate}")]
+        //Endpoint: api/Workout/workouts-by-date-range/{startDate}/{endDate}
         [Authorize]
         public async Task<ActionResult<List<Workout>>> GetWorkoutsByDateRange(DateTime startDate, DateTime endDate)
         {
@@ -333,12 +335,73 @@ namespace ProServ.Server.Controllers
             }
         }
 
-        // [HttpPost("generate-test-workout")]
-        // [Authorize]
-        // public async Task<ActionResult> GenerateTestWorkout()
-        // {
+        [HttpGet("my-team-workouts-by-month")]
+        //Endpoint: api/Workout/my-team-workouts-by-month
+        [Authorize]
+        public async Task<ActionResult<List<AssignedWorkout>>> GetTeamWorkoutsByDateRange([FromQuery] DateTime todaysDate)
+        {
+            try
+            {
+                //Get database context
+                using var db = _contextFactory.CreateDbContext();
 
-        // }
+                //Ensure user is logged in
+                var user = await _userManager.GetUserAsync(User);
+
+                if (user == null)
+                {
+                    return BadRequest("User not found");
+                }
+
+                //Ensure user is coach of team
+                //First get the team id
+                var teamId = db.UserInformation.Where(n => n.UserId == user.Id).Select(n => n.TeamID).FirstOrDefault();
+
+                //If team id is null return bad request
+                if (teamId == 0)
+                {
+                    return BadRequest("User is not a coach");
+                }
+
+                //make sure user is the coach of the team
+                var team = db.Teams.Where(n => n.TeamID == teamId).FirstOrDefault();
+
+                if (team.OwnerID != user.Id)
+                {
+                    return BadRequest("User is not coach of team");
+                }
+
+                //Get all athletes on team
+                var athletes = db.UserInformation.Where(n => n.TeamID == teamId).AsQueryable();
+
+                //if no athletes found return empty list
+                if (athletes.Count() == 0)
+                {
+                    return Ok(new List<AssignedWorkout>());
+                }
+
+                //Get all workouts for this month under the athletes and their ids
+                var workouts = await db.AssignedWorkouts.Where(n => n.WorkoutDate.Month == todaysDate.Month && n.WorkoutDate.Year == todaysDate.Year && athletes.Select(p => p.UserId).Contains(n.AssigneeId)).ToListAsync();
+
+                //if no workouts found return empty list
+                if (workouts.Count() == 0)
+                {
+                    return Ok(new List<AssignedWorkout>());
+                }
+
+                await db.DisposeAsync();
+
+                return Ok(workouts);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("ERROR: " + ex.Message);
+                Debug.WriteLine(ex.Message);
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, ex.Message);
+            }
+        }
 
     }
 

@@ -7,10 +7,10 @@
 
 
 <PageTitle>Dashboard</PageTitle>
-`   
+`
 <AuthorizeView>
     <Authorized>
-        @if(_isLoading)
+        @if (_isLoading)
         {
             <div class=" justify-center content-center">
                 <div class="loader"></div>
@@ -19,49 +19,63 @@
         else
         {
             <div class="dashboard-container">
-                <div class="bg-red dark:bg-slate-800 w-full h-full flex flex-col justify-center content-center p-4 left-0 top-0">
-                <RadzenStack JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Start" style=" " Gap="1.5rem">
-                    <div class="flex justify-between content-cente w-full">
-                        <p class="text-4xl font-semibold">Welcome @_myInformation.FirstName</p>
-                        <p class="text-4xl font-semibold">@DateTime.Now.ToString("MMMM d yyyy")</p>
-                    </div>
-                    <div class="dashboard-responsive-stack">
-                        <RadzenCard style="border-radius: 12px;" class="calendar-container">
-                            <RadzenScheduler @ref=@_calendar SlotRender=@OnSlotRender style="height: 768px;" TItem="AssignedWorkout" Data="@_assignedWorkouts" StartProperty="WorkoutDate" EndProperty="WorkoutDate"
-                                             TextProperty="WorkoutName" SelectedIndex="2"
-                                             SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect AppointmentRender=@OnAppointmentRender>
-                                <RadzenDayView />
-                                <RadzenWeekView />
-                                <RadzenMonthView />
-                                <RadzenYearView />
-                            </RadzenScheduler>
-                        </RadzenCard>
-                        <RadzenCard class="athlete-container" style="border-radius: 12px;">
-                            <div class="flex justify-center flex-col content-start p-4">
-                               @if(_loadingMyteam)
-                               {
-                                    <div class="loader"></div>
-                               }
-                               else if(_userHasNoTeam)
-                               {
-                                    <p class="self-center text-2xl font-medium">You Currently Have No Team</p>
-                               }
-                               else
-                               {
-                                    @if(this._myAtheletes.Count() == 0)
+                <div
+                    class="bg-red dark:bg-slate-800 w-full h-full flex flex-col justify-center content-center p-4 left-0 top-0">
+                    <RadzenStack JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Start" style=" "
+                        Gap="1.5rem">
+                        <div class="flex justify-between content-cente w-full">
+                            <p class="text-4xl font-semibold">Welcome @_myInformation.FirstName</p>
+                            <p class="text-4xl font-semibold">@DateTime.Now.ToString("MMMM d yyyy")</p>
+                        </div>
+                        <div class="dashboard-responsive-stack">
+                            <RadzenCard style="border-radius: 12px;" class="calendar-container">
+                                <RadzenScheduler @ref=@_calendar SlotRender=@OnSlotRender style="height: 768px;"
+                                    TItem="AssignedWorkout" Data="@_assignedWorkouts" StartProperty="WorkoutDate"
+                                    EndProperty="WorkoutDate" TextProperty="WorkoutName" SelectedIndex="2"
+                                    SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect
+                                    AppointmentRender=@OnAppointmentRender>
+
+                                    <RadzenWeekView />
+                                    <RadzenMonthView />
+                                    <RadzenYearView />
+                                </RadzenScheduler>
+                            </RadzenCard>
+                            <RadzenCard class="athlete-container" style="border-radius: 12px;">
+                                <div class="flex justify-center flex-col content-start p-4">
+                                    @if (_loadingMyteam)
                                     {
-                                        <p class=" self-center text-2xl font-medium">You Currently Have No Athletes</p>
+                                        <div class="loader"></div>
+                                    }
+                                    else if (_userHasNoTeam)
+                                    {
+                                        <p class="self-center text-2xl font-medium">You Currently Have No Team</p>
                                     }
                                     else
                                     {
-                                        
+                                        @if (this._myAtheletes.Count() == 0)
+                                        {
+                                            <p class=" self-center text-2xl font-medium">You Currently Have No Athletes</p>
+                                        }
+                                        else
+                                        {
+                                            <RadzenStack>
+                                                <RadzenDataGrid Data="_myAtheletes" TItem="UserInformation">
+                                                    <Columns>
+                                                        <RadzenDataGridColumn TItem="UserInformation" Title="Name" Context="user">
+                                                            <Template>
+                                                                <p>@user.FirstName @user.LastName</p>
+                                                            </Template>
+                                                        </RadzenDataGridColumn>
+                                                    </Columns>
+                                                </RadzenDataGrid>
+                                            </RadzenStack>
+                                        }
                                     }
-                               }
-                            </div>
-                        </RadzenCard>
-                    </div>
-                </RadzenStack>
-            </div>
+                                </div>
+                            </RadzenCard>
+                        </div>
+                    </RadzenStack>
+                </div>
             </div>
         }
     </Authorized>
@@ -72,7 +86,5 @@
 </AuthorizeView>
 
 <style>
-    
+
 </style>
-
-
