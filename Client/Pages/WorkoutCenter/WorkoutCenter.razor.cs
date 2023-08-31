@@ -11,6 +11,8 @@ using ProServ.Shared.Models.Workouts;
 using Microsoft.AspNetCore.Components;
 using ProServ.Client.Data;
 using Radzen;
+using ProServ.Shared.Models.Util;
+using Radzen.Blazor;
 
 namespace ProServ.Client.Pages.WorkoutCenter
 {
@@ -27,7 +29,10 @@ namespace ProServ.Client.Pages.WorkoutCenter
 
 
         private List<UserInformation> _workoutAssignees = new List<UserInformation>();
-        private IEnumerable<UserInformation> _myAtheletes;
+        private IEnumerable<User_Short> _myAtheletes;
+        private int _myAtheletesCount = 0;
+        private User_Short _selectedAthlete;
+
 
         private List<string> _blockTypes = new List<string>() { "Warmup", "Strength", "Long Run", "Cooldown", "Custom" };
         private string _selectedBlockTypes = "Warmup";
@@ -144,21 +149,56 @@ namespace ProServ.Client.Pages.WorkoutCenter
             }
         }
 
-        void MyTeamLoadDataEvent(LoadDataArgs args)
+        async void MyTeamLoadDataEvent(LoadDataArgs args)
         {
-            var query = dbContext.Customers.AsQueryable();
+            string searchFilter = args.Filter.ToLower();
 
-            if (!string.IsNullOrEmpty(args.Filter))
+            //check if the search filter is empty
+            if (string.IsNullOrEmpty(searchFilter))
             {
-                query = query.Where(c => c.CustomerID.ToLower().Contains(args.Filter.ToLower()) || c.ContactName.ToLower().Contains(args.Filter.ToLower()));
+                Console.WriteLine("Search filter is empty; fetching all athletes.");
             }
 
-            count = query.Count();
 
-            customers = query.Skip(args.Skip.HasValue ? args.Skip.Value : 0).Take(args.Top.HasValue ? args.Top.Value : 10).ToList();
+            var encodedSearchFilter = Uri.EscapeDataString(searchFilter);
+            var athleteResponse = await Http.GetAsync($"api/workout/search-athletes?searchFilter={encodedSearchFilter}");
 
-            InvokeAsync(StateHasChanged);
+
+            if (athleteResponse.IsSuccessStatusCode)
+            {
+                var wrapper = await athleteResponse.Content.ReadFromJsonAsync<ResponseWrapper<User_Short>>();
+                _myAtheletes = wrapper.values ?? new List<User_Short>();
+                _myAtheletesCount = _myAtheletes.Count();
+                //var k = _myAtheletes.FirstOrDefault().Item1;
+            }
+            else
+            {
+                _myAtheletes = new List<User_Short>();
+                _myAtheletesCount = 0;
+            }
+
+
+            await InvokeAsync(StateHasChanged);
         }
+
+        async void SelectAthlete(object user)
+        {
+            //this._selectedAthlete = (User_Short)user;
+            var user2 = (User_Short)user;
+            Console.WriteLine("Selected Athlete: " + user2.name);
+
+            _selectedAthlete = null;
+            await InvokeAsync(StateHasChanged);
+
+        }
+        private Timer debounceTimer;
+
+        private void Debounce(Action method, int milliseconds = 300)
+        {
+            debounceTimer?.Dispose();
+            debounceTimer = new Timer(_ => method(), null, milliseconds, Timeout.Infinite);
+        }
+
     }
 }
 
