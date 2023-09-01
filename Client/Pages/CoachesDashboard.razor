@@ -3,6 +3,7 @@
 @attribute [Authorize(Roles = "Coach")]
 @inject HttpClient Http;
 @inject NavigationManager NavigationManager;
+@inject ILocalStorageService localStorageService;
 @layout MainLayout;
 
 
@@ -89,7 +90,7 @@
                                                             Context="user">
                                                             <Template>
                                                                 <RadzenButton ButtonStyle="ButtonStyle.Primary"
-                                                                    Text="Assign Workout" Icon="add_circle_outline" />
+                                                                    Text="Assign Workout" Icon="add_circle_outline" Click="(args => AssignUserWorkout(user))"/>
                                                             </Template>
                                                         </RadzenDataGridColumn>
 

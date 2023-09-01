@@ -13,6 +13,7 @@ using ProServ.Client.Data;
 using Radzen;
 using ProServ.Shared.Models.Util;
 using Radzen.Blazor;
+using Blazored.LocalStorage;
 
 namespace ProServ.Client.Pages.WorkoutCenter
 {
@@ -26,8 +27,8 @@ namespace ProServ.Client.Pages.WorkoutCenter
         public AuthenticationStateProvider AuthProvider { get; set; }
         [Inject]
         public NavigationManager NavManager { get; set; }
-
-
+        [Inject]
+        public ILocalStorageService LocalStorage { get; set; }
         private List<UserInformation> _workoutAssignees = new List<UserInformation>();
         private IEnumerable<User_Short> _myAtheletes;
         private int _myAtheletesCount = 0;
@@ -47,6 +48,15 @@ namespace ProServ.Client.Pages.WorkoutCenter
             NewWorkout = new Workout();
             NewWorkout.WorkoutBlocks = new List<WorkoutBlock>();
             NewWorkout.WorkoutBlocks.Add(new WorkoutBlock() { BlockName = _blockTypes[0], BlockType = _blockTypes[0] });
+
+            //Check to see if there is a user_short in local storage. If there is grab it and set the selected athelte and then delete it from local storage
+            var selectedUser = await LocalStorage.GetItemAsync<User_Short>("selectedUser");
+
+            if (selectedUser != null)
+            {
+                _selectedAthlete = selectedUser;
+                await LocalStorage.RemoveItemAsync("selectedUser");
+            }
         }
 
 
@@ -72,8 +82,6 @@ namespace ProServ.Client.Pages.WorkoutCenter
             }
 
         }
-
-
         private void AddNewWorkoutBlock()
         {
             WorkoutBlock newBlock = new WorkoutBlock()
@@ -183,11 +191,20 @@ namespace ProServ.Client.Pages.WorkoutCenter
 
         async void SelectAthlete(object user)
         {
-            //this._selectedAthlete = (User_Short)user;
-            var user2 = (User_Short)user;
-            Console.WriteLine("Selected Athlete: " + user2.name);
+            //Convert user to User_Short
+            var userShort = (User_Short)user;
+            
+            //check if the user is null 
+            if (userShort == null)
+            {
+                Console.WriteLine("User is null");
+                _selectedAthlete = null;
+                return;
+            }
 
-            _selectedAthlete = null;
+            Console.WriteLine("Selected Athlete: " + userShort.name);
+
+            _selectedAthlete = userShort;
             await InvokeAsync(StateHasChanged);
 
         }

@@ -22,12 +22,13 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using ProServ.Client.Controllers;
 using ProServ.Shared.Models.UserInfo;
-using Blazored.LocalStorage;
+
 using System.Net.Http.Headers;
 using System.Diagnostics;
 using ProServ.Shared.Models.Workouts;
 using ProServ.Shared.Models.Util;
 using Newtonsoft.Json.Bson;
+
 
 namespace ProServ.Client.Pages
 {
@@ -173,6 +174,23 @@ namespace ProServ.Client.Pages
             //if no workout display no workout message
         }
 
+        //Assign User Workout
+        private async void AssignUserWorkout (UserInformation user)
+        {
+            //Convert user information to short_user
+            var selectedUser = new User_Short
+            {
+                id = user.UserId,
+                name = user.FirstName + " " + user.LastName
+            };
+
+            await localStorageService.SetItemAsync("selectedUser", selectedUser);
+
+            //Navigate to assign workout page
+            NavigationManager.NavigateTo("/workout-center");
+        }
+
+        //Calendar Methods
         private async Task OnDateSelect(DateTime date)
         {
             _selectedDate = date;
@@ -201,9 +219,6 @@ namespace ProServ.Client.Pages
             await OnDateSelect(args.Start);
             await InvokeAsync(StateHasChanged);
         }
-
-
-
         async Task OnAppointmentSelect(SchedulerAppointmentSelectEventArgs<AssignedWorkout> args)
         {
 

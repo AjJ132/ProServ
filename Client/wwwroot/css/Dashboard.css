@@ -1,7 +1,7 @@
 ﻿.dashboard-container{
     max-width: 1650px;
     width: 100%;
-    background-color: red;
+    align-self: flex-start;
 }
 
 
@@ -12,8 +12,8 @@
 }
 
 .athlete-container{
-    min-width: 400px;
-    max-width: 600px;
+    min-width: 450px;
+    max-width: 700px;
     width: 50vw;
 }
 
@@ -23,9 +23,11 @@
     display: flex !important;
     flex-direction: row;
     width: 100%;
-    justify-content: center;
+    justify-content: start;
     align-items: start;
     gap: 20px;
+
+
 }
 
 @media(max-width: 1400px){
