@@ -46,6 +46,7 @@ namespace ProServ.Client.Pages.WorkoutCenter
         {
             //Init Workout
             NewWorkout = new Workout();
+            NewWorkout.WorkoutName = "New Workout";
             NewWorkout.WorkoutBlocks = new List<WorkoutBlock>();
             NewWorkout.WorkoutBlocks.Add(new WorkoutBlock() { BlockName = _blockTypes[0], BlockType = _blockTypes[0] });
 
@@ -94,17 +95,28 @@ namespace ProServ.Client.Pages.WorkoutCenter
             this.NewWorkout.WorkoutBlocks.Add(newBlock);
             StateHasChanged();
         }
+
         void SelectBlock(int blockOrder)
         {
-            _selectedBlockOrder = blockOrder;
-
-            if (this._selectedBlock == null)
+            if (_selectedBlockOrder == blockOrder)
             {
-                this._selectedBlock = new WorkoutBlock();
+                // Toggle off the selected block
+                _selectedBlockOrder = null;
+                _selectedBlock = null;
             }
+            else
+            {
+                _selectedBlockOrder = blockOrder;
 
-            this._selectedBlock = this.NewWorkout.WorkoutBlocks.Where(x => x.BlockOrder == blockOrder).FirstOrDefault();
+                if (_selectedBlock == null)
+                {
+                    _selectedBlock = new WorkoutBlock();
+                }
+
+                _selectedBlock = NewWorkout.WorkoutBlocks.Where(x => x.BlockOrder == blockOrder).FirstOrDefault();
+            }
         }
+
         void BlockTypeDropDownChange(object updatedType)
         {
             this._selectedBlock.BlockType = updatedType.ToString();
@@ -193,7 +205,7 @@ namespace ProServ.Client.Pages.WorkoutCenter
         {
             //Convert user to User_Short
             var userShort = (User_Short)user;
-            
+
             //check if the user is null 
             if (userShort == null)
             {

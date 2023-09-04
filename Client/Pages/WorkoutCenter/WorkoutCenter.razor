@@ -10,61 +10,76 @@
 
 <div class="workout-center-container">
     <div>
-        <p>Create New</p>
-        <RadzenCard style="min-width: 1100px;">
+
+        
             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center">
                 <RadzenCard style="border-radius: 12px;">
-                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center">
-                        <div
-                            style="position: relative; background-color: pink; min-height: 500px; min-width: 500px; padding: 1rem;">
-                            <RadzenStack JustifyContent="JustifyContent.Start">
-                                @foreach (var block in NewWorkout.WorkoutBlocks)
-                                {
-                                    <RadzenCard @onclick="() => SelectBlock(block.BlockOrder)"
-                                        class="@((block.BlockOrder == _selectedBlockOrder) ? "workout-block-selected" : "workout-block")"
-                                        style="max-width: 200px;">
-                                        <RadzenStack>
-                                            <p style="display: inline-block;">@block.BlockName</p>
-                                        </RadzenStack>
-                                    </RadzenCard>
-                                }
-                            </RadzenStack>
-                            <div style="position: absolute; right: 10px; bottom: 10px; z-index: 5;">
-                                <RadzenButton Text="Add" Icon="add" Click="AddNewWorkoutBlock"
-                                    Size="ButtonSize.Large" />
+                    <RadzenStack>
+                        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween">
+                            <p style="font-size: 2rem;">@NewWorkout.WorkoutName</p>
+<RadzenButton Text="Add Block" Icon="add" Click="AddNewWorkoutBlock"
+                                        Size="ButtonSize.Large" />
+                        </RadzenStack>
+                        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center">
+                            <div style="position: relative; min-height: 500px; min-width: 700px; padding: 1rem;">
+                                <RadzenStack JustifyContent="JustifyContent.Start">
+                                    @foreach (var block in NewWorkout.WorkoutBlocks)
+                                    {
+                                        <RadzenCard @onclick="() => SelectBlock(block.BlockOrder)"
+                                            class="@((block.BlockOrder == _selectedBlockOrder) ? "workout-block-selected" : "workout-block")"
+                                            style="max-width: 200px;">
+                                            <RadzenStack>
+                                                <p style="display: inline-block;">@block.BlockName</p>
+                                            </RadzenStack>
+                                        </RadzenCard>
+                                    }
+                                </RadzenStack>
+                                @* <div style="position: absolute; right: 10px; bottom: 10px; z-index: 5;">
+                                    <RadzenButton Text="Add" Icon="add" Click="AddNewWorkoutBlock"
+                                        Size="ButtonSize.Large" />
+                                </div> *@
                             </div>
-                        </div>
-                        @if (_selectedBlockOrder != null)
-                        {
-                            <RadzenStack
-                                style="background-color: lightgray; min-height: 500px; min-width: 350px; padding: 1rem;">
+                            @if (_selectedBlockOrder != null)
+                            {
+                                <RadzenStack JustifyContent="JustifyContent.SpaceBetween"
+                                    style=" min-height: 500px; min-width: 350px; padding: 1rem;">
 
-                                <p class=" text-2xl font-semibold mb-4">Parameters</p>
+                                    <RadzenStack>
+                                        <p class=" text-2xl font-semibold mb-4">Parameters</p>
 
-                                <p class="text-lg font-medium">Block Type</p>
-                                <RadzenDropDown TValue="string" @bind-Value="@_selectedBlock.BlockType"
-                                    Change="@( args => BlockTypeDropDownChange(args))" Data="@_blockTypes"
-                                    style="margin-top: 0" />
+                                        <p class="text-lg font-medium">Block Type</p>
+                                        <RadzenDropDown TValue="string" @bind-Value="@_selectedBlock.BlockType"
+                                            Change="@( args => BlockTypeDropDownChange(args))" Data="@_blockTypes"
+                                            style="margin-top: 0" />
 
-                                @switch (_selectedBlock.BlockType)
-                                {
-                                    case "Warmup":
-                                        break;
-                                    case "Strength":
-                                        break;
-                                    case "Long Run":
-                                        <LongRun OnChange="UpdateLongRunData" />
-                                        break;
-                                    case "Cooldown":
-                                        break;
-                                    case "Custom":
-                                        <CustomWorkout OnChange="UpdateCustomData" />
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            </RadzenStack>
-                        }
+                                        @switch (_selectedBlock.BlockType)
+                                        {
+                                            case "Warmup":
+                                                break;
+                                            case "Strength":
+                                                break;
+                                            case "Long Run":
+                                                <LongRun OnChange="UpdateLongRunData" />
+                                                break;
+                                            case "Cooldown":
+                                                break;
+                                            case "Custom":
+                                                <CustomWorkout OnChange="UpdateCustomData" />
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    </RadzenStack>
+
+                                    <RadzenButton Text="Remove Block" Icon="delete" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Large" Style="max-width: 200px; align-self:center;"/>
+                                </RadzenStack>
+                            }
+                        </RadzenStack>
+                    </RadzenStack>
+                </RadzenCard>
+                <RadzenCard style="border-radius: 12px;">
+                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center">
+                        
                         <RadzenStack JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Start"
                             Style="min-width: 225px; width: 100%; padding: 1rem;">
                             <div>
@@ -108,7 +123,7 @@
                     </RadzenStack>
                 </RadzenCard>
             </RadzenStack>
-        </RadzenCard>
+        
     </div>
     <div>
         <p>Choose From Library</p>
@@ -122,9 +137,10 @@
 
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: start;
+        align-items: start;
 
-        background-color: red;
+
 
     }
 
@@ -133,7 +149,7 @@
     }
 
     .workout-block-selected {
-
+        border: 2px solid var(--primary-blue);
         scale: 1.1;
     }
 </style>
