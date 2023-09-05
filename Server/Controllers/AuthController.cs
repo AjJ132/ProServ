@@ -125,15 +125,20 @@ namespace ProServ.Server.Controllers
             var result = await _signInManager.PasswordSignInAsync(user, model.Password, isPersistent: true, lockoutOnFailure: false);
 
 
+
             if (result.Succeeded)
             {
                 //Get users role
                 var role = await _userManager.GetRolesAsync(user);
+                var db = _contextFactory.CreateDbContext();
+
+                //Get users first name
+                string name = await db.UserInformation.Where(x => x.UserId.Equals(user.Id)).Select(x => x.FirstName).FirstOrDefaultAsync();
 
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(ClaimTypes.NameIdentifier, user.Id), // Add this line
+                    new Claim(ClaimTypes.Name, name),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id),
                     new Claim(ClaimTypes.Role, role.FirstOrDefault())
                 };
 
@@ -149,6 +154,9 @@ namespace ProServ.Server.Controllers
                     claims: claims,
                     expires: DateTime.Now.AddDays(1),
                     signingCredentials: creds);
+
+                //dispose of the db context 
+                await db.DisposeAsync();
 
                 return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
             }

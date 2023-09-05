@@ -25,6 +25,7 @@ namespace ProServ.Shared.Models.Workouts
         [NotMapped]
         public DateTime DateToComplete { get; set; }
         [NotMapped]
+        [Required]
         public string CoachName { get; set; }
 
 
@@ -34,7 +35,8 @@ namespace ProServ.Shared.Models.Workouts
 
         //public virtual WorkoutInfo WorkoutInfo { get; set; }
 
-        public virtual ICollection<AssignedWorkout> AssignedWorkouts { get; set; }
+        //**Have to init this list or else it throws a required error when transporting over API not sure why 09/05/2023
+        public virtual ICollection<AssignedWorkout> AssignedWorkouts { get; set; } = new List<AssignedWorkout>();
     }
 
 }

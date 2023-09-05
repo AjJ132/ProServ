@@ -41,9 +41,14 @@ namespace ProServ.Client.Pages.WorkoutCenter
         private int? _selectedBlockOrder = null;
         private WorkoutBlock _selectedBlock;
         private Parameter _selectedBlockParameter;
+        private string _coachName = "";
 
         protected override async Task OnInitializedAsync()
         {
+            //Get the coach name via API
+
+
+
             //Init Workout
             NewWorkout = new Workout();
             NewWorkout.WorkoutName = "New Workout";
@@ -69,9 +74,9 @@ namespace ProServ.Client.Pages.WorkoutCenter
             var authState = await AuthProvider.GetAuthenticationStateAsync();
             string userID = authState.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
+            //Assign Coach ID
             workout.CoachId = userID;
-
-
+            workout.CoachName = authState.User.FindFirst(ClaimTypes.Name).Value;
 
 
             //Send workout over HTTP
