@@ -42,13 +42,11 @@ namespace ProServ.Client.Pages.WorkoutCenter
         private WorkoutBlock _selectedBlock;
         private Parameter _selectedBlockParameter;
         private string _coachName = "";
+        private bool _hasAssignees = false;
+        private DateTime _dateToComplete = DateTime.Today;
 
         protected override async Task OnInitializedAsync()
         {
-            //Get the coach name via API
-
-
-
             //Init Workout
             NewWorkout = new Workout();
             NewWorkout.WorkoutName = "New Workout";
@@ -71,11 +69,13 @@ namespace ProServ.Client.Pages.WorkoutCenter
         {
             Workout workout = this.NewWorkout;
 
+            //Get the current user's ID from Claims
             var authState = await AuthProvider.GetAuthenticationStateAsync();
             string userID = authState.User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-            //Assign Coach ID
+            //Assign Coach ID from Claims
             workout.CoachId = userID;
+            //Assign Coach Name from Claims
             workout.CoachName = authState.User.FindFirst(ClaimTypes.Name).Value;
 
 
@@ -84,6 +84,7 @@ namespace ProServ.Client.Pages.WorkoutCenter
             if (createWorkoutResponse.IsSuccessStatusCode)
             {
                 //TODO: Reset interface
+                //TODO: Add success message
                 Console.WriteLine("Workout Created");
             }
 
@@ -216,12 +217,14 @@ namespace ProServ.Client.Pages.WorkoutCenter
             {
                 Console.WriteLine("User is null");
                 _selectedAthlete = null;
+                _hasAssignees = false;
                 return;
             }
 
             Console.WriteLine("Selected Athlete: " + userShort.name);
 
             _selectedAthlete = userShort;
+            _hasAssignees = true;
             await InvokeAsync(StateHasChanged);
 
         }

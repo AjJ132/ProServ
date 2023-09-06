@@ -77,18 +77,18 @@
                         </RadzenStack>
                     </RadzenStack>
                 </RadzenCard>
-                <RadzenCard style="border-radius: 12px;">
+                <RadzenCard style="border-radius: 12px; min-width: 270px;">
                     <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center">
                         
                         <RadzenStack JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Start"
                             Style="min-width: 225px; width: 100%; padding: 1rem;">
                             <div>
                                 <p class=" text-2xl font-semibold">Workout Settings</p>
-                                <RadzenStack AlignItems="AlignItems.Start" class=" mt-4">
-                                    <p class="text-lg font-medium">New Workout Name</p>
+                                <div  class=" mt-4">
+                                    <p class="text-lg font-medium text-slate-500">Name</p>
                                     <RadzenTextBox @bind-Value=NewWorkout.WorkoutName Placeholder="Workout Name"
                                         style="width: 100%;" />
-                                </RadzenStack>
+                                </div>
                                 <RadzenStack AlignItems="AlignItems.Start" class=" mt-4">
                                     <p class="text-lg font-medium">Notes</p>
                                     <RadzenTextArea @bind-Value=NewWorkout.Notes Placeholder="Workout Notes"
@@ -107,9 +107,9 @@
                 <RadzenCard>
                     <RadzenStack JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Start"
                         Style="min-width: 225px; width: 100%; padding: 1rem;">
+                        <p class=" text-2xl font-semibold">Athlete</p>
                         <div>
-                            <p class=" text-2xl font-semibold">Assign To</p>
-                            <RadzenStack AlignItems="AlignItems.Start" class=" mt-4">
+                            
                                 <p class="text-lg font-medium">Search</p>
                                 <RadzenDropDown Count="@_myAtheletesCount" TValue="User_Short" Value="@_selectedAthlete"
                                     Change="@(args => SelectAthlete(args))" AllowVirtualization="false"
@@ -117,7 +117,11 @@
                                     Style="width: 100%; max-width: 400px;" Data="@_myAtheletes"
                                     LoadData="@((args) => Debounce(() => MyTeamLoadDataEvent(args)))" />
 
-                            </RadzenStack>
+                            
+                        </div>
+                        <div>
+                            <p class="text-lg font-medium">Date</p>
+                            <RadzenDatePicker @bind-Value="@_dateToComplete" Style="width: 100%; max-width: 400px;" ShowTime="false"/>
                         </div>
 
                     </RadzenStack>
