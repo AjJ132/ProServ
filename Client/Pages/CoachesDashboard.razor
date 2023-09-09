@@ -61,8 +61,17 @@
                                         else
                                         {
                                             <RadzenStack AlignItems="AlignItems.Start">
-                                                <h1>@_selectedDate.ToString("MMMM/dd")</h1>
-                                                <RadzenDataGrid Data="_myAtheletes" TItem="UserInformation">
+                                                <RadzenStack Orientation="Orientation.Horizontal">
+                                                    <h1>@_selectedDate.ToString("MMMM/dd")</h1>
+                                                    @*Change Date*@
+                                                    <RadzenStack Orientation="Orientation.Horizontal">
+                                                        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="arrow_back"
+                                                            Click=@(args => ChangeDate(-1)) />
+                                                        <RadzenButton ButtonStyle="ButtonStyle.Secondary" Icon="arrow_forward"
+                                                            Click=@(args => ChangeDate(1)) />
+                                                    </RadzenStack>
+                                                </RadzenStack>
+                                                <RadzenDataGrid Data="_myAtheletes" TItem="UserInformation" @ref="_myTeamGrid">
                                                     <Columns>
                                                         <RadzenDataGridColumn TItem="UserInformation" Title="Name" Context="user">
                                                             <Template>
@@ -90,7 +99,8 @@
                                                             Context="user">
                                                             <Template>
                                                                 <RadzenButton ButtonStyle="ButtonStyle.Primary"
-                                                                    Text="Assign Workout" Icon="add_circle_outline" Click="(args => AssignUserWorkout(user))"/>
+                                                                    Text="Assign Workout" Icon="add_circle_outline"
+                                                                    Click="(args => AssignUserWorkout(user))" />
                                                             </Template>
                                                         </RadzenDataGridColumn>
 

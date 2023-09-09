@@ -79,6 +79,61 @@ namespace ProServ.Server.Controllers
             }
         }
 
+        [HttpPost("create-assign-workout")]
+        //Endpoint: api/Workout/create-assign-workout
+        [Authorize]
+        public async Task<ActionResult> AddNewAssignedWorkout(AssignedWorkout newAssignedWorkout)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                //redundant check
+                if (user.Id != null)
+                {
+                    newAssignedWorkout.CoachId = user.Id;
+
+                    //grab coach name
+
+                }
+                else
+                {
+                    return NotFound("User ID not found");
+                }
+
+                //Get database context
+                var db = _contextFactory.CreateDbContext();
+
+                //grab coach name
+                string coachName = db.UserInformation
+                    .Where(n => n.UserId.Equals(newAssignedWorkout.CoachId))
+                    .Select(p => p.FirstName + " " + p.LastName)
+                    .FirstOrDefault() ?? "NOT FOUND";
+
+                newAssignedWorkout.CoachName = coachName;
+
+                if (db == null)
+                {
+                    return StatusCode(500, "Database connection failed");
+                }
+
+                await db.AssignedWorkouts.AddAsync(newAssignedWorkout);
+                await db.SaveChangesAsync();
+
+                return Ok("New workout created and assigned.");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet("this-weeks-workouts/overview")]
         //Endpoint: api/Workout/this-weeks-workouts/overview
         [Authorize]

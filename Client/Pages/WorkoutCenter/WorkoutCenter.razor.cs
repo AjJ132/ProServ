@@ -71,22 +71,56 @@ namespace ProServ.Client.Pages.WorkoutCenter
 
             //Get the current user's ID from Claims
             var authState = await AuthProvider.GetAuthenticationStateAsync();
-            string userID = authState.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userID = authState.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var coachName = authState.User.FindFirst(ClaimTypes.Name).Value;
 
             //Assign Coach ID from Claims
             workout.CoachId = userID;
             //Assign Coach Name from Claims
-            workout.CoachName = authState.User.FindFirst(ClaimTypes.Name).Value;
+            workout.CoachName = coachName;
 
-
-            //Send workout over HTTP
-            var createWorkoutResponse = await Http.PostAsJsonAsync("api/Workout/create-workout", workout);
-            if (createWorkoutResponse.IsSuccessStatusCode)
+            //Determine if athlete is selected
+            if (_selectedAthlete != null)
             {
-                //TODO: Reset interface
-                //TODO: Add success message
-                Console.WriteLine("Workout Created");
+                AssignedWorkout newAssign = new()
+                {
+                    AssigneeId = _selectedAthlete.id,
+                    CoachId = userID,
+                    CoachName = coachName,
+                    WorkoutDate = _dateToComplete,
+                    WorkoutName = workout.WorkoutName,
+                    ReportBack = false, //TODO: Add report back
+                    Notes = "", //TODO: Add notes
+                    WorkoutId = 0, //TEMP. ID will be added after workout is created
+                    Workout = workout,
+                };
+
+                //send assigned workout over HTTP
+                var assignWorkoutResponse = await Http.PostAsJsonAsync("api/Workout/create-assign-workout", newAssign);
+                if (assignWorkoutResponse.IsSuccessStatusCode)
+                {
+                    //Reset interface
+                    //TODO add success message/notification
+                }
+                else
+                {
+                    //TODO: Add error message
+                }
             }
+            else
+            {
+                //Workout has no assignee, add it to database. TODO: Add message to user to assign or add to collection. 
+                //TODO add collection feature
+                //Send workout over HTTP
+                var createWorkoutResponse = await Http.PostAsJsonAsync("api/Workout/create-workout", workout);
+                if (createWorkoutResponse.IsSuccessStatusCode)
+                {
+                    //TODO: Reset interface
+                    //TODO: Add success message
+                    Console.WriteLine("Workout Created");
+                }
+            }
+
 
         }
         private void AddNewWorkoutBlock()
@@ -228,8 +262,8 @@ namespace ProServ.Client.Pages.WorkoutCenter
             await InvokeAsync(StateHasChanged);
 
         }
-        private Timer debounceTimer;
 
+        private Timer debounceTimer;
         private void Debounce(Action method, int milliseconds = 300)
         {
             debounceTimer?.Dispose();

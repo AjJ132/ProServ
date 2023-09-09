@@ -46,7 +46,7 @@ namespace ProServ.Client.Pages
         private bool _loadingMyteam = true;
         private bool _userHasNoTeam = false;
 
-
+        private RadzenDataGrid<UserInformation> _myTeamGrid;
 
         private UserInformation _myInformation;
         protected override async Task OnInitializedAsync()
@@ -157,6 +157,7 @@ namespace ProServ.Client.Pages
 
                     //Get the workouts for the selected day
                     _workoutsForDay = _assignedWorkouts.Where(x => x.WorkoutDate.Date == _selectedDate.Date).ToList();
+                    Console.WriteLine("Total Workouts: " + _assignedWorkouts.Count());
                 }
                 else
                 {
@@ -175,7 +176,7 @@ namespace ProServ.Client.Pages
         }
 
         //Assign User Workout
-        private async void AssignUserWorkout (UserInformation user)
+        private async void AssignUserWorkout(UserInformation user)
         {
             //Convert user information to short_user
             var selectedUser = new User_Short
@@ -198,7 +199,16 @@ namespace ProServ.Client.Pages
             _workoutsForDay = _assignedWorkouts.Where(x => x.WorkoutDate.Date == _selectedDate.Date).ToList();
             await InvokeAsync(StateHasChanged);
         }
+        private async void ChangeDate(int days)
+        {
+            _selectedDate = _selectedDate.AddDays(days);
+            _workoutsForDay = _assignedWorkouts.Where(x => x.WorkoutDate.Date == _selectedDate.Date).ToList();
 
+            //reload datagrid
+            await _calendar.Reload();
+
+            await InvokeAsync(StateHasChanged);
+        }
         void OnSlotRender(SchedulerSlotRenderEventArgs args)
         {
             if (args.View.Text == "Month" && args.Start.Date == DateTime.Today)
@@ -212,7 +222,6 @@ namespace ProServ.Client.Pages
 
             }
         }
-
         async Task OnSlotSelect(SchedulerSlotSelectEventArgs args)
         {
             //set selected date
