@@ -14,12 +14,13 @@ public class WorkoutBlock
     public int WorkoutId { get; set; }
 
     [MaxLength(50)]
+    [Required]
     public string BlockName { get; set; }
 
     public string BlockType { get; set; }
 
 
     public virtual Workout? Workout { get; set; }
-    public virtual ICollection<Parameter> Parameters { get; set; }
+    public virtual ICollection<Parameter> Parameters { get; set; } = new List<Parameter>();
 }
 

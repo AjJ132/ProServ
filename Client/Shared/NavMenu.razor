@@ -84,7 +84,7 @@
         //Get user permission state
         try
         {
-            var userRoleResponse = await Http.GetAsync("api/User/user-role");
+            var userRoleResponse = await Http.GetAsync("api/Auth/user-role");
             if (userRoleResponse.IsSuccessStatusCode)
             {
                 this._userRole = await userRoleResponse.Content.ReadAsStringAsync();

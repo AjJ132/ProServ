@@ -37,6 +37,7 @@ namespace ProServ.Server.Controllers
         }
 
         [HttpPost("create-workout")]
+        //Endpoint: api/Workout/create-workout
         [Authorize]
         public async Task<ActionResult> AddNewWorkout(Workout newWorkout)
         {
@@ -78,7 +79,63 @@ namespace ProServ.Server.Controllers
             }
         }
 
+        [HttpPost("create-assign-workout")]
+        //Endpoint: api/Workout/create-assign-workout
+        [Authorize]
+        public async Task<ActionResult> AddNewAssignedWorkout(AssignedWorkout newAssignedWorkout)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
+
+                //redundant check
+                if (user.Id != null)
+                {
+                    newAssignedWorkout.CoachId = user.Id;
+
+                    //grab coach name
+
+                }
+                else
+                {
+                    return NotFound("User ID not found");
+                }
+
+                //Get database context
+                var db = _contextFactory.CreateDbContext();
+
+                //grab coach name
+                string coachName = db.UserInformation
+                    .Where(n => n.UserId.Equals(newAssignedWorkout.CoachId))
+                    .Select(p => p.FirstName + " " + p.LastName)
+                    .FirstOrDefault() ?? "NOT FOUND";
+
+                newAssignedWorkout.CoachName = coachName;
+
+                if (db == null)
+                {
+                    return StatusCode(500, "Database connection failed");
+                }
+
+                await db.AssignedWorkouts.AddAsync(newAssignedWorkout);
+                await db.SaveChangesAsync();
+
+                return Ok("New workout created and assigned.");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet("this-weeks-workouts/overview")]
+        //Endpoint: api/Workout/this-weeks-workouts/overview
         [Authorize]
         public async Task<ActionResult<List<AssignedWorkout>>> GetThisWeeksWorkouts()
         {
@@ -232,14 +289,14 @@ namespace ProServ.Server.Controllers
             }
         }
 
-
         [HttpGet("workouts-by-date-range/{startDate}/{endDate}")]
+        //Endpoint: api/Workout/workouts-by-date-range/{startDate}/{endDate}
         [Authorize]
         public async Task<ActionResult<List<Workout>>> GetWorkoutsByDateRange(DateTime startDate, DateTime endDate)
         {
             try
             {
-                Console.WriteLine("Init DB");
+
                 using var db = _contextFactory.CreateDbContext();
 
                 Console.WriteLine("Getting workouts by date range");
@@ -262,8 +319,11 @@ namespace ProServ.Server.Controllers
                 {
                     if (assignedWorkouts.Count() == 0)
                     {
-                        var response = new { Message = "No workouts found for this date range" };
-                        return Ok(response);
+                        //var response = new { Message = "No workouts found for this date range" };
+                        //return Ok(response);
+
+                        //TEST CODE
+                        workoutIds = new List<int> { 6 };
                     }
 
                 }
@@ -300,7 +360,9 @@ namespace ProServ.Server.Controllers
                     workout.WorkoutBlocks = workoutBlocks.Where(n => n.WorkoutId == workout.WorkoutId).ToList();
 
                     //Set date
-                    workout.DateToComplete = assignedWorkouts.Where(n => n.WorkoutId == workout.WorkoutId).Select(p => p.WorkoutDate).FirstOrDefault();
+                    //workout.DateToComplete = assignedWorkouts.Where(n => n.WorkoutId == workout.WorkoutId).Select(p => p.WorkoutDate).FirstOrDefault();
+                    //TEST CODE
+                    workout.DateToComplete = DateTime.Now;
 
                     //set coach name
                     string coachName = db.UserInformation
@@ -328,12 +390,128 @@ namespace ProServ.Server.Controllers
             }
         }
 
-        // [HttpPost("generate-test-workout")]
-        // [Authorize]
-        // public async Task<ActionResult> GenerateTestWorkout()
-        // {
+        [HttpGet("my-team-workouts-by-month")]
+        //Endpoint: api/Workout/my-team-workouts-by-month
+        [Authorize]
+        public async Task<ActionResult<List<AssignedWorkout>>> GetTeamWorkoutsByDateRange([FromQuery] DateTime todaysDate)
+        {
+            try
+            {
+                //Get database context
+                using var db = _contextFactory.CreateDbContext();
 
-        // }
+                //Ensure user is logged in
+                var user = await _userManager.GetUserAsync(User);
+
+                if (user == null)
+                {
+                    return BadRequest("User not found");
+                }
+
+                //Ensure user is coach of team
+                //First get the team id
+                var teamId = db.UserInformation.Where(n => n.UserId == user.Id).Select(n => n.TeamID).FirstOrDefault();
+
+                //If team id is null return bad request
+                if (teamId == 0)
+                {
+                    return BadRequest("User is not a coach");
+                }
+
+                //make sure user is the coach of the team
+                var team = db.Teams.Where(n => n.TeamID == teamId).FirstOrDefault();
+
+                if (team.OwnerID != user.Id)
+                {
+                    return BadRequest("User is not coach of team");
+                }
+
+                //Get all athletes on team
+                var athletes = db.UserInformation.Where(n => n.TeamID == teamId).AsQueryable();
+
+                //if no athletes found return empty list
+                if (athletes.Count() == 0)
+                {
+                    return Ok(new List<AssignedWorkout>());
+                }
+
+                //Get all workouts for this month under the athletes and their ids
+                var workouts = await db.AssignedWorkouts.Where(n => n.WorkoutDate.Month == todaysDate.Month && n.WorkoutDate.Year == todaysDate.Year && athletes.Select(p => p.UserId).Contains(n.AssigneeId)).ToListAsync();
+
+                //if no workouts found return empty list
+                if (workouts.Count() == 0)
+                {
+                    return Ok(new List<AssignedWorkout>());
+                }
+
+                await db.DisposeAsync();
+
+                return Ok(workouts);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("ERROR: " + ex.Message);
+                Debug.WriteLine(ex.Message);
+                Console.WriteLine(ex.Message);
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+        [HttpGet("search-athletes")]
+        [Authorize]
+        public async Task<ActionResult<List<User_Short>>> SearchAthletes([FromQuery] string searchFilter = null)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(searchFilter))
+                {
+                    searchFilter = Uri.UnescapeDataString(searchFilter);
+                }
+
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return BadRequest("User not found");
+                }
+
+                using var db = _contextFactory.CreateDbContext();
+
+                var teamId = db.UserInformation.Where(p => p.UserId == user.Id).Select(p => p.TeamID).FirstOrDefault();
+
+                var athletesQuery = db.UserInformation.AsQueryable().Where(n => n.TeamID == teamId);
+
+                if (!string.IsNullOrEmpty(searchFilter))
+                {
+                    var searchTerms = searchFilter.Split(' ').Select(s => s.ToLower()).ToList();
+                    foreach (var term in searchTerms)
+                    {
+                        athletesQuery = athletesQuery.Where(n => n.FirstName.ToLower().Contains(term) || n.LastName.ToLower().Contains(term));
+                    }
+                }
+
+                var filteredAthletes = await athletesQuery.ToListAsync();
+
+                if (filteredAthletes.Count == 0)
+                {
+                    return Ok(new List<User_Short>());
+                }
+
+                var athletesList = filteredAthletes.Select(a => new User_Short
+                {
+                    id = a.UserId,
+                    name = $"{a.FirstName} {a.LastName}"
+                }).ToList();
+
+                return Ok(athletesList);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ERROR: {ex.Message}");
+                return StatusCode(500, ex.Message);
+            }
+        }
 
     }
 
