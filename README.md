@@ -31,42 +31,6 @@ As a student software engineer, this project allows me to dive into various aspe
 ### Prerequisites
 For the time being, this application is not installable due to special database access requirements.
 
-**Note:** This project is a work in progress as of September 12, 2023. Some features may still be under development.
-
-#### Frontend: Blazor Application
-1. Clone the repository to your local machine
-2. Navigate to the frontend directory
-   ```bash
-   cd ProServ/Client 
-   ```
-3. Restore the packages
-   ```bash
-   dotnet restore 
-   ```
-4. Run the application
-   ```bash
-   dotnet run 
-   ```
-
-#### Backend: ASP.NET
-1. Navigate to the backend directory
-   ```bash
-   cd ProServ/Server 
-   ```
-2. Restore the packages
-   ```bash
-   dotnet restore 
-   ```
-3. Run the application
-   ```bash
-   dotnet run 
-   ```
-
-#### Mobile iOS App
-1. Open the project in Xcode
-2. Select your preferred simulator or connect your iOS device
-3. Build and run the application
-
 ## Usage
 To run the system locally, it's important to start the server application first, as it serves as the API server for both the client application and the mobile app. Follow these steps to ensure a smooth setup:
 1. Start the Server Application: Begin by launching the server application to initialize the API server.
