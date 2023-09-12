@@ -29,7 +29,7 @@ As a student software engineer, this project allows me to dive into various aspe
 ## Installation
 
 ### Prerequisites
-Before proceeding with the installation, make sure you have the .NET runtime installed on your machine. You can download it from [here](https://dotnet.microsoft.com/download). Please download version “.NET 7.0” or higher.
+For the time being, this application is not installable due to special database access requirements.
 
 **Note:** This project is a work in progress as of September 12, 2023. Some features may still be under development.
 
